@@ -52,3 +52,53 @@ pub fn squareLength(v: anytype) RealType {
         else => unreachable, // made unreachable by assert above
     }
 }
+
+/// Normilizes the given vector (modifies)
+pub fn normalize(T: type, v: *T) void {
+    std.debug.assert(T == Vec2 or T == Vec3 or T == Vec4);
+
+    v.* /= @splat(length(v.*));
+}
+
+/// Returns the length of the given vector
+pub fn dot(l: anytype, r: anytype) RealType {
+    std.debug.assert(@TypeOf(l) == @TypeOf(r));
+    std.debug.assert(@TypeOf(l) == Vec2 or @TypeOf(l) == Vec3 or @TypeOf(l) == Vec4);
+
+    switch (@TypeOf(l)) {
+        Vec2 => {
+            return l[0] * r[0] + l[1] * r[1];
+        },
+        Vec3 => {
+            return l[0] * r[0] + l[1] * r[1] + l[2] * r[2];
+        },
+        Vec4 => {
+            return l[0] * r[0] + l[1] * r[1] + l[2] * r[2] + l[3] * r[3];
+        },
+        else => unreachable, // made unreachable by assert above
+    }
+}
+
+pub fn cross(l: Vec3, r: Vec3) Vec3 {
+    return .{
+        l[1] * r[2] - l[2] * r[1],
+        l[2] * r[0] - l[0] * r[2],
+        l[0] * r[1] - l[1] * r[0],
+    };
+}
+
+/// Mat4 type
+pub const Mat4 = @Vector(16, RealType);
+
+pub fn diagonalMat4(r: RealType) Mat4 {
+    return Mat4{
+        r, 0, 0, 0,
+        0, r, 0, 0,
+        0, 0, r, 0,
+        0, 0, 0, r,
+    };
+}
+
+pub fn identity() Mat4 {
+    return diagonalMat4(1.0);
+}
