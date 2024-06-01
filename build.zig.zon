@@ -1,0 +1,14 @@
+.{
+    .name = "arion-math",
+    .version = "0.1.0-dev",
+
+    .minimum_zig_version = "0.13.0-dev",
+
+    .dependencies = .{},
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
