@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    _ = b.addModule("arion-math", .{
+    const amth = b.addModule("arion-math", .{
         .root_source_file = b.path("src/root.zig"),
     });
 
@@ -16,6 +16,9 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
+    tests.root_module.addImport("amth", amth);
+
     b.installArtifact(tests);
 
     test_step.dependOn(&b.addRunArtifact(tests).step);
