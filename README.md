@@ -8,7 +8,7 @@ Add this URL to dependencies in the `build.zig.zon`:
 
 Then in the `build.zig` add:
 ```zig
-const amth = b.dependency("amth", .{});
+const amth = b.dependency("arion-math", .{});
 exe.root_module.addImport("amth", amth.module("root"));
 ```
 Now, in your code use:
