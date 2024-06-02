@@ -98,3 +98,12 @@ pub fn diagonalMat4(r: RealType) Mat4 {
 pub fn identity() Mat4 {
     return diagonalMat4(1.0);
 }
+
+pub fn orthographic(l: RealType, r: RealType, t: RealType, b: RealType, n: RealType, f: RealType) Mat4 {
+    return Mat4{
+        2 / (r - l), 0,           0,            -(r + l) / (r - l),
+        0,           2 / (t - b), 0,            -(t + b) / (t - b),
+        0,           0,           -2 / (f - n), -(f + n) / (f - n),
+        0,           0,           0,            1.0,
+    };
+}
