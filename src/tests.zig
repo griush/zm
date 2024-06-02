@@ -75,3 +75,27 @@ test "Mat4 scale" {
 
     try std.testing.expectEqual(amth.Mat4.diagonal(3.0).data, identity.data);
 }
+
+test "Mat4 multiply" {
+    const m1 = amth.Mat4{
+        .data = .{
+            1, 2, 2, 2,
+            2, 3, 2, 1,
+            2, 2, 1, 4,
+            1, 1, 1, 1,
+        },
+    };
+
+    const m2 = amth.Mat4{
+        .data = .{
+            -1,   0,     0,    2,
+            0.25, 0.75,  0.25, -2.25,
+            0.5,  -0.5,  -0.5, 1.5,
+            0.25, -0.25, 0.25, -0.25,
+        },
+    };
+
+    const m: amth.Mat4 = amth.Mat4.multiply(m1, m2);
+
+    try std.testing.expectEqual(amth.Mat4.identity().data, m.data);
+}

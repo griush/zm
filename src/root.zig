@@ -1,5 +1,13 @@
 const RealType = f32;
 
+pub fn toRaidans(deg: RealType) RealType {
+    return deg * 0.01745329252;
+}
+
+pub fn toDegrees(rad: RealType) RealType {
+    return rad * 57.29577951;
+}
+
 pub const Vec2 = struct {
     const Self = @This();
 
@@ -196,13 +204,76 @@ pub const Mat4 = struct {
         return Mat4.diagonal(1.0);
     }
 
-    pub fn orthographic(l: RealType, r: RealType, t: RealType, b: RealType, n: RealType, f: RealType) Mat4 {
+    pub fn orthographic(left: RealType, right: RealType, top: RealType, bottom: RealType, near: RealType, far: RealType) Mat4 {
         return Mat4{
             .data = .{
-                2 / (r - l), 0,           0,            -(r + l) / (r - l),
-                0,           2 / (t - b), 0,            -(t + b) / (t - b),
-                0,           0,           -2 / (f - n), -(f + n) / (f - n),
-                0,           0,           0,            1.0,
+                2 / (right - left), 0,                  0,                 -(right + left) / (right - left),
+                0,                  2 / (top - bottom), 0,                 -(top + bottom) / (top - bottom),
+                0,                  0,                  -2 / (far - near), -(far + near) / (far - near),
+                0,                  0,                  0,                 1.0,
+            },
+        };
+    }
+
+    /// `fov` takes in degrees
+    pub fn perspective(fov: RealType, aspect: RealType, near: RealType, far: RealType) Mat4 {
+        fov = toRaidans(fov);
+        return Mat4{
+            .data = .{
+                1 / (aspect * @tan(fov / 2)), 0,                 0,                            0,
+                0,                            1 / @tan(fov / 2), 0,                            0,
+                0,                            0,                 -(far + near) / (far - near), -(2 * far * near) / (far - near),
+                0,                            0,                 -1,                           0,
+            },
+        };
+    }
+
+    pub fn translation(x: RealType, y: RealType, z: RealType) Mat4 {
+        return Mat4{
+            .data = .{
+                1, 0, 0, x,
+                0, 1, 0, y,
+                0, 0, 1, z,
+                0, 0, 0, 1,
+            },
+        };
+    }
+
+    /// `angle` takes in degrees
+    pub fn rotation(axis: Vec3, angle: RealType) Mat4 {
+        var result = Mat4.identity();
+
+        const r = toRaidans(angle);
+        const c = @cos(r);
+        const s = @sin(r);
+        const omc = 1.0 - c;
+
+        const x = axis.x();
+        const y = axis.y();
+        const z = axis.z();
+
+        result.data[0 + 0 * 4] = x * x * omc + c;
+        result.data[0 + 1 * 4] = y * x * omc + z * s;
+        result.data[0 + 2 * 4] = x * z * omc - y * s;
+
+        result.data[1 + 0 * 4] = x * y * omc - z * s;
+        result.data[1 + 1 * 4] = y * y * omc + c;
+        result.data[1 + 2 * 4] = y * z * omc + x * s;
+
+        result.data[2 + 0 * 4] = x * z * omc + y * s;
+        result.data[2 + 1 * 4] = y * z * omc - x * s;
+        result.data[2 + 2 * 4] = z * z * omc + c;
+
+        return result;
+    }
+
+    pub fn scaling(x: RealType, y: RealType, z: RealType) Mat4 {
+        return Mat4{
+            .data = .{
+                x, 0, 0, 0,
+                0, y, 0, 0,
+                0, 0, z, 0,
+                0, 0, 0, 1,
             },
         };
     }
@@ -221,5 +292,24 @@ pub const Mat4 = struct {
 
     pub fn scale(self: *Self, s: RealType) void {
         self.data *= @splat(s);
+    }
+
+    pub fn multiply(l: Self, r: Self) Self {
+        var data: @Vector(16, RealType) = @splat(0.0);
+
+        var row: usize = 0;
+        while (row < 4) : (row += 1) {
+            var col: usize = 0;
+            while (col < 4) : (col += 1) {
+                var e: usize = 0;
+                while (e < 4) : (e += 1) {
+                    data[col + row * 4] += l.data[e + row * 4] * r.data[e * 4 + col];
+                }
+            }
+        }
+
+        return Mat4{
+            .data = data,
+        };
     }
 };
