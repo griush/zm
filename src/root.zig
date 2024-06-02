@@ -11,72 +11,71 @@ pub const Vec3 = @Vector(3, RealType);
 /// Vec4 type
 pub const Vec4 = @Vector(4, RealType);
 
-/// Scales a vec of given type
-pub fn scale(comptime T: type, v: *T, s: RealType) void {
-    std.debug.assert(T == Vec2 or T == Vec3 or T == Vec4);
+/// Mat4 type
+pub const Mat4 = @Vector(16, RealType);
+
+pub fn scaleVec2(v: *Vec2, s: RealType) void {
     v.* *= @splat(s);
 }
 
-/// Returns the length of the given vector
-pub fn length(v: anytype) RealType {
-    std.debug.assert(@TypeOf(v) == Vec2 or @TypeOf(v) == Vec3 or @TypeOf(v) == Vec4);
-
-    switch (@TypeOf(v)) {
-        Vec2 => {
-            return @sqrt(v[0] * v[0] + v[1] * v[1]);
-        },
-        Vec3 => {
-            return @sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-        },
-        Vec4 => {
-            return @sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]);
-        },
-        else => unreachable, // made unreachable by assert above
-    }
+pub fn scaleVec3(v: *Vec3, s: RealType) void {
+    v.* *= @splat(s);
 }
 
-/// Returns the length of the given vector
-pub fn squareLength(v: anytype) RealType {
-    std.debug.assert(@TypeOf(v) == Vec2 or @TypeOf(v) == Vec3 or @TypeOf(v) == Vec4);
-
-    switch (@TypeOf(v)) {
-        Vec2 => {
-            return v[0] * v[0] + v[1] * v[1];
-        },
-        Vec3 => {
-            return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-        },
-        Vec4 => {
-            return v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
-        },
-        else => unreachable, // made unreachable by assert above
-    }
+pub fn scaleVec4(v: *Vec4, s: RealType) void {
+    v.* *= @splat(s);
 }
 
-/// Normilizes the given vector (modifies)
-pub fn normalize(T: type, v: *T) void {
-    std.debug.assert(T == Vec2 or T == Vec3 or T == Vec4);
-
-    v.* /= @splat(length(v.*));
+pub fn scaleMat4(m: *Mat4, s: RealType) void {
+    m.* *= @splat(s);
 }
 
-/// Returns the length of the given vector
-pub fn dot(l: anytype, r: anytype) RealType {
-    std.debug.assert(@TypeOf(l) == @TypeOf(r));
-    std.debug.assert(@TypeOf(l) == Vec2 or @TypeOf(l) == Vec3 or @TypeOf(l) == Vec4);
+pub fn squareLengthVec2(v: Vec2) RealType {
+    return v[0] * v[0] + v[1] * v[1];
+}
 
-    switch (@TypeOf(l)) {
-        Vec2 => {
-            return l[0] * r[0] + l[1] * r[1];
-        },
-        Vec3 => {
-            return l[0] * r[0] + l[1] * r[1] + l[2] * r[2];
-        },
-        Vec4 => {
-            return l[0] * r[0] + l[1] * r[1] + l[2] * r[2] + l[3] * r[3];
-        },
-        else => unreachable, // made unreachable by assert above
-    }
+pub fn squareLengthVec3(v: Vec3) RealType {
+    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+}
+
+pub fn squareLengthVec4(v: Vec4) RealType {
+    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
+}
+
+pub fn lengthVec2(v: Vec2) RealType {
+    return @sqrt(squareLengthVec2(v));
+}
+
+pub fn lengthVec3(v: Vec3) RealType {
+    return @sqrt(squareLengthVec3(v));
+}
+
+pub fn lengthVec4(v: Vec4) RealType {
+    return @sqrt(squareLengthVec4(v));
+}
+
+pub fn normalizeVec2(v: *Vec2) void {
+    scaleVec2(v, 1 / lengthVec2(v.*));
+}
+
+pub fn normalizeVec3(v: *Vec3) void {
+    scaleVec3(v, 1 / lengthVec3(v.*));
+}
+
+pub fn normalizeVec4(v: *Vec4) void {
+    scaleVec4(v, 1 / lengthVec4(v.*));
+}
+
+pub fn dotVec2(l: Vec2, r: Vec2) RealType {
+    return l[0] * r[0] + l[1] * r[1];
+}
+
+pub fn dotVec3(l: Vec3, r: Vec3) RealType {
+    return l[0] * r[0] + l[1] * r[1] + l[2] * r[2];
+}
+
+pub fn dotVec4(l: Vec4, r: Vec4) RealType {
+    return l[0] * r[0] + l[1] * r[1] + l[2] * r[2] + l[3] * r[3];
 }
 
 pub fn cross(l: Vec3, r: Vec3) Vec3 {
@@ -86,9 +85,6 @@ pub fn cross(l: Vec3, r: Vec3) Vec3 {
         l[0] * r[1] - l[1] * r[0],
     };
 }
-
-/// Mat4 type
-pub const Mat4 = @Vector(16, RealType);
 
 pub fn diagonalMat4(r: RealType) Mat4 {
     return Mat4{
