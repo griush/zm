@@ -9,9 +9,9 @@ Add this URL to dependencies in the `build.zig.zon`:
 Then in the `build.zig` add:
 ```zig
 const amth = b.dependency("arion-math", .{});
-exe.root_module.addImport("amth", amth.module("root"));
+exe.root_module.addImport("amth", amth.module("arion-math"));
 ```
-Now, in your code use:
+Now, in your code, you can use:
 ```zig
 const amth = @import("amth");
 ```
