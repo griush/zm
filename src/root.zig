@@ -83,6 +83,10 @@ pub const Vec3 = struct {
         return self.data[2];
     }
 
+    pub fn xy(self: Self) Vec2 {
+        return Vec2.from(self.x(), self.y());
+    }
+
     pub fn add(l: Self, r: Self) Self {
         return Self{
             .data = l.data + r.data,
@@ -149,6 +153,10 @@ pub const Vec4 = struct {
 
     pub fn w(self: Self) RealType {
         return self.data[3];
+    }
+
+    pub fn xyz(self: Self) Vec3 {
+        return Vec3.from(self.x(), self.y(), self.z());
     }
 
     pub fn add(l: Self, r: Self) Self {
@@ -311,5 +319,19 @@ pub const Mat4 = struct {
         return Mat4{
             .data = data,
         };
+    }
+
+    pub fn transpose(self: Self) Self {
+        var result = Mat4.identity();
+
+        var row: usize = 0;
+        while (row < 4) : (row += 1) {
+            var col: usize = 0;
+            while (col < 4) : (col += 1) {
+                result.data[col * 4 + row] = self.data[row * 4 + col];
+            }
+        }
+
+        return result;
     }
 };
