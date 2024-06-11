@@ -17,7 +17,6 @@ test "vec arithmetic" {
     const v = amth.Vec2.from(2, -1);
     const v2 = amth.Vec2.from(1.5, 4.2);
 
-    // TODO: Find a nicer API for this
     const sum = amth.Vec2.add(v, v2);
     const diff = amth.Vec2.add(v, v2.neg());
 
@@ -42,7 +41,7 @@ test "Vec length" {
     const len = v.length();
     const square_len = v.squareLength();
 
-    try std.testing.expectApproxEqAbs(@sqrt(5.0), len, 0.0001);
+    try std.testing.expectApproxEqAbs(amth.sqrt(5.0), len, 0.0001);
     try std.testing.expectApproxEqAbs(5.0, square_len, 0.0001);
 }
 

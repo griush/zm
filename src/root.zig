@@ -1,3 +1,4 @@
+const amth = @This();
 const RealType = f32;
 
 pub fn toRaidans(deg: RealType) RealType {
@@ -6,6 +7,30 @@ pub fn toRaidans(deg: RealType) RealType {
 
 pub fn toDegrees(rad: RealType) RealType {
     return rad * 57.29577951;
+}
+
+pub fn abs(x: RealType) RealType {
+    return @abs(x);
+}
+
+pub fn max(a: RealType, b: RealType) RealType {
+    return @max(a, b);
+}
+
+pub fn min(a: RealType, b: RealType) RealType {
+    return @min(a, b);
+}
+
+pub fn sqrt(x: RealType) RealType {
+    return @sqrt(x);
+}
+
+pub fn sin(x: RealType) RealType {
+    return @sin(x);
+}
+
+pub fn cos(x: RealType) RealType {
+    return @cos(x);
 }
 
 pub const Vec2 = struct {
@@ -48,7 +73,7 @@ pub const Vec2 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return @sqrt(self.squareLength());
+        return amth.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
@@ -108,7 +133,7 @@ pub const Vec3 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return @sqrt(self.squareLength());
+        return amth.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
@@ -180,7 +205,7 @@ pub const Vec4 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return @sqrt(self.squareLength());
+        return amth.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
