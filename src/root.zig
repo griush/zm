@@ -21,6 +21,16 @@ pub fn min(a: RealType, b: RealType) RealType {
     return @min(a, b);
 }
 
+pub fn clamp(n: RealType, lb: RealType, hb: RealType) RealType {
+    return @max(lb, @min(n, hb));
+}
+
+/// No extrapolation, clamps t
+pub fn lerp(a: RealType, b: RealType, t: RealType) RealType {
+    t = amth.clamp(t, 0.0, 1.0);
+    return (1 - t) * a + t * b;
+}
+
 pub fn sqrt(x: RealType) RealType {
     return @sqrt(x);
 }
@@ -80,8 +90,19 @@ pub const Vec2 = struct {
         self.scale(1 / self.length());
     }
 
-    pub fn dot(l: Vec2, r: Vec2) RealType {
+    pub fn dot(l: Self, r: Self) RealType {
         return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
+    }
+
+    /// No extrapolation, clamps t
+    pub fn lerp(a: Self, b: Self, t: RealType) Self {
+        t = amth.clamp(t, 0.0, 1.0);
+        return Self{
+            .data = .{
+                (1 - t) * a.x() + t * b.x(),
+                (1 - t) * a.y() + t * b.y(),
+            },
+        };
     }
 };
 
@@ -140,11 +161,23 @@ pub const Vec3 = struct {
         self.scale(1 / self.length());
     }
 
-    pub fn dot(l: Vec3, r: Vec3) RealType {
+    pub fn dot(l: Self, r: Self) RealType {
         return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
     }
 
-    pub fn cross(l: Vec3, r: Vec3) Vec3 {
+    /// No extrapolation, clamps t
+    pub fn lerp(a: Self, b: Self, t: RealType) Self {
+        t = amth.clamp(t, 0.0, 1.0);
+        return Self{
+            .data = .{
+                (1 - t) * a.x() + t * b.x(),
+                (1 - t) * a.y() + t * b.y(),
+                (1 - t) * a.z() + t * b.z(),
+            },
+        };
+    }
+
+    pub fn cross(l: Self, r: Self) Vec3 {
         return .{
             l.y() * r.z() - l.z() * r.y(),
             l.z() * r.x() - l.x() * r.z(),
@@ -214,6 +247,19 @@ pub const Vec4 = struct {
 
     pub fn dot(l: Vec4, r: Vec4) RealType {
         return l.x() * r.x() + l.y() * r.y() + l.z() * r.z() + l.w() * r.w();
+    }
+
+    /// No extrapolation, clamps t
+    pub fn lerp(a: Self, b: Self, t: RealType) Self {
+        t = amth.clamp(t, 0.0, 1.0);
+        return Self{
+            .data = .{
+                (1 - t) * a.x() + t * b.x(),
+                (1 - t) * a.y() + t * b.y(),
+                (1 - t) * a.z() + t * b.z(),
+                (1 - t) * a.w() + t * b.w(),
+            },
+        };
     }
 };
 
