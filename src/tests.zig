@@ -98,3 +98,20 @@ test "Mat4 multiply" {
 
     try std.testing.expectEqual(amth.Mat4.identity().data, m.data);
 }
+
+test "clamp" {
+    try std.testing.expectEqual(0.0, amth.clamp(0.0, -1.0, 1.0));
+    try std.testing.expectEqual(2.0, amth.clamp(3.0, 1.0, 2.0));
+    try std.testing.expectEqual(4.0, amth.clamp(3.0, 4.0, 8.0));
+}
+
+test "Vec2 lerp" {
+    const a = amth.Vec2.from(1.0, 2.0);
+    const b = amth.Vec2.from(4.0, 6.0);
+
+    try std.testing.expectEqual(amth.Vec2.from(1.0, 2.0), amth.Vec2.lerp(a, b, 0.0));
+    try std.testing.expectEqual(amth.Vec2.from(4.0, 6.0), amth.Vec2.lerp(a, b, 1.0));
+    try std.testing.expectEqual(amth.Vec2.from(2.5, 4.0), amth.Vec2.lerp(a, b, 0.5));
+    try std.testing.expectEqual(amth.Vec2.from(1.75, 3.0), amth.Vec2.lerp(a, b, 0.25));
+    try std.testing.expectEqual(amth.Vec2.from(3.25, 5.0), amth.Vec2.lerp(a, b, 0.75));
+}

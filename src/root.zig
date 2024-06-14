@@ -27,8 +27,8 @@ pub fn clamp(n: RealType, lb: RealType, hb: RealType) RealType {
 
 /// No extrapolation, clamps t
 pub fn lerp(a: RealType, b: RealType, t: RealType) RealType {
-    t = amth.clamp(t, 0.0, 1.0);
-    return (1 - t) * a + t * b;
+    const l = amth.clamp(t, 0.0, 1.0);
+    return (1 - l) * a + l * b;
 }
 
 pub fn sqrt(x: RealType) RealType {
@@ -96,11 +96,11 @@ pub const Vec2 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        t = amth.clamp(t, 0.0, 1.0);
+        const l = amth.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
-                (1 - t) * a.x() + t * b.x(),
-                (1 - t) * a.y() + t * b.y(),
+                (1 - l) * a.x() + l * b.x(),
+                (1 - l) * a.y() + l * b.y(),
             },
         };
     }
@@ -167,12 +167,12 @@ pub const Vec3 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        t = amth.clamp(t, 0.0, 1.0);
+        const l = amth.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
-                (1 - t) * a.x() + t * b.x(),
-                (1 - t) * a.y() + t * b.y(),
-                (1 - t) * a.z() + t * b.z(),
+                (1 - l) * a.x() + l * b.x(),
+                (1 - l) * a.y() + l * b.y(),
+                (1 - l) * a.z() + l * b.z(),
             },
         };
     }
@@ -251,13 +251,13 @@ pub const Vec4 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        t = amth.clamp(t, 0.0, 1.0);
+        const l = amth.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
-                (1 - t) * a.x() + t * b.x(),
-                (1 - t) * a.y() + t * b.y(),
-                (1 - t) * a.z() + t * b.z(),
-                (1 - t) * a.w() + t * b.w(),
+                (1 - l) * a.x() + l * b.x(),
+                (1 - l) * a.y() + l * b.y(),
+                (1 - l) * a.z() + l * b.z(),
+                (1 - l) * a.w() + l * b.w(),
             },
         };
     }
