@@ -1,12 +1,14 @@
+const std = @import("std");
+
 const amth = @This();
 const RealType = f32;
 
 pub fn toRaidans(deg: RealType) RealType {
-    return deg * 0.01745329252;
+    return deg * std.math.rad_per_deg;
 }
 
 pub fn toDegrees(rad: RealType) RealType {
-    return rad * 57.29577951;
+    return rad * std.math.deg_per_rad;
 }
 
 pub fn abs(x: RealType) RealType {
