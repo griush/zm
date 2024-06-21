@@ -16,7 +16,7 @@ Add this dependency in the `build.zig.zon`:
 Then in the `build.zig` add:
 ```zig
 const amth = b.dependency("arion_math", .{});
-exe.root_module.addImport("amth", amth.module("arion-math"));
+exe.root_module.addImport("amth", amth.module("root"));
 ```
 Now, in your code, you can use:
 ```zig
