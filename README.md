@@ -8,7 +8,6 @@ Add this dependency in the `build.zig.zon`:
 .arion_math = .{
     .url = "https://github.com/griush/arion-math/archive/refs/heads/master.tar.gz"
     .hash = "hash here",
-    .lazy = true,
 },
 
 ```
