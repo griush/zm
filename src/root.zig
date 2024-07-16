@@ -298,13 +298,13 @@ pub const Mat4 = struct {
 
     /// `fov` takes in degrees
     pub fn perspective(fov: RealType, aspect: RealType, near: RealType, far: RealType) Mat4 {
-        fov = toRaidans(fov);
+        const fov_rad = toRaidans(fov);
         return Mat4{
             .data = .{
-                1 / (aspect * @tan(fov / 2)), 0,                 0,                            0,
-                0,                            1 / @tan(fov / 2), 0,                            0,
-                0,                            0,                 -(far + near) / (far - near), -(2 * far * near) / (far - near),
-                0,                            0,                 -1,                           0,
+                1 / (aspect * @tan(fov_rad / 2)), 0,                     0,                            0,
+                0,                                1 / @tan(fov_rad / 2), 0,                            0,
+                0,                                0,                     -(far + near) / (far - near), -(2 * far * near) / (far - near),
+                0,                                0,                     -1,                           0,
             },
         };
     }
