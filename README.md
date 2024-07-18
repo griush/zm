@@ -3,7 +3,7 @@ SIMD math library
 
 ## Usage
 > [!NOTE]  
-> This library is tracking Zig's master branch. Last tested with ``.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.363+c3faae6bf`.
 
 Add this dependency in the `build.zig.zon`:
 
