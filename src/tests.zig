@@ -139,3 +139,13 @@ test "Vec2 lerp" {
     try std.testing.expectEqual(zm.Vec2.from(1.75, 3.0), zm.Vec2.lerp(a, b, 0.25));
     try std.testing.expectEqual(zm.Vec2.from(3.25, 5.0), zm.Vec2.lerp(a, b, 0.75));
 }
+
+test "Mat2 multiply Vec2" {
+    const transform = zm.Mat2.rotation(-90.0);
+    const vec = zm.Vec2.from(0.0, 1.0);
+
+    const rotated = transform.multiplyVec2(vec);
+
+    try std.testing.expectApproxEqAbs(1.0, rotated.x(), 0.0001);
+    try std.testing.expectApproxEqAbs(0.0, rotated.y(), 0.0001);
+}

@@ -48,6 +48,12 @@ pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
 
 /// Returns a Vec2 type with T being the component type.
 pub fn Vec2Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float, .ComptimeInt => {},
+        else => @compileError("Vec2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
     return struct {
         const Self = @This();
 
@@ -114,13 +120,14 @@ pub fn Vec2Base(comptime T: type) type {
     };
 }
 
-// Builtin Vec2Base types
-pub const Vec2 = Vec2Base(f32);
-pub const Vec2d = Vec2Base(f64);
-pub const Vec2i = Vec2Base(i32);
-
 /// Returns a Vec3 type with T being the component type.
 pub fn Vec3Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float, .ComptimeInt => {},
+        else => @compileError("Vec3Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
     return struct {
         const Self = @This();
 
@@ -197,22 +204,25 @@ pub fn Vec3Base(comptime T: type) type {
 
         /// Returns the cross product of the given vectors.
         pub fn cross(l: Self, r: Self) Self {
-            return .{
-                l.y() * r.z() - l.z() * r.y(),
-                l.z() * r.x() - l.x() * r.z(),
-                l.x() * r.y() - l.y() * r.x(),
+            return Self{
+                .data = .{
+                    l.y() * r.z() - l.z() * r.y(),
+                    l.z() * r.x() - l.x() * r.z(),
+                    l.x() * r.y() - l.y() * r.x(),
+                },
             };
         }
     };
 }
 
-// Default Vec3Base types
-pub const Vec3 = Vec3Base(f32);
-pub const Vec3d = Vec3Base(f64);
-pub const Vec3i = Vec3Base(i32);
-
 /// Returns a Vec4 type with T being the component type.
 pub fn Vec4Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float, .ComptimeInt => {},
+        else => @compileError("Vec4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
     return struct {
         const Self = @This();
 
@@ -299,13 +309,14 @@ pub fn Vec4Base(comptime T: type) type {
     };
 }
 
-// Default Vec4Base types
-pub const Vec4 = Vec4Base(f32);
-pub const Vec4d = Vec4Base(f64);
-pub const Vec4i = Vec4Base(i32);
-
 /// Returns a Mat2 type with T being the element type.
 pub fn Mat2Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float, .ComptimeInt => {},
+        else => @compileError("Mat2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
     return struct {
         const Self = @This();
 
@@ -331,22 +342,28 @@ pub fn Mat2Base(comptime T: type) type {
             const a = zm.toRaidans(angle);
 
             return Self{
-                @cos(a), -@sin(a),
-                @sin(a), @cos(a),
+                .data = .{
+                    @cos(a), -@sin(a),
+                    @sin(a), @cos(a),
+                },
             };
         }
 
         pub fn scaling(sx: T, sy: T) Self {
             return Self{
-                sx, 0,
-                0,  sy,
+                .data = .{
+                    sx, 0,
+                    0,  sy,
+                },
             };
         }
 
         pub fn scalingVec2(s: Vec2Base(T)) Self {
             return Self{
-                s.x(), 0,
-                0,     s.y(),
+                .data = .{
+                    s.x(), 0,
+                    0,     s.y(),
+                },
             };
         }
 
@@ -385,6 +402,15 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
+        pub fn multiplyVec2(self: Self, vec: Vec2Base(T)) Vec2Base(T) {
+            return Vec2Base(T){
+                .data = .{
+                    self.data[0] * vec.x() + self.data[1] * vec.y(),
+                    self.data[2] * vec.x() + self.data[3] * vec.y(),
+                },
+            };
+        }
+
         pub fn determinant(self: Self) Self {
             const a = self.data[0];
             const b = self.data[1];
@@ -417,20 +443,23 @@ pub fn Mat2Base(comptime T: type) type {
             const det = 1.0 / (a * d - b * c);
 
             return Self{
-                d / det,  -b / det,
-                -c / det, a / det,
+                .data = .{
+                    d / det,  -b / det,
+                    -c / det, a / det,
+                },
             };
         }
     };
 }
 
-// Default Mat3Base types
-pub const Mat2 = Mat2Base(f32);
-pub const Mat2d = Mat2Base(f64);
-pub const Mat2i = Mat2Base(i32);
-
 /// Returns a Mat4 type with T being the element type.
 pub fn Mat4Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float, .ComptimeInt => {},
+        else => @compileError("Mat4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
     return struct {
         const Self = @This();
 
@@ -639,7 +668,27 @@ pub fn Mat4Base(comptime T: type) type {
     };
 }
 
-// Default Mat4Base types
+// Builtin Vec2Base types
+pub const Vec2 = Vec2Base(f32);
+pub const Vec2d = Vec2Base(f64);
+pub const Vec2i = Vec2Base(i32);
+
+// Builtin Vec3Base types
+pub const Vec3 = Vec3Base(f32);
+pub const Vec3d = Vec3Base(f64);
+pub const Vec3i = Vec3Base(i32);
+
+// Builtin Vec4Base types
+pub const Vec4 = Vec4Base(f32);
+pub const Vec4d = Vec4Base(f64);
+pub const Vec4i = Vec4Base(i32);
+
+// Builtin Mat2Base types
+pub const Mat2 = Mat2Base(f32);
+pub const Mat2d = Mat2Base(f64);
+pub const Mat2i = Mat2Base(i32);
+
+// Builtin Mat4Base types
 pub const Mat4 = Mat4Base(f32);
 pub const Mat4d = Mat4Base(f64);
 pub const Mat4i = Mat4Base(i32);
