@@ -25,4 +25,4 @@ jobs:
           zig build -Doptimize=ReleaseSafe
       - name: Tests
         run: |
-          zig build test
+          zig build test --summary all

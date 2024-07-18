@@ -2,6 +2,8 @@ const std = @import("std");
 
 const zm = @This();
 
+/// Takes in a floating point type representing degrees.
+/// Returns the equivalent in radians.
 pub fn toRaidans(degress: anytype) @TypeOf(degress) {
     const T = @TypeOf(degress);
     return switch (T) {
@@ -10,6 +12,8 @@ pub fn toRaidans(degress: anytype) @TypeOf(degress) {
     };
 }
 
+/// Takes in a floating point type representing radians.
+/// Returns the equivalent in degrees.
 pub fn toDegrees(radians: anytype) @TypeOf(radians) {
     const T = @TypeOf(radians);
     return switch (T) {
@@ -18,6 +22,8 @@ pub fn toDegrees(radians: anytype) @TypeOf(radians) {
     };
 }
 
+/// Clamps the value `n` between `low_bound` and `high_bound`.
+/// Must be a floating point type.
 pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(n) {
     const T = @TypeOf(n);
     return switch (T) {
@@ -26,7 +32,7 @@ pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(
     };
 }
 
-/// No extrapolation, clamps t
+/// No extrapolation, clamps `t`.
 pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
     const T = @TypeOf(a);
     switch (T) {
@@ -38,12 +44,14 @@ pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
     }
 }
 
+/// Returns a Vec2 type with T being the component type.
 pub fn Vec2Base(comptime T: type) type {
     return struct {
         const Self = @This();
 
         data: @Vector(2, T),
 
+        /// Creates a Vec2 from the given components.
         pub inline fn from(in_x: T, in_y: T) Self {
             return .{
                 .data = .{ in_x, in_y },
@@ -86,11 +94,12 @@ pub fn Vec2Base(comptime T: type) type {
             self.scale(1 / self.length());
         }
 
+        /// Returns the dot product of the two given vectors.
         pub fn dot(l: Self, r: Self) T {
             return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
         }
 
-        /// No extrapolation, clamps t
+        /// No extrapolation, clamps `t`.
         pub fn lerp(a: Self, b: Self, t: T) Self {
             const l = zm.clamp(t, 0.0, 1.0);
             return Self{
@@ -108,12 +117,14 @@ pub const Vec2 = Vec2Base(f32);
 pub const Vec2d = Vec2Base(f64);
 pub const Vec2i = Vec2Base(i32);
 
+/// Returns a Vec3 type with T being the component type.
 pub fn Vec3Base(comptime T: type) type {
     return struct {
         const Self = @This();
 
         data: @Vector(3, T),
 
+        /// Creates a Vec3 from the given components.
         pub inline fn from(in_x: T, in_y: T, in_z: T) Self {
             return .{
                 .data = .{ in_x, in_y, in_z },
@@ -132,6 +143,7 @@ pub fn Vec3Base(comptime T: type) type {
             return self.data[2];
         }
 
+        /// Returns a 2D-vector with the `x` and `y` components.
         pub fn xy(self: Self) Vec2Base(T) {
             return Vec2Base(T).from(self.x(), self.y());
         }
@@ -164,11 +176,12 @@ pub fn Vec3Base(comptime T: type) type {
             self.scale(1 / self.length());
         }
 
+        /// Returns the dot product of the given vectors.
         pub fn dot(l: Self, r: Self) T {
             return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
         }
 
-        /// No extrapolation, clamps t
+        /// No extrapolation, clamps `t`.
         pub fn lerp(a: Self, b: Self, t: T) Self {
             const l = zm.clamp(t, 0.0, 1.0);
             return Self{
@@ -180,6 +193,7 @@ pub fn Vec3Base(comptime T: type) type {
             };
         }
 
+        /// Returns the cross product of the given vectors.
         pub fn cross(l: Self, r: Self) Self {
             return .{
                 l.y() * r.z() - l.z() * r.y(),
@@ -195,12 +209,14 @@ pub const Vec3 = Vec3Base(f32);
 pub const Vec3d = Vec3Base(f64);
 pub const Vec3i = Vec3Base(i32);
 
+/// Returns a Vec4 type with T being the component type.
 pub fn Vec4Base(comptime T: type) type {
     return struct {
         const Self = @This();
 
         data: @Vector(4, T),
 
+        /// Creates a Vec4 from the given components.
         pub inline fn from(in_x: T, in_y: T, in_z: T, in_w: T) Self {
             return .{
                 .data = .{ in_x, in_y, in_z, in_w },
@@ -223,10 +239,12 @@ pub fn Vec4Base(comptime T: type) type {
             return self.data[3];
         }
 
+        /// Returns a 2D-vector with the `x` and `y` components.
         pub fn xy(self: Self) Vec2Base(T) {
             return Vec2Base(T).from(self.x(), self.y());
         }
 
+        /// Returns a 3D-vector with the `x`, `y` and `z` components.
         pub fn xyz(self: Self) Vec3Base(T) {
             return Vec3Base(T).from(self.x(), self.y(), self.z());
         }
@@ -259,11 +277,12 @@ pub fn Vec4Base(comptime T: type) type {
             self.scale(1 / self.length());
         }
 
+        /// Returns the dot product of the given vectors.
         pub fn dot(l: Self, r: Self) T {
             return l.x() * r.x() + l.y() * r.y() + l.z() * r.z() + l.w() * r.w();
         }
 
-        /// No extrapolation, clamps t
+        /// No extrapolation, clamps `t`.
         pub fn lerp(a: Self, b: Self, t: T) Self {
             const l = zm.clamp(t, 0.0, 1.0);
             return Self{
@@ -283,12 +302,14 @@ pub const Vec4 = Vec4Base(f32);
 pub const Vec4d = Vec4Base(f64);
 pub const Vec4i = Vec4Base(i32);
 
+/// Returns a Mat4 type with T being the component type.
 pub fn Mat4Base(comptime T: type) type {
     return struct {
         const Self = @This();
 
         data: @Vector(16, T),
 
+        /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(r: T) Self {
             return Self{
                 .data = .{
@@ -300,6 +321,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
+        /// Returns the identity matrix.
         pub fn identity() Self {
             return Self.diagonal(1.0);
         }
