@@ -18,7 +18,7 @@ Add this dependency in the `build.zig.zon`:
 Then in the `build.zig` add:
 ```zig
 const zm = b.dependency("zm", .{});
-exe.root_module.addImport("zm", zm.module("root"));
+exe.root_module.addImport("zm", zm.module("zm"));
 ```
 Now, in your code, you can use:
 ```zig

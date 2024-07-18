@@ -6,7 +6,7 @@ pub fn build(b: *std.Build) void {
     const root_source_file = b.path("src/root.zig");
 
     // Zig module
-    const zm = b.addModule("root", .{
+    const zm = b.addModule("zm", .{
         .root_source_file = root_source_file,
     });
 

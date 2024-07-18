@@ -1,3 +1,5 @@
+//! zm - SIMD Math library
+
 const std = @import("std");
 
 const zm = @This();
@@ -302,7 +304,132 @@ pub const Vec4 = Vec4Base(f32);
 pub const Vec4d = Vec4Base(f64);
 pub const Vec4i = Vec4Base(i32);
 
-/// Returns a Mat4 type with T being the component type.
+/// Returns a Mat2 type with T being the element type.
+pub fn Mat2Base(comptime T: type) type {
+    return struct {
+        const Self = @This();
+
+        data: @Vector(4, T),
+
+        /// Creates a diagonal matrix with the given value.
+        pub inline fn diagonal(r: T) Self {
+            return Self{ .data = .{
+                r, 0,
+                0, r,
+            } };
+        }
+
+        /// Returns the identity matrix.
+        pub fn identity() Self {
+            return Self.diagonal(1);
+        }
+
+        // Transformations
+
+        /// `angle` takes in degrees
+        pub fn rotation(angle: T) Self {
+            const a = zm.toRaidans(angle);
+
+            return Self{
+                @cos(a), -@sin(a),
+                @sin(a), @cos(a),
+            };
+        }
+
+        pub fn scaling(sx: T, sy: T) Self {
+            return Self{
+                sx, 0,
+                0,  sy,
+            };
+        }
+
+        pub fn scalingVec2(s: Vec2Base(T)) Self {
+            return Self{
+                s.x(), 0,
+                0,     s.y(),
+            };
+        }
+
+        pub fn add(l: Self, r: Self) Self {
+            return Self{
+                .data = l.data + r.data,
+            };
+        }
+
+        pub fn neg(self: Self) Self {
+            return Self{
+                .data = -self.data,
+            };
+        }
+
+        pub fn scale(self: *Self, s: T) void {
+            self.data *= @splat(s);
+        }
+
+        pub fn multiply(l: Self, r: Self) Self {
+            var data: @Vector(4, T) = @splat(0.0);
+
+            var row: usize = 0;
+            while (row < 2) : (row += 1) {
+                var col: usize = 0;
+                while (col < 2) : (col += 1) {
+                    var e: usize = 0;
+                    while (e < 2) : (e += 1) {
+                        data[col + row * 2] += l.data[e + row * 2] * r.data[e * 2 + col];
+                    }
+                }
+            }
+
+            return Self{
+                .data = data,
+            };
+        }
+
+        pub fn determinant(self: Self) Self {
+            const a = self.data[0];
+            const b = self.data[1];
+            const c = self.data[2];
+            const d = self.data[3];
+
+            return (a * d - b * c);
+        }
+
+        pub fn transpose(self: Self) Self {
+            var result = Self.identity();
+
+            var row: usize = 0;
+            while (row < 2) : (row += 1) {
+                var col: usize = 0;
+                while (col < 2) : (col += 1) {
+                    result.data[col * 2 + row] = self.data[row * 2 + col];
+                }
+            }
+
+            return result;
+        }
+
+        pub fn inverse(self: Self) Self {
+            const a = self.data[0];
+            const b = self.data[1];
+            const c = self.data[2];
+            const d = self.data[3];
+
+            const det = 1.0 / (a * d - b * c);
+
+            return Self{
+                d / det,  -b / det,
+                -c / det, a / det,
+            };
+        }
+    };
+}
+
+// Default Mat3Base types
+pub const Mat2 = Mat2Base(f32);
+pub const Mat2d = Mat2Base(f64);
+pub const Mat2i = Mat2Base(i32);
+
+/// Returns a Mat4 type with T being the element type.
 pub fn Mat4Base(comptime T: type) type {
     return struct {
         const Self = @This();
@@ -323,7 +450,7 @@ pub fn Mat4Base(comptime T: type) type {
 
         /// Returns the identity matrix.
         pub fn identity() Self {
-            return Self.diagonal(1.0);
+            return Self.diagonal(1);
         }
 
         pub fn orthographic(left: T, right: T, top: T, bottom: T, near: T, far: T) Self {
@@ -359,6 +486,10 @@ pub fn Mat4Base(comptime T: type) type {
                     0, 0, 0, 1,
                 },
             };
+        }
+
+        pub fn translationVec3(vec: Vec3Base(T)) Self {
+            return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
         /// `angle` takes in degrees
