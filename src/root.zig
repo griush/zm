@@ -6,10 +6,11 @@ const zm = @This();
 
 /// Takes in a floating point type representing degrees.
 /// Returns the equivalent in radians.
-pub fn toRaidans(degress: anytype) @TypeOf(degress) {
+pub fn toRadians(degress: anytype) @TypeOf(degress) {
     const T = @TypeOf(degress);
-    return switch (T) {
-        f32, f64, comptime_float => degress * std.math.rad_per_deg,
+    const type_info = @typeInfo(T);
+    return switch (type_info) {
+        .Float, .ComptimeFloat => degress * std.math.rad_per_deg,
         else => @compileError("toRadians not implemented for " ++ @typeName(T)),
     };
 }
@@ -18,8 +19,9 @@ pub fn toRaidans(degress: anytype) @TypeOf(degress) {
 /// Returns the equivalent in degrees.
 pub fn toDegrees(radians: anytype) @TypeOf(radians) {
     const T = @TypeOf(radians);
-    return switch (T) {
-        f32, f64, comptime_float => radians * std.math.deg_per_rad,
+    const type_info = @typeInfo(T);
+    return switch (type_info) {
+        .Float, .ComptimeFloat => radians * std.math.deg_per_rad,
         else => @compileError("toDegrees not implemented for " ++ @typeName(T)),
     };
 }
@@ -29,7 +31,7 @@ pub fn toDegrees(radians: anytype) @TypeOf(radians) {
 pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(n) {
     const T = @TypeOf(n);
     return switch (T) {
-        f32, f64, comptime_float => @max(low_bound, @min(n, high_bound)),
+        f16, f32, f64, comptime_float => @max(low_bound, @min(n, high_bound)),
         else => @compileError("clamp not implemented for " ++ @typeName(T)),
     };
 }
@@ -169,6 +171,24 @@ pub fn Vec3Base(comptime T: type) type {
         pub inline fn forward() Self {
             return .{
                 .data = .{ 0.0, 0.0, 1.0 },
+            };
+        }
+
+        pub inline fn left() Self {
+            return .{
+                .data = .{ -1.0, 0.0, 0.0 },
+            };
+        }
+
+        pub inline fn down() Self {
+            return .{
+                .data = .{ 0.0, -1.0, 0.0 },
+            };
+        }
+
+        pub inline fn back() Self {
+            return .{
+                .data = .{ 0.0, 0.0, -1.0 },
             };
         }
 
@@ -414,7 +434,7 @@ pub fn Mat2Base(comptime T: type) type {
 
         /// `angle` takes in degrees
         pub fn rotation(angle: T) Self {
-            const a = zm.toRaidans(angle);
+            const a = toRadians(angle);
 
             return Self{
                 .data = .{
@@ -570,7 +590,7 @@ pub fn Mat4Base(comptime T: type) type {
 
         /// `fov` takes in degrees
         pub fn perspective(fov: T, aspect: T, near: T, far: T) Self {
-            const fov_rad = toRaidans(fov);
+            const fov_rad = toRadians(fov);
             return Self{
                 .data = .{
                     1 / (aspect * @tan(fov_rad / 2)), 0,                     0,                            0,
@@ -600,7 +620,7 @@ pub fn Mat4Base(comptime T: type) type {
         pub fn rotation(axis: Vec3, angle: T) Self {
             var result = Self.identity();
 
-            const r = toRaidans(angle);
+            const r = toRadians(angle);
             const c = @cos(r);
             const s = @sin(r);
             const omc = 1.0 - c;
