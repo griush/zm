@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const amth = @This();
+const zm = @This();
 const RealType = f32;
 
 pub fn toRaidans(deg: RealType) RealType {
@@ -29,7 +29,7 @@ pub fn clamp(n: RealType, lb: RealType, hb: RealType) RealType {
 
 /// No extrapolation, clamps t
 pub fn lerp(a: RealType, b: RealType, t: RealType) RealType {
-    const l = amth.clamp(t, 0.0, 1.0);
+    const l = zm.clamp(t, 0.0, 1.0);
     return (1 - l) * a + l * b;
 }
 
@@ -85,7 +85,7 @@ pub const Vec2 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return amth.sqrt(self.squareLength());
+        return zm.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
@@ -98,7 +98,7 @@ pub const Vec2 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        const l = amth.clamp(t, 0.0, 1.0);
+        const l = zm.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
                 (1 - l) * a.x() + l * b.x(),
@@ -156,7 +156,7 @@ pub const Vec3 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return amth.sqrt(self.squareLength());
+        return zm.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
@@ -169,7 +169,7 @@ pub const Vec3 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        const l = amth.clamp(t, 0.0, 1.0);
+        const l = zm.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
                 (1 - l) * a.x() + l * b.x(),
@@ -240,7 +240,7 @@ pub const Vec4 = struct {
     }
 
     pub fn length(self: Self) RealType {
-        return amth.sqrt(self.squareLength());
+        return zm.sqrt(self.squareLength());
     }
 
     pub fn normalize(self: *Self) void {
@@ -253,7 +253,7 @@ pub const Vec4 = struct {
 
     /// No extrapolation, clamps t
     pub fn lerp(a: Self, b: Self, t: RealType) Self {
-        const l = amth.clamp(t, 0.0, 1.0);
+        const l = zm.clamp(t, 0.0, 1.0);
         return Self{
             .data = .{
                 (1 - l) * a.x() + l * b.x(),
