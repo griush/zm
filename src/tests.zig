@@ -41,7 +41,7 @@ test "Vec length" {
     const len = v.length();
     const square_len = v.squareLength();
 
-    try std.testing.expectApproxEqAbs(zm.sqrt(5.0), len, 0.0001);
+    try std.testing.expectApproxEqAbs(@sqrt(5.0), len, 0.0001);
     try std.testing.expectApproxEqAbs(5.0, square_len, 0.0001);
 }
 
