@@ -28,3 +28,27 @@ Now, in your code, you can use:
 ```zig
 const zm = @import("zm");
 ```
+
+### Example
+```zig
+const zm = @import("zm");
+
+pub fn main() !void {
+    // Basic type
+    const Vec2OfU16 = zm.Vec2Base(u16);
+    const vec = Vec2OfU16.from(3, 1);
+    // ... use vec
+
+    // Built-in vec and mat types
+    // [Vec/Mat]X -> [Vec/Mat]XBase(f32)
+    // [Vec/Mat]Xd -> [Vec/Mat]XBase(f64);
+    // [Vec/Mat]Xi -> [Vec/Mat]XBase(i32);
+    const vec2 = zm.Vec2.from(0.3, -1.5); // Vec2 of 'f32'
+
+    // Projection matrices
+    const camera = zm.Mat4.perspective(60.0, 16.0 / 9.0, 0.05, 100.0);
+
+    // Essential operations
+    const inverse = camera.inverse();
+}
+```
