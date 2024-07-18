@@ -117,6 +117,20 @@ pub fn Vec2Base(comptime T: type) type {
                 },
             };
         }
+
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+
+            try writer.print("({d}, {d})", .{
+                v.data[0], v.data[1],
+            });
+        }
     };
 }
 
@@ -212,6 +226,22 @@ pub fn Vec3Base(comptime T: type) type {
                 },
             };
         }
+
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+
+            try writer.print("({d}, {d}, {d})", .{
+                v.data[0],
+                v.data[1],
+                v.data[2],
+            });
+        }
     };
 }
 
@@ -305,6 +335,23 @@ pub fn Vec4Base(comptime T: type) type {
                     (1 - l) * a.w() + l * b.w(),
                 },
             };
+        }
+
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+
+            try writer.print("({d}, {d}, {d}, {d})", .{
+                v.data[0],
+                v.data[1],
+                v.data[2],
+                v.data[3],
+            });
         }
     };
 }

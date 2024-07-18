@@ -149,3 +149,11 @@ test "Mat2 multiply Vec2" {
     try std.testing.expectApproxEqAbs(1.0, rotated.x(), 0.0001);
     try std.testing.expectApproxEqAbs(0.0, rotated.y(), 0.0001);
 }
+
+test "vec print" {
+    const v2 = zm.Vec2.from(1.0, 2.0);
+    const v3 = zm.Vec3.from(1.0, 2.0, 3.0);
+    const v4 = zm.Vec4.from(1.0, 2.0, 3.0, 4.0);
+
+    std.debug.print("2: {any}\n3: {any}\n4: {any}\n", .{ v2, v3, v4 });
+}
