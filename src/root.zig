@@ -154,6 +154,24 @@ pub fn Vec3Base(comptime T: type) type {
             };
         }
 
+        pub inline fn right() Self {
+            return .{
+                .data = .{ 1.0, 0.0, 0.0 },
+            };
+        }
+
+        pub inline fn up() Self {
+            return .{
+                .data = .{ 0.0, 1.0, 0.0 },
+            };
+        }
+
+        pub inline fn forward() Self {
+            return .{
+                .data = .{ 0.0, 0.0, 1.0 },
+            };
+        }
+
         pub inline fn x(self: Self) T {
             return self.data[0];
         }
@@ -169,6 +187,16 @@ pub fn Vec3Base(comptime T: type) type {
         /// Returns a 2D-vector with the `x` and `y` components.
         pub fn xy(self: Self) Vec2Base(T) {
             return Vec2Base(T).from(self.x(), self.y());
+        }
+
+        /// Returns a 2D-vector with the `x` and `z` components.
+        pub fn xz(self: Self) Vec2Base(T) {
+            return Vec2Base(T).from(self.x(), self.z());
+        }
+
+        /// Returns a 2D-vector with the `y` and `z` components.
+        pub fn yz(self: Self) Vec2Base(T) {
+            return Vec2Base(T).from(self.y(), self.z());
         }
 
         pub fn add(l: Self, r: Self) Self {
@@ -642,6 +670,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
+        /// This is useful as you need to transpose matrices for OpenGL
         pub fn transpose(self: Self) Self {
             var result = Self.identity();
 
