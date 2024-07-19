@@ -19,6 +19,8 @@ Add this dependency in the `build.zig.zon`:
 ```
 Run `zig build` and it will give a hash. Append id bellow the URL.
 
+Or, run `zig fetch --save git+https://github.com/griush/zm`.
+
 Then in the `build.zig` add:
 ```zig
 const zm = b.dependency("zm", .{});
