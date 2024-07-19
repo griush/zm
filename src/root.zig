@@ -30,8 +30,9 @@ pub fn toDegrees(radians: anytype) @TypeOf(radians) {
 /// Must be a floating point type.
 pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(n) {
     const T = @TypeOf(n);
-    return switch (T) {
-        f16, f32, f64, comptime_float => @max(low_bound, @min(n, high_bound)),
+    const type_info = @typeInfo(T);
+    return switch (type_info) {
+        .Int, .Float, .ComptimeInt, .ComptimeFloat => @max(low_bound, @min(n, high_bound)),
         else => @compileError("clamp not implemented for " ++ @typeName(T)),
     };
 }
@@ -39,20 +40,21 @@ pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(
 /// No extrapolation, clamps `t`.
 pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
     const T = @TypeOf(a);
-    switch (T) {
-        f32, f64, comptime_float => {
+    const type_info = @typeInfo(T);
+    return switch (type_info) {
+        .Float, .ComptimeFloat => {
             const l = zm.clamp(t, 0.0, 1.0);
             return (1 - l) * a + l * b;
         },
-        else => @compileError("clamp not implemented for " ++ @typeName(T)),
-    }
+        else => @compileError("lerp not implemented for " ++ @typeName(T)),
+    };
 }
 
 /// Returns a Vec2 type with T being the component type.
 pub fn Vec2Base(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float, .ComptimeInt => {},
+        .Int, .Float => {},
         else => @compileError("Vec2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
@@ -140,7 +142,7 @@ pub fn Vec2Base(comptime T: type) type {
 pub fn Vec3Base(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float, .ComptimeInt => {},
+        .Int, .Float => {},
         else => @compileError("Vec3Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
@@ -297,7 +299,7 @@ pub fn Vec3Base(comptime T: type) type {
 pub fn Vec4Base(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float, .ComptimeInt => {},
+        .Int, .Float => {},
         else => @compileError("Vec4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
@@ -408,7 +410,7 @@ pub fn Vec4Base(comptime T: type) type {
 pub fn Mat2Base(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float, .ComptimeInt => {},
+        .Int, .Float => {},
         else => @compileError("Mat2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
@@ -432,9 +434,9 @@ pub fn Mat2Base(comptime T: type) type {
 
         // Transformations
 
-        /// `angle` takes in degrees
+        /// `angle` takes in radians
         pub fn rotation(angle: T) Self {
-            const a = toRadians(angle);
+            const a = angle;
 
             return Self{
                 .data = .{
@@ -551,7 +553,7 @@ pub fn Mat2Base(comptime T: type) type {
 pub fn Mat4Base(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float, .ComptimeInt => {},
+        .Int, .Float => {},
         else => @compileError("Mat4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
@@ -588,15 +590,14 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        /// `fov` takes in degrees
+        /// `fov` takes in radians
         pub fn perspective(fov: T, aspect: T, near: T, far: T) Self {
-            const fov_rad = toRadians(fov);
             return Self{
                 .data = .{
-                    1 / (aspect * @tan(fov_rad / 2)), 0,                     0,                            0,
-                    0,                                1 / @tan(fov_rad / 2), 0,                            0,
-                    0,                                0,                     -(far + near) / (far - near), -(2 * far * near) / (far - near),
-                    0,                                0,                     -1,                           0,
+                    1 / (aspect * @tan(fov / 2)), 0,                 0,                            0,
+                    0,                            1 / @tan(fov / 2), 0,                            0,
+                    0,                            0,                 -(far + near) / (far - near), -(2 * far * near) / (far - near),
+                    0,                            0,                 -1,                           0,
                 },
             };
         }
@@ -616,11 +617,11 @@ pub fn Mat4Base(comptime T: type) type {
             return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
-        /// `angle` takes in degrees
+        /// `angle` takes in radians
         pub fn rotation(axis: Vec3, angle: T) Self {
             var result = Self.identity();
 
-            const r = toRadians(angle);
+            const r = angle;
             const c = @cos(r);
             const s = @sin(r);
             const omc = 1.0 - c;
@@ -764,6 +765,174 @@ pub fn Mat4Base(comptime T: type) type {
     };
 }
 
+pub fn QuaternionBase(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float => {},
+        else => @compileError("QuaternionBase only supports floating point types. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
+    return struct {
+        const Self = @This();
+
+        // Data
+        w: T,
+        x: T,
+        y: T,
+        z: T,
+
+        pub inline fn identity() Self {
+            return Self{
+                .w = 1.0,
+                .x = 0.0,
+                .y = 0.0,
+                .z = 0.0,
+            };
+        }
+
+        pub inline fn from(w: T, x: T, y: T, z: T) Self {
+            return Self{
+                .w = w,
+                .x = x,
+                .y = y,
+                .z = z,
+            };
+        }
+
+        pub fn fromVec3(w: T, axis: Vec3Base(T)) Self {
+            return Self.from(w, axis.x(), axis.y(), axis.z());
+        }
+
+        /// `angle` takes in radians
+        pub fn fromAxisAngle(axis: Vec3Base(T), radians: T) Self {
+            const sin_half_angle = @sin(radians / 2);
+            const w = @cos(radians / 2);
+
+            var mut_axis = axis;
+            mut_axis.normalize();
+            mut_axis.scale(sin_half_angle);
+            return Self.fromVec3(w, mut_axis);
+        }
+
+        /// `v` components take in radians
+        pub fn fromEulerAngles(v: Vec3Base(T)) Self {
+            const x = Self.fromAxis(v.x(), Vec3.right());
+            const y = Self.fromAxis(v.y(), Vec3.up());
+            const z = Self.fromAxis(v.z(), Vec3.forward());
+
+            return z.multiply(y.multiply(x));
+        }
+
+        // TODO: Constructor from rotation matrix
+
+        pub fn add(self: Self, other: Self) Self {
+            return Self.from(self.w + other.w, self.x + other.x, self.y + other.y, self.z + other.z);
+        }
+
+        pub fn sub(self: Self, other: Self) Self {
+            return Self.from(self.w - other.w, self.x - other.x, self.y - other.y, self.z - other.z);
+        }
+
+        pub fn scale(self: Self, scalar: T) Self {
+            return Self.from(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
+        }
+
+        pub fn neg(self: Self) Self {
+            return self.scale(-1.0);
+        }
+
+        pub fn normalize(self: *Self) void {
+            const m = @sqrt(self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z);
+            if (m > 0.0) {
+                const i_m = 1.0 / m;
+                self.w *= i_m;
+                self.x *= i_m;
+                self.y *= i_m;
+                self.z *= i_m;
+            } else {
+                self.* = Self.identity();
+            }
+        }
+
+        pub inline fn conjugate(self: Self) Self {
+            return Self.from(self.w, -self.x, -self.y, -self.z);
+        }
+
+        pub fn multiply(self: Self, other: Self) Self {
+            return Self{
+                .w = self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
+                .x = self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
+                .y = self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
+                .z = self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w,
+            };
+        }
+
+        pub fn inverse(self: Self) Self {
+            const norm_sq = self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z;
+            if (norm_sq == 0) {
+                return Self.identity();
+            }
+            const inv_norm_sq = 1.0 / norm_sq;
+            return Self{
+                .w = self.w * inv_norm_sq,
+                .x = -self.x * inv_norm_sq,
+                .y = -self.y * inv_norm_sq,
+                .z = -self.z * inv_norm_sq,
+            };
+        }
+
+        pub fn dot(self: Self, other: Self) T {
+            return self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z;
+        }
+
+        pub fn lerp(self: Self, other: Self, t: T) Self {
+            const w = zm.lerp(self.w, other.w, t);
+            const x = zm.lerp(self.x, other.x, t);
+            const y = zm.lerp(self.y, other.y, t);
+            const z = zm.lerp(self.z, other.z, t);
+
+            return Self.from(w, x, y, z);
+        }
+
+        pub fn slerp(self: Self, other: Self, t: T) Self {
+            const cos_theta = self.dot(other);
+
+            if (cos_theta > 0.9995) {
+                // If mostly identical, lerp
+                var result = Self.lerp(self, other, t);
+                result.normalize();
+                return result;
+            }
+
+            const theta = std.math.acos(zm.clamp(cos_theta, -1, 1));
+            const thetap = theta * t;
+            var qperp = self.scale(cos_theta);
+            qperp = Self.sub(other, qperp);
+            qperp.normalize();
+
+            var result = self.scale(@cos(thetap));
+            return result.add(qperp.scale(@sin(thetap)));
+        }
+
+        pub fn format(
+            q: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+
+            try writer.print("(w: {d}, v: ({d}, {d}, {d}))", .{
+                q.w,
+                q.x,
+                q.y,
+                q.z,
+            });
+        }
+    };
+}
+
 // Builtin Vec2Base types
 pub const Vec2 = Vec2Base(f32);
 pub const Vec2d = Vec2Base(f64);
@@ -788,3 +957,7 @@ pub const Mat2i = Mat2Base(i32);
 pub const Mat4 = Mat4Base(f32);
 pub const Mat4d = Mat4Base(f64);
 pub const Mat4i = Mat4Base(i32);
+
+// Builtin Quaternion types
+pub const Quaternion = QuaternionBase(f32);
+pub const Quaterniond = QuaternionBase(f64);

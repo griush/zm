@@ -34,7 +34,7 @@ const zm = @import("zm");
 const zm = @import("zm");
 
 pub fn main() !void {
-    // Basic type
+    // Base type
     const Vec2OfU16 = zm.Vec2Base(u16);
     const vec = Vec2OfU16.from(3, 1);
     // ... use vec
