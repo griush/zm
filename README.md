@@ -6,7 +6,7 @@
 SIMD math library
 
 ## Usage
-> [!NOTE]  
+> [!NOTE]
 > This library is tracking Zig's master branch. Last tested with `0.14.0-dev.363+c3faae6bf`.
 
 Add this dependency in the `build.zig.zon`:
@@ -14,10 +14,10 @@ Add this dependency in the `build.zig.zon`:
 ```zig
 .zm = .{
     .url = "https://github.com/griush/zm/archive/refs/heads/master.tar.gz"
-    .hash = "hash here",
 },
 
 ```
+Run `zig build` and it will give a hash. Append id bellow the URL.
 
 Then in the `build.zig` add:
 ```zig
