@@ -1,4 +1,5 @@
 # zm
+![GitHub License](https://img.shields.io/github/license/griush/zm?style=for-the-badge)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/.github%2Fworkflows%2Fci.yaml?branch=master&style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/griush/zm?style=for-the-badge&logo=github)
 ![GitHub Repo stars](https://img.shields.io/github/stars/griush/zm?style=for-the-badge&logo=github&color=gold)
