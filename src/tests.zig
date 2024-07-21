@@ -70,6 +70,20 @@ test "Vec normalize" {
     try std.testing.expectEqual(@Vector(3, f32){ 0, 0, 1 }, z.data);
 }
 
+test "Mat2 scale" {
+    const m = zm.Mat2.scaling(1.0, 2.0);
+    const v = zm.Vec2.from(3, 1.5);
+
+    try std.testing.expectEqual(zm.Vec2.from(3, 3), m.multiplyVec2(v));
+}
+
+test "Mat3 scale" {
+    var identity = zm.Mat3.identity();
+    identity.scale(3.0);
+
+    try std.testing.expectEqual(zm.Mat3.diagonal(3.0).data, identity.data);
+}
+
 test "Mat4 scale" {
     var identity = zm.Mat4.identity();
     identity.scale(3.0);
