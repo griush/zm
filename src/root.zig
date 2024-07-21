@@ -1,4 +1,4 @@
-//! zm - SIMD Math library
+//! zm - SIMD Math library fully cross-platform
 
 const std = @import("std");
 
@@ -90,6 +90,7 @@ pub fn Vec2Base(comptime T: type) type {
             };
         }
 
+        /// Scales the given vector. Modidies self, does not return anything.
         pub inline fn scale(self: *Self, s: T) void {
             self.data *= @splat(s);
         }
@@ -721,7 +722,7 @@ pub fn Mat4Base(comptime T: type) type {
             return Self.diagonal(1);
         }
 
-        pub fn orthographic(left: T, right: T, top: T, bottom: T, near: T, far: T) Self {
+        pub fn orthographic(left: T, right: T, bottom: T, top: T, near: T, far: T) Self {
             return Self{
                 .data = .{
                     2 / (right - left), 0,                  0,                 -(right + left) / (right - left),
