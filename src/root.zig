@@ -1084,33 +1084,37 @@ pub fn QuaternionBase(comptime T: type) type {
         }
 
         /// No extrapolation. Clamps `t`.
-        pub fn slerp(self: Self, other: Self, t: T) Self {
+        pub fn slerp(a: Self, b: Self, t: T) Self {
             // TODO: Look at https://gitlab.com/bztsrc/slerp-opt
             // and implement fastSlerp
             const tc = clamp(t, 0.0, 1.0);
-            const cos_theta = self.dot(other);
+            var am = a;
+            var cos_theta = am.dot(b);
 
-            const o = other;
-            // TODO: Uncomment this. But does not pass tests
-            // if (cos_theta < 0.0) {
-            //     o = other.neg();
-            //     cos_theta = -cos_theta;
-            // }
+            if (cos_theta <= 0.0) {
+                _ = am.scaleMut(-1);
+                cos_theta = -cos_theta;
+            }
 
             if (cos_theta > 0.9995) {
                 // If mostly identical, lerp
-                var result = Self.lerp(self, o, tc);
+                var result = Self.lerp(am, b, tc);
                 result.normalize();
                 return result;
             }
 
             const theta = std.math.acos(zm.clamp(cos_theta, -1, 1));
-            const thetap = theta * tc;
-            var qperp = Self.sub(o, self.scale(cos_theta));
-            qperp.normalize();
+            const denominator: T = @sin(theta);
+            const pt = (1.0 - t) * theta;
+            const spt = @sin(pt);
+            const sptp = am.scale(spt);
 
-            var result = self.scale(@cos(thetap));
-            return result.add(qperp.scale(@sin(thetap)));
+            const sqt = @sin(tc * theta);
+            const sqtq = b.scale(sqt);
+
+            const numerator = sptp.add(sqtq);
+
+            return numerator.scale(1.0 / denominator);
         }
 
         pub fn format(
