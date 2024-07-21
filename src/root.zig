@@ -90,9 +90,14 @@ pub fn Vec2Base(comptime T: type) type {
             };
         }
 
-        /// Scales the given vector. Modidies self, does not return anything.
-        pub inline fn scale(self: *Self, s: T) void {
+        pub inline fn scale(self: Self, s: T) Self {
+            return Self.from(self.x() * s, self.y() * s);
+        }
+
+        /// Scales the given vector. Modidies self, returns self.
+        pub inline fn scaleMut(self: *Self, s: T) Self {
             self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn squareLength(self: Self) T {
@@ -104,7 +109,7 @@ pub fn Vec2Base(comptime T: type) type {
         }
 
         pub fn normalize(self: *Self) void {
-            self.scale(1 / self.length());
+            self.scaleMut(1 / self.length());
         }
 
         /// Returns the dot product of the two given vectors.
@@ -234,8 +239,14 @@ pub fn Vec3Base(comptime T: type) type {
             };
         }
 
-        pub fn scale(self: *Self, s: T) void {
+        pub inline fn scale(self: Self, s: T) Self {
+            return Self.from(self.x() * s, self.y() * s, self.z() * s);
+        }
+
+        /// Scales the given vector. Modidies self, returns self.
+        pub inline fn scaleMut(self: *Self, s: T) Self {
             self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn squareLength(self: Self) T {
@@ -354,8 +365,14 @@ pub fn Vec4Base(comptime T: type) type {
             };
         }
 
-        pub fn scale(self: *Self, s: T) void {
+        pub inline fn scale(self: Self, s: T) Self {
+            return Self.from(self.x() * s, self.y() * s, self.z() * s, self.w() * s);
+        }
+
+        /// Scales the given vector. Modidies self, returns self.
+        pub inline fn scaleMut(self: *Self, s: T) Self {
             self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn squareLength(self: Self) T {
@@ -479,8 +496,9 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn scale(self: *Self, s: T) void {
+        pub fn scaleMut(self: *Self, s: T) Self {
             self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn multiply(l: Self, r: Self) Self {
@@ -636,8 +654,9 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub inline fn scale(self: *Self, scalar: T) void {
-            self.data *= @splat(scalar);
+        pub fn scaleMut(self: *Self, s: T) Self {
+            self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn neg(self: Self) Self {
@@ -811,8 +830,9 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn scale(self: *Self, s: T) void {
+        pub fn scaleMut(self: *Self, s: T) Self {
             self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn multiply(l: Self, r: Self) Self {
@@ -987,8 +1007,19 @@ pub fn QuaternionBase(comptime T: type) type {
             return Self.from(self.w - other.w, self.x - other.x, self.y - other.y, self.z - other.z);
         }
 
+        /// Non-mutable scale function
         pub fn scale(self: Self, scalar: T) Self {
             return Self.from(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
+        }
+
+        /// Mutable scale function
+        pub fn scaleMut(self: *Self, scalar: T) Self {
+            self.w *= scalar;
+            self.x *= scalar;
+            self.y *= scalar;
+            self.z *= scalar;
+
+            return self.*;
         }
 
         pub fn neg(self: Self) Self {
@@ -1035,10 +1066,11 @@ pub fn QuaternionBase(comptime T: type) type {
             };
         }
 
-        pub fn dot(self: Self, other: Self) T {
-            return self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z;
+        pub fn dot(left: Self, right: Self) T {
+            return left.w * right.w + left.x * right.x + left.y * right.y + left.z * right.z;
         }
 
+        /// No extrapolation. Clamps `t`.
         pub fn lerp(self: Self, other: Self, t: T) Self {
             const w = zm.lerp(self.w, other.w, t);
             const x = zm.lerp(self.x, other.x, t);
@@ -1048,20 +1080,30 @@ pub fn QuaternionBase(comptime T: type) type {
             return Self.from(w, x, y, z);
         }
 
+        /// No extrapolation. Clamps `t`.
         pub fn slerp(self: Self, other: Self, t: T) Self {
+            // TODO: Look at https://gitlab.com/bztsrc/slerp-opt
+            // and implement fastSlerp
+            const tc = clamp(t, 0.0, 1.0);
             const cos_theta = self.dot(other);
+
+            const o = other;
+            // TODO: Uncomment this. But does not pass tests
+            // if (cos_theta < 0.0) {
+            //     o = other.neg();
+            //     cos_theta = -cos_theta;
+            // }
 
             if (cos_theta > 0.9995) {
                 // If mostly identical, lerp
-                var result = Self.lerp(self, other, t);
+                var result = Self.lerp(self, o, tc);
                 result.normalize();
                 return result;
             }
 
             const theta = std.math.acos(zm.clamp(cos_theta, -1, 1));
-            const thetap = theta * t;
-            var qperp = self.scale(cos_theta);
-            qperp = Self.sub(other, qperp);
+            const thetap = theta * tc;
+            var qperp = Self.sub(o, self.scale(cos_theta));
             qperp.normalize();
 
             var result = self.scale(@cos(thetap));

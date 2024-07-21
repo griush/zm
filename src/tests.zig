@@ -203,7 +203,7 @@ test "Quaternion slerp" {
     const b = zm.Quaternion.fromAxisAngle(zm.Vec3.up(), std.math.pi);
 
     const qs = zm.Quaternion.slerp(a, b, 1.0);
-    const expected = zm.Quaternion.from(0.0, 0, 1, 0);
+    const expected = zm.Quaternion.from(0, 0, 1, 0);
 
     try std.testing.expectApproxEqAbs(expected.w, qs.w, float_tolerance);
     try std.testing.expectApproxEqAbs(expected.x, qs.x, float_tolerance);
@@ -214,8 +214,8 @@ test "Quaternion slerp" {
     var d = zm.Quaternion.from(0.7071067811865475, 0, 0.7071067811865475, 0);
     d.normalize();
 
-    try std.testing.expectApproxEqAbs(c.w, d.w, float_tolerance);
-    try std.testing.expectApproxEqAbs(c.x, d.x, float_tolerance);
-    try std.testing.expectApproxEqAbs(c.y, d.y, float_tolerance);
-    try std.testing.expectApproxEqAbs(c.z, d.z, float_tolerance);
+    try std.testing.expectApproxEqAbs(d.w, c.w, float_tolerance);
+    try std.testing.expectApproxEqAbs(d.x, c.x, float_tolerance);
+    try std.testing.expectApproxEqAbs(d.y, c.y, float_tolerance);
+    try std.testing.expectApproxEqAbs(d.z, c.z, float_tolerance);
 }
