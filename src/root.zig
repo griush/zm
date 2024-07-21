@@ -580,7 +580,101 @@ pub fn Mat3Base(comptime T: type) type {
             return Self.diagonal(1);
         }
 
-        /// Transposes the matrix. Returns new value, does not modify `self`
+        pub fn translation(tx: T, ty: T) Self {
+            return Self{
+                1, 0, tx,
+                0, 1, ty,
+                0, 0, 1,
+            };
+        }
+
+        pub fn translationVec2(v: Vec2Base(T)) Self {
+            return Self{
+                1, 0, v.x(),
+                0, 1, v.y(),
+                0, 0, 1,
+            };
+        }
+
+        /// `angle` takes in radians
+        pub fn rotation(angle: T) Self {
+            const a = angle;
+
+            return Self{
+                .data = .{
+                    @cos(a), -@sin(a), 0,
+                    @sin(a), @cos(a),  0,
+                    0,       0,        1,
+                },
+            };
+        }
+
+        pub fn scaling(sx: T, sy: T) Self {
+            return Self{
+                .data = .{
+                    sx, 0,  0,
+                    0,  sy, 0,
+                    0,  0,  1,
+                },
+            };
+        }
+
+        pub fn scalingVec2(v: Vec2Base(T)) Self {
+            return Self{
+                .data = .{
+                    v.x(), 0,     0,
+                    0,     v.y(), 0,
+                    0,     0,     1,
+                },
+            };
+        }
+
+        pub inline fn add(l: Self, r: Self) Self {
+            return Self{
+                .data = l.data + r.data,
+            };
+        }
+
+        pub inline fn scale(self: *Self, scalar: T) void {
+            self.data *= @splat(scalar);
+        }
+
+        pub fn neg(self: Self) Self {
+            return Self{
+                .data = -self.data,
+            };
+        }
+
+        pub fn multiplyVec3(self: Self, vec: Vec3Base(T)) Vec3Base(T) {
+            return Vec3Base(T){
+                .data = .{
+                    self.data[0] * vec.x() + self.data[1] * vec.y() + self.data[2] * vec.z(),
+                    self.data[3] * vec.x() + self.data[4] * vec.y() + self.data[5] * vec.z(),
+                    self.data[6] * vec.x() + self.data[7] * vec.y() + self.data[8] * vec.z(),
+                },
+            };
+        }
+
+        pub fn multiply(l: Self, r: Self) Self {
+            var data: @Vector(9, T) = @splat(0.0);
+
+            var row: usize = 0;
+            while (row < 3) : (row += 1) {
+                var col: usize = 0;
+                while (col < 3) : (col += 1) {
+                    var e: usize = 0;
+                    while (e < 3) : (e += 1) {
+                        data[col + row * 3] += l.data[e + row * 3] * r.data[e * 3 + col];
+                    }
+                }
+            }
+
+            return Self{
+                .data = data,
+            };
+        }
+
+        /// Transposes the matrix.
         pub fn transpose(self: Self) Self {
             var result = Self.identity();
 
@@ -736,6 +830,17 @@ pub fn Mat4Base(comptime T: type) type {
 
             return Self{
                 .data = data,
+            };
+        }
+
+        pub fn multiplyByVec4(m: Self, v: Vec4Base(T)) Vec4Base(T) {
+            return Vec4Base(T){
+                .data = .{
+                    m.data[0] * v.x() + m.data[1] * v.y() + m.data[2] * v.z() + m.data[3] * v.w(),
+                    m.data[4] * v.x() + m.data[5] * v.y() + m.data[6] * v.z() + m.data[7] * v.w(),
+                    m.data[8] * v.x() + m.data[9] * v.y() + m.data[10] * v.z() + m.data[11] * v.w(),
+                    m.data[12] * v.x() + m.data[13] * v.y() + m.data[14] * v.z() + m.data[15] * v.w(),
+                },
             };
         }
 
@@ -1000,6 +1105,11 @@ pub const Vec4i = Vec4Base(i32);
 pub const Mat2 = Mat2Base(f32);
 pub const Mat2d = Mat2Base(f64);
 pub const Mat2i = Mat2Base(i32);
+
+// Builtin Mat3Base types
+pub const Mat3 = Mat3Base(f32);
+pub const Mat3d = Mat3Base(f64);
+pub const Mat3i = Mat3Base(i32);
 
 // Builtin Mat4Base types
 pub const Mat4 = Mat4Base(f32);
