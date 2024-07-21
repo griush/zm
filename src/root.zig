@@ -421,10 +421,12 @@ pub fn Mat2Base(comptime T: type) type {
 
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(r: T) Self {
-            return Self{ .data = .{
-                r, 0,
-                0, r,
-            } };
+            return Self{
+                .data = .{
+                    r, 0,
+                    0, r,
+                },
+            };
         }
 
         /// Returns the identity matrix.
@@ -545,6 +547,52 @@ pub fn Mat2Base(comptime T: type) type {
                     -c / det, a / det,
                 },
             };
+        }
+    };
+}
+
+/// Returns a Mat2 type with T being the element type.
+pub fn Mat3Base(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    switch (type_info) {
+        .Int, .Float => {},
+        else => @compileError("Mat3Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+    }
+
+    return struct {
+        const Self = @This();
+
+        data: @Vector(9, T),
+
+        /// Creates a diagonal matrix with the given value.
+        pub inline fn diagonal(r: T) Self {
+            return Self{
+                .data = .{
+                    r, 0, 0,
+                    0, r, 0,
+                    0, 0, r,
+                },
+            };
+        }
+
+        /// Returns the identity matrix.
+        pub fn identity() Self {
+            return Self.diagonal(1);
+        }
+
+        /// Transposes the matrix. Returns new value, does not modify `self`
+        pub fn transpose(self: Self) Self {
+            var result = Self.identity();
+
+            var row: usize = 0;
+            while (row < 3) : (row += 1) {
+                var col: usize = 0;
+                while (col < 3) : (col += 1) {
+                    result.data[col * 3 + row] = self.data[row * 3 + col];
+                }
+            }
+
+            return result;
         }
     };
 }
