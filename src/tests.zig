@@ -32,7 +32,7 @@ test "vec arithmetic" {
 test "Vec2 scale" {
     var v = zm.Vec2.from(2, -1);
 
-    v.scale(3.0);
+    _ = v.scaleMut(3.0);
 
     try std.testing.expectApproxEqAbs(6, v.x(), float_tolerance);
     try std.testing.expectApproxEqAbs(-3, v.y(), float_tolerance);
@@ -61,9 +61,9 @@ test "Vec normalize" {
     var y = zm.Vec3.from(0, 1, 0);
     var z = zm.Vec3.from(0, 0, 1);
 
-    x.normalize();
-    y.normalize();
-    z.normalize();
+    _ = x.normalize();
+    _ = y.normalize();
+    _ = z.normalize();
 
     try std.testing.expectEqual(@Vector(3, f32){ 1, 0, 0 }, x.data);
     try std.testing.expectEqual(@Vector(3, f32){ 0, 1, 0 }, y.data);
@@ -79,14 +79,14 @@ test "Mat2 scale" {
 
 test "Mat3 scale" {
     var identity = zm.Mat3.identity();
-    identity.scale(3.0);
+    _ = identity.scaleMut(3.0);
 
     try std.testing.expectEqual(zm.Mat3.diagonal(3.0).data, identity.data);
 }
 
 test "Mat4 scale" {
     var identity = zm.Mat4.identity();
-    identity.scale(3.0);
+    _ = identity.scaleMut(3.0);
 
     try std.testing.expectEqual(zm.Mat4.diagonal(3.0).data, identity.data);
 }

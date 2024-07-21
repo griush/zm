@@ -108,8 +108,9 @@ pub fn Vec2Base(comptime T: type) type {
             return @sqrt(self.squareLength());
         }
 
-        pub fn normalize(self: *Self) void {
-            self.scaleMut(1 / self.length());
+        pub fn normalize(self: *Self) Self {
+            _ = self.scaleMut(1 / self.length());
+            return self.*;
         }
 
         /// Returns the dot product of the two given vectors.
@@ -257,8 +258,9 @@ pub fn Vec3Base(comptime T: type) type {
             return @sqrt(self.squareLength());
         }
 
-        pub fn normalize(self: *Self) void {
-            self.scale(1 / self.length());
+        pub fn normalize(self: *Self) Self {
+            _ = self.scaleMut(1 / self.length());
+            return self.*;
         }
 
         /// Returns the dot product of the given vectors.
@@ -384,7 +386,8 @@ pub fn Vec4Base(comptime T: type) type {
         }
 
         pub fn normalize(self: *Self) void {
-            self.scale(1 / self.length());
+            _ = self.scaleMut(1 / self.length());
+            return self.*;
         }
 
         /// Returns the dot product of the given vectors.
@@ -983,8 +986,8 @@ pub fn QuaternionBase(comptime T: type) type {
             const w = @cos(radians / 2);
 
             var mut_axis = axis;
-            mut_axis.normalize();
-            mut_axis.scale(sin_half_angle);
+            _ = mut_axis.normalize();
+            _ = mut_axis.scaleMut(sin_half_angle);
             return Self.fromVec3(w, mut_axis);
         }
 
