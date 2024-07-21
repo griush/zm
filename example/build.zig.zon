@@ -1,0 +1,17 @@
+.{
+    .name = "zm_example",
+
+    .version = "0.1.0",
+
+    .dependencies = .{
+        .zm = .{
+            .path = "..",
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
