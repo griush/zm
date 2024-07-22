@@ -33,4 +33,4 @@ const zm = @import("zm");
 ```
 
 ### Example
-See [example](/example/)
+See [example](/example/).
