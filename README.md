@@ -4,7 +4,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/griush/zm?style=for-the-badge&logo=github)
 ![GitHub Repo stars](https://img.shields.io/github/stars/griush/zm?style=for-the-badge&logo=github&color=gold)
 
-SIMD math library
+SIMD math library fully cross-platform.
 
 ## Usage
 > [!NOTE]
@@ -18,7 +18,7 @@ Add this dependency in the `build.zig.zon`:
 },
 
 ```
-Run `zig build` and it will give a hash. Append id bellow the URL.
+Run `zig build` and it will give a hash. Append it bellow the URL.
 
 Or, run `zig fetch --save git+https://github.com/griush/zm`.
 
@@ -34,3 +34,6 @@ const zm = @import("zm");
 
 ### Example
 See [example](/example/).
+
+## Benchmarks
+See [benchmarks](/src/benchmark.zig).

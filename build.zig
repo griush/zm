@@ -32,6 +32,20 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(tests);
     test_step.dependOn(&b.addRunArtifact(tests).step);
 
+    // Benchmark step
+    const benchmark_step = b.step("benchmark", "Run zm benchmark");
+    const benchmark = b.addExecutable(.{
+        .name = "zm-benchmark",
+        .root_source_file = b.path("src/benchmark.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
+    benchmark.root_module.addImport("zm", zm);
+
+    b.installArtifact(benchmark);
+    benchmark_step.dependOn(&b.addRunArtifact(benchmark).step);
+
     // Docs step
     const install_docs = b.addInstallDirectory(.{
         .source_dir = lib.getEmittedDocs(),

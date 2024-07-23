@@ -329,6 +329,12 @@ pub fn Vec4Base(comptime T: type) type {
             };
         }
 
+        pub inline fn fromVec3(in_v: Vec3Base(T), in_w: T) Self {
+            return .{
+                .data = .{ in_v.x(), in_v.y(), in_v.z(), in_w },
+            };
+        }
+
         pub inline fn x(self: Self) T {
             return self.data[0];
         }
