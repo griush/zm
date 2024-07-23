@@ -136,6 +136,8 @@ pub fn Vec2Base(comptime T: type) type {
             };
         }
 
+        /// This function allows `Vec2`s to be formated by Zig's `std.fmt`.
+        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec2.zero() });`
         pub fn format(
             v: Self,
             comptime fmt: []const u8,
@@ -311,6 +313,8 @@ pub fn Vec3Base(comptime T: type) type {
             };
         }
 
+        /// This function allows `Vec3`s to be formated by Zig's `std.fmt`.
+        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.zero() });`
         pub fn format(
             v: Self,
             comptime fmt: []const u8,
@@ -342,20 +346,21 @@ pub fn Vec4Base(comptime T: type) type {
 
         data: @Vector(4, T),
 
-        /// Creates a Vec4 with all components initialized at 0
+        /// Creates a `Vec4` with all components initialized at 0
         pub inline fn zero() Self {
             return Self{
                 .data = .{ 0, 0, 0, 0 },
             };
         }
 
-        /// Creates a Vec4 from the given components.
+        /// Creates a `Vec4` from the given components
         pub inline fn from(in_x: T, in_y: T, in_z: T, in_w: T) Self {
             return .{
                 .data = .{ in_x, in_y, in_z, in_w },
             };
         }
 
+        /// Creates a `Vec4` from a `Vec3Base(T)` and a fourth component `w`
         pub inline fn fromVec3(in_v: Vec3Base(T), in_w: T) Self {
             return .{
                 .data = .{ in_v.x(), in_v.y(), in_v.z(), in_w },
@@ -415,7 +420,7 @@ pub fn Vec4Base(comptime T: type) type {
         }
 
         pub fn length(self: Self) T {
-            return zm.sqrt(self.squareLength());
+            return @sqrt(self.squareLength());
         }
 
         pub fn normalize(self: *Self) void {
@@ -441,6 +446,8 @@ pub fn Vec4Base(comptime T: type) type {
             };
         }
 
+        /// This function allows `Vec4`s to be formated by Zig's `std.fmt`.
+        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec4.zero() });`
         pub fn format(
             v: Self,
             comptime fmt: []const u8,
@@ -690,15 +697,15 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
-        }
-
         pub fn neg(self: Self) Self {
             return Self{
                 .data = -self.data,
             };
+        }
+
+        pub fn scaleMut(self: *Self, s: T) Self {
+            self.data *= @splat(s);
+            return self.*;
         }
 
         pub fn multiplyVec3(self: Self, vec: Vec3Base(T)) Vec3Base(T) {
@@ -711,6 +718,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
+        /// Multiplies two matrices together
         pub fn multiply(l: Self, r: Self) Self {
             var data: @Vector(9, T) = @splat(0.0);
 
@@ -815,6 +823,7 @@ pub fn Mat4Base(comptime T: type) type {
             return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
+        /// Returns a rotation transformation matrix
         /// `angle` takes in radians
         pub fn rotation(axis: Vec3, angle: T) Self {
             var result = Self.identity();
@@ -854,7 +863,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        /// Returns a Mat4Base(T) from a QuaternionBase(T)
+        /// Returns a `Mat4Base(T)` from a `QuaternionBase(T)`
         pub fn fromQuaternion(q: QuaternionBase(T)) Self {
             // From https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
             var result = Self.identity();
@@ -1171,6 +1180,8 @@ pub fn QuaternionBase(comptime T: type) type {
             return numerator.scale(1.0 / denominator);
         }
 
+        /// This function allows `Quaternion`s to be formated by Zig's `std.fmt`.
+        /// Example: `std.debug.print("Vec: {any}", .{ zm.Quaternion.fromEulerAngles(zm.Vec3.up()) });`
         pub fn format(
             q: Self,
             comptime fmt: []const u8,

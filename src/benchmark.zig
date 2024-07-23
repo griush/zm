@@ -1,5 +1,6 @@
 // On Intel® Core™ i9-9900K, Zig version: 0.14.0-dev.367+a57479afc, ReleaseFast
 // Test - Vec3 Normalize(100_000_000): 176 ms
+// Test - Vec3 Cross + Vec3 scale(100_000_000): 136 ms
 // Test - Mat4 multiply Vec4(100_000_000): 175 ms
 
 const std = @import("std");
@@ -51,22 +52,24 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(v);
     }
 
-    std.debug.print("Test - Vec3 Normalize({d}): {d} ms\n", .{ count, timer.milliElapsed() });
+    std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, timer.milliElapsed() });
     timer.reset();
 
     // Cross + scale
-    // for (0..count) |_| {
-    //     // const a = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
-    //     // const b = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
-    //     const a = zm.Vec3.up();
-    //     const b = zm.Vec3.up();
-    //
-    //     var c = a.cross(b);
-    //     _ = c.scaleMut(0.1);
-    // }
-    //
-    // std.debug.print("Test - Vec3 Cross + Vec3 scale + random generation({d}): {d} ms\n", .{ count, timer.milliElapsed() });
-    // timer.reset();
+    for (0..count - 1) |i| {
+        // const a = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
+        // const b = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
+        const a = vec3s.items[i];
+        const b = vec3s.items[i + 1];
+
+        var c = a.cross(b);
+        _ = c.scaleMut(0.1);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec3 Cross + Vec3 scale({}): {d} ms\n", .{ count, timer.milliElapsed() });
+    timer.reset();
 
     // mat mul vec
     for (0..count) |i| {
@@ -78,6 +81,6 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(r);
     }
 
-    std.debug.print("Test - Mat4 multiply Vec4({d}): {d} ms\n", .{ count, timer.milliElapsed() });
+    std.debug.print("Test - Mat4 multiply Vec4({}): {d} ms\n", .{ count, timer.milliElapsed() });
     timer.reset();
 }
