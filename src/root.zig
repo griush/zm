@@ -63,6 +63,13 @@ pub fn Vec2Base(comptime T: type) type {
 
         data: @Vector(2, T),
 
+        /// Creates a Vec2 with all components initialized at 0
+        pub inline fn zero() Self {
+            return Self{
+                .data = .{ 0, 0 },
+            };
+        }
+
         /// Creates a Vec2 from the given components.
         pub inline fn from(in_x: T, in_y: T) Self {
             return .{
@@ -158,10 +165,23 @@ pub fn Vec3Base(comptime T: type) type {
 
         data: @Vector(3, T),
 
+        /// Creates a Vec3 with all components initialized at 0
+        pub inline fn zero() Self {
+            return Self{
+                .data = .{ 0, 0, 0 },
+            };
+        }
+
         /// Creates a Vec3 from the given components.
         pub inline fn from(in_x: T, in_y: T, in_z: T) Self {
             return .{
                 .data = .{ in_x, in_y, in_z },
+            };
+        }
+
+        pub inline fn fromVec2(in_v: Vec2Base(T), in_z: T) Self {
+            return .{
+                .data = .{ in_v.x(), in_v.y(), in_z },
             };
         }
 
@@ -321,6 +341,13 @@ pub fn Vec4Base(comptime T: type) type {
         const Self = @This();
 
         data: @Vector(4, T),
+
+        /// Creates a Vec4 with all components initialized at 0
+        pub inline fn zero() Self {
+            return Self{
+                .data = .{ 0, 0, 0, 0 },
+            };
+        }
 
         /// Creates a Vec4 from the given components.
         pub inline fn from(in_x: T, in_y: T, in_z: T, in_w: T) Self {
@@ -827,6 +854,27 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
+        /// Returns a Mat4Base(T) from a QuaternionBase(T)
+        pub fn fromQuaternion(q: QuaternionBase(T)) Self {
+            // From https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
+            var result = Self.identity();
+
+            // Row 1
+            result.data[0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
+            result.data[1] = 2 * q.x * q.y - 2 * q.z * q.w;
+            result.data[2] = 2 * q.x * q.z + 2 * q.y * q.w;
+            // Row 2
+            result.data[4] = 2 * q.x * q.y + 2 * q.z * q.w;
+            result.data[5] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
+            result.data[6] = 2 * q.y * q.z - 2 * q.x * q.w;
+            // Row 3
+            result.data[8] = 2 * q.x * q.z - 2 * q.y * q.w;
+            result.data[9] = 2 * q.y * q.z + 2 * q.x * q.w;
+            result.data[10] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+
+            return result;
+        }
+
         pub fn add(l: Self, r: Self) Self {
             return Self{
                 .data = l.data + r.data,
@@ -951,7 +999,7 @@ pub fn Mat4Base(comptime T: type) type {
 pub fn QuaternionBase(comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
-        .Int, .Float => {},
+        .Float => {},
         else => @compileError("QuaternionBase only supports floating point types. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 

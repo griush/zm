@@ -219,3 +219,21 @@ test "Quaternion slerp" {
     try std.testing.expectApproxEqAbs(d.y, c.y, float_tolerance);
     try std.testing.expectApproxEqAbs(d.z, c.z, float_tolerance);
 }
+
+test "Quaternion to Mat4" {
+    const q = zm.Quaternion.from(0.7071067811865475, 0.7071067811865475, 0.0, 0.0);
+    const m = zm.Mat4.fromQuaternion(q);
+
+    const expected = zm.Mat4{
+        .data = .{
+            1, 0, 0,  0,
+            0, 0, -1, 0,
+            0, 1, 0,  0,
+            0, 0, 0,  1,
+        },
+    };
+
+    for (0..16) |i| {
+        try std.testing.expectApproxEqAbs(expected.data[i], m.data[i], float_tolerance);
+    }
+}

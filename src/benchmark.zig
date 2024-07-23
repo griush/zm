@@ -1,7 +1,6 @@
-// On my Intel® Core™ i9-9900K
+// On Intel® Core™ i9-9900K, Zig version: 0.14.0-dev.367+a57479afc, ReleaseFast
 // Test - Vec3 Normalize(100_000_000): 176 ms
 // Test - Mat4 multiply Vec4(100_000_000): 175 ms
-//
 
 const std = @import("std");
 const zm = @import("zm");
@@ -34,7 +33,7 @@ pub fn main() !void {
     std.debug.print("zm - Benchmarks\n", .{});
 
     var timer = Timer.init();
-    std.debug.print("Generating data...\n", .{});
+    std.debug.print("Generating random data...\n", .{});
     const count = 100_000_000;
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     for (0..count) |_| {
