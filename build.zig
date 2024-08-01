@@ -18,6 +18,10 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // Check step to see if it compiles
+    const check = b.step("check", "Check if foo compiles");
+    check.dependOn(&lib.step);
+
     // Tests step
     const test_step = b.step("test", "Run zm tests");
     const tests = b.addTest(.{

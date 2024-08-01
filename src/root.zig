@@ -50,422 +50,23 @@ pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
     };
 }
 
-/// Returns a Vec2 type with T being the component type.
-pub fn Vec2Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
-    switch (type_info) {
-        .Int, .Float => {},
-        else => @compileError("Vec2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
-    }
-
-    return struct {
-        const Self = @This();
-
-        data: @Vector(2, T),
-
-        /// Creates a Vec2 with all components initialized at 0
-        pub inline fn zero() Self {
-            return Self{
-                .data = .{ 0, 0 },
-            };
-        }
-
-        /// Creates a Vec2 from the given components.
-        pub inline fn from(in_x: T, in_y: T) Self {
-            return .{
-                .data = .{ in_x, in_y },
-            };
-        }
-
-        pub inline fn x(self: Self) T {
-            return self.data[0];
-        }
-
-        pub inline fn y(self: Self) T {
-            return self.data[1];
-        }
-
-        pub inline fn add(l: Self, r: Self) Self {
-            return Self{
-                .data = l.data + r.data,
-            };
-        }
-
-        pub inline fn neg(self: Self) Self {
-            return Self{
-                .data = -self.data,
-            };
-        }
-
-        pub inline fn scale(self: Self, s: T) Self {
-            return Self.from(self.x() * s, self.y() * s);
-        }
-
-        /// Scales the given vector. Modidies self, returns self.
-        pub inline fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
-        }
-
-        pub fn squareLength(self: Self) T {
-            return self.x() * self.x() + self.y() * self.y();
-        }
-
-        pub fn length(self: Self) T {
-            return @sqrt(self.squareLength());
-        }
-
-        pub fn normalize(self: *Self) Self {
-            _ = self.scaleMut(1 / self.length());
-            return self.*;
-        }
-
-        /// Returns the dot product of the two given vectors.
-        pub fn dot(l: Self, r: Self) T {
-            return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
-        }
-
-        /// No extrapolation, clamps `t`.
-        pub fn lerp(a: Self, b: Self, t: T) Self {
-            const l = zm.clamp(t, 0.0, 1.0);
-            return Self{
-                .data = .{
-                    (1 - l) * a.x() + l * b.x(),
-                    (1 - l) * a.y() + l * b.y(),
-                },
-            };
-        }
-
-        /// This function allows `Vec2`s to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec2.zero() });`
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-
-            try writer.print("({d}, {d})", .{
-                v.data[0], v.data[1],
-            });
-        }
-    };
-}
-
-/// Returns a Vec3 type with T being the component type.
-pub fn Vec3Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
-    switch (type_info) {
-        .Int, .Float => {},
-        else => @compileError("Vec3Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
-    }
-
-    return struct {
-        const Self = @This();
-
-        data: @Vector(3, T),
-
-        /// Creates a Vec3 with all components initialized at 0
-        pub inline fn zero() Self {
-            return Self{
-                .data = .{ 0, 0, 0 },
-            };
-        }
-
-        /// Creates a Vec3 from the given components.
-        pub inline fn from(in_x: T, in_y: T, in_z: T) Self {
-            return .{
-                .data = .{ in_x, in_y, in_z },
-            };
-        }
-
-        pub inline fn fromVec2(in_v: Vec2Base(T), in_z: T) Self {
-            return .{
-                .data = .{ in_v.x(), in_v.y(), in_z },
-            };
-        }
-
-        pub inline fn right() Self {
-            return .{
-                .data = .{ 1.0, 0.0, 0.0 },
-            };
-        }
-
-        pub inline fn up() Self {
-            return .{
-                .data = .{ 0.0, 1.0, 0.0 },
-            };
-        }
-
-        pub inline fn forward() Self {
-            return .{
-                .data = .{ 0.0, 0.0, 1.0 },
-            };
-        }
-
-        pub inline fn left() Self {
-            return .{
-                .data = .{ -1.0, 0.0, 0.0 },
-            };
-        }
-
-        pub inline fn down() Self {
-            return .{
-                .data = .{ 0.0, -1.0, 0.0 },
-            };
-        }
-
-        pub inline fn back() Self {
-            return .{
-                .data = .{ 0.0, 0.0, -1.0 },
-            };
-        }
-
-        pub inline fn x(self: Self) T {
-            return self.data[0];
-        }
-
-        pub inline fn y(self: Self) T {
-            return self.data[1];
-        }
-
-        pub inline fn z(self: Self) T {
-            return self.data[2];
-        }
-
-        /// Returns a 2D-vector with the `x` and `y` components.
-        pub fn xy(self: Self) Vec2Base(T) {
-            return Vec2Base(T).from(self.x(), self.y());
-        }
-
-        /// Returns a 2D-vector with the `x` and `z` components.
-        pub fn xz(self: Self) Vec2Base(T) {
-            return Vec2Base(T).from(self.x(), self.z());
-        }
-
-        /// Returns a 2D-vector with the `y` and `z` components.
-        pub fn yz(self: Self) Vec2Base(T) {
-            return Vec2Base(T).from(self.y(), self.z());
-        }
-
-        pub fn add(l: Self, r: Self) Self {
-            return Self{
-                .data = l.data + r.data,
-            };
-        }
-
-        pub fn neg(self: Self) Self {
-            return Self{
-                .data = -self.data,
-            };
-        }
-
-        pub inline fn scale(self: Self, s: T) Self {
-            return Self.from(self.x() * s, self.y() * s, self.z() * s);
-        }
-
-        /// Scales the given vector. Modidies self, returns self.
-        pub inline fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
-        }
-
-        pub fn squareLength(self: Self) T {
-            return self.x() * self.x() + self.y() * self.y() + self.z() * self.z();
-        }
-
-        pub fn length(self: Self) T {
-            return @sqrt(self.squareLength());
-        }
-
-        pub fn normalize(self: *Self) Self {
-            _ = self.scaleMut(1 / self.length());
-            return self.*;
-        }
-
-        /// Returns the dot product of the given vectors.
-        pub fn dot(l: Self, r: Self) T {
-            return l.x() * r.x() + l.y() * r.y() + l.z() * r.z();
-        }
-
-        /// No extrapolation, clamps `t`.
-        pub fn lerp(a: Self, b: Self, t: T) Self {
-            const l = zm.clamp(t, 0.0, 1.0);
-            return Self{
-                .data = .{
-                    (1 - l) * a.x() + l * b.x(),
-                    (1 - l) * a.y() + l * b.y(),
-                    (1 - l) * a.z() + l * b.z(),
-                },
-            };
-        }
-
-        /// Returns the cross product of the given vectors.
-        pub fn cross(l: Self, r: Self) Self {
-            return Self{
-                .data = .{
-                    l.y() * r.z() - l.z() * r.y(),
-                    l.z() * r.x() - l.x() * r.z(),
-                    l.x() * r.y() - l.y() * r.x(),
-                },
-            };
-        }
-
-        /// This function allows `Vec3`s to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.zero() });`
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-
-            try writer.print("({d}, {d}, {d})", .{
-                v.data[0],
-                v.data[1],
-                v.data[2],
-            });
-        }
-    };
-}
-
-/// Returns a Vec4 type with T being the component type.
-pub fn Vec4Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
-    switch (type_info) {
-        .Int, .Float => {},
-        else => @compileError("Vec4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
-    }
-
-    return struct {
-        const Self = @This();
-
-        data: @Vector(4, T),
-
-        /// Creates a `Vec4` with all components initialized at 0
-        pub inline fn zero() Self {
-            return Self{
-                .data = .{ 0, 0, 0, 0 },
-            };
-        }
-
-        /// Creates a `Vec4` from the given components
-        pub inline fn from(in_x: T, in_y: T, in_z: T, in_w: T) Self {
-            return .{
-                .data = .{ in_x, in_y, in_z, in_w },
-            };
-        }
-
-        /// Creates a `Vec4` from a `Vec3Base(T)` and a fourth component `w`
-        pub inline fn fromVec3(in_v: Vec3Base(T), in_w: T) Self {
-            return .{
-                .data = .{ in_v.x(), in_v.y(), in_v.z(), in_w },
-            };
-        }
-
-        pub inline fn x(self: Self) T {
-            return self.data[0];
-        }
-
-        pub inline fn y(self: Self) T {
-            return self.data[1];
-        }
-
-        pub inline fn z(self: Self) T {
-            return self.data[2];
-        }
-
-        pub inline fn w(self: Self) T {
-            return self.data[3];
-        }
-
-        /// Returns a 2D-vector with the `x` and `y` components.
-        pub fn xy(self: Self) Vec2Base(T) {
-            return Vec2Base(T).from(self.x(), self.y());
-        }
-
-        /// Returns a 3D-vector with the `x`, `y` and `z` components.
-        pub fn xyz(self: Self) Vec3Base(T) {
-            return Vec3Base(T).from(self.x(), self.y(), self.z());
-        }
-
-        pub fn add(l: Self, r: Self) Self {
-            return Self{
-                .data = l.data + r.data,
-            };
-        }
-
-        pub fn neg(self: Self) Self {
-            return Self{
-                .data = -self.data,
-            };
-        }
-
-        pub inline fn scale(self: Self, s: T) Self {
-            return Self.from(self.x() * s, self.y() * s, self.z() * s, self.w() * s);
-        }
-
-        /// Scales the given vector. Modidies self, returns self.
-        pub inline fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
-        }
-
-        pub fn squareLength(self: Self) T {
-            return self.x() * self.x() + self.y() * self.y() + self.z() * self.z() + self.w() * self.w();
-        }
-
-        pub fn length(self: Self) T {
-            return @sqrt(self.squareLength());
-        }
-
-        pub fn normalize(self: *Self) void {
-            _ = self.scaleMut(1 / self.length());
-            return self.*;
-        }
-
-        /// Returns the dot product of the given vectors.
-        pub fn dot(l: Self, r: Self) T {
-            return l.x() * r.x() + l.y() * r.y() + l.z() * r.z() + l.w() * r.w();
-        }
-
-        /// No extrapolation, clamps `t`.
-        pub fn lerp(a: Self, b: Self, t: T) Self {
-            const l = zm.clamp(t, 0.0, 1.0);
-            return Self{
-                .data = .{
-                    (1 - l) * a.x() + l * b.x(),
-                    (1 - l) * a.y() + l * b.y(),
-                    (1 - l) * a.z() + l * b.z(),
-                    (1 - l) * a.w() + l * b.w(),
-                },
-            };
-        }
-
-        /// This function allows `Vec4`s to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec4.zero() });`
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-
-            try writer.print("({d}, {d}, {d}, {d})", .{
-                v.data[0],
-                v.data[1],
-                v.data[2],
-                v.data[3],
-            });
-        }
-    };
-}
+// Vectors
+const Vec = @import("vector.zig").Vec;
+
+// Builtin Vec2Base types
+pub const Vec2 = Vec(2, f32);
+pub const Vec2d = Vec(2, f64);
+pub const Vec2i = Vec(2, i32);
+
+// Builtin Vec3Base types
+pub const Vec3 = Vec(3, f32);
+pub const Vec3d = Vec(3, f64);
+pub const Vec3i = Vec(3, i32);
+
+// Builtin Vec4Base types
+pub const Vec4 = Vec(4, f32);
+pub const Vec4d = Vec(4, f64);
+pub const Vec4i = Vec(4, i32);
 
 /// Returns a Mat2 type with T being the element type.
 pub fn Mat2Base(comptime T: type) type {
@@ -518,7 +119,7 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn scalingVec2(s: Vec2Base(T)) Self {
+        pub fn scalingVec2(s: Vec(2, T)) Self {
             return Self{
                 .data = .{
                     s.x(), 0,
@@ -563,8 +164,8 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn multiplyVec2(self: Self, vec: Vec2Base(T)) Vec2Base(T) {
-            return Vec2Base(T){
+        pub fn multiplyVec2(self: Self, vec: Vec(2, T)) Vec(2, T) {
+            return Vec(2, T){
                 .data = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y(),
                     self.data[2] * vec.x() + self.data[3] * vec.y(),
@@ -650,7 +251,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn translationVec2(v: Vec2Base(T)) Self {
+        pub fn translationVec2(v: Vec(2, T)) Self {
             return Self{
                 1, 0, v.x(),
                 0, 1, v.y(),
@@ -681,7 +282,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn scalingVec2(v: Vec2Base(T)) Self {
+        pub fn scalingVec2(v: Vec(2, T)) Self {
             return Self{
                 .data = .{
                     v.x(), 0,     0,
@@ -708,8 +309,8 @@ pub fn Mat3Base(comptime T: type) type {
             return self.*;
         }
 
-        pub fn multiplyVec3(self: Self, vec: Vec3Base(T)) Vec3Base(T) {
-            return Vec3Base(T){
+        pub fn multiplyVec3(self: Self, vec: Vec(3, T)) Vec(3, T) {
+            return Vec(3, T){
                 .data = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y() + self.data[2] * vec.z(),
                     self.data[3] * vec.x() + self.data[4] * vec.y() + self.data[5] * vec.z(),
@@ -819,7 +420,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn translationVec3(vec: Vec3Base(T)) Self {
+        pub fn translationVec3(vec: Vec(3, T)) Self {
             return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
@@ -920,8 +521,8 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn multiplyByVec4(m: Self, v: Vec4Base(T)) Vec4Base(T) {
-            return Vec4Base(T){
+        pub fn multiplyByVec4(m: Self, v: Vec(4, T)) Vec(4, T) {
+            return Vec(4, T){
                 .data = .{
                     m.data[0] * v.x() + m.data[1] * v.y() + m.data[2] * v.z() + m.data[3] * v.w(),
                     m.data[4] * v.x() + m.data[5] * v.y() + m.data[6] * v.z() + m.data[7] * v.w(),
@@ -1039,23 +640,19 @@ pub fn QuaternionBase(comptime T: type) type {
             };
         }
 
-        pub fn fromVec3(w: T, axis: Vec3Base(T)) Self {
+        pub fn fromVec3(w: T, axis: Vec(3, T)) Self {
             return Self.from(w, axis.x(), axis.y(), axis.z());
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: Vec3Base(T), radians: T) Self {
+        pub fn fromAxisAngle(axis: Vec(3, T), radians: T) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
-
-            var mut_axis = axis;
-            _ = mut_axis.normalize();
-            _ = mut_axis.scaleMut(sin_half_angle);
-            return Self.fromVec3(w, mut_axis);
+            return Self.fromVec3(w, axis.normalized().scale(sin_half_angle));
         }
 
         /// `v` components take in radians
-        pub fn fromEulerAngles(v: Vec3Base(T)) Self {
+        pub fn fromEulerAngles(v: Vec(3, T)) Self {
             const x = Self.fromAxis(v.x(), Vec3.right());
             const y = Self.fromAxis(v.y(), Vec3.up());
             const z = Self.fromAxis(v.z(), Vec3.forward());
@@ -1200,21 +797,6 @@ pub fn QuaternionBase(comptime T: type) type {
         }
     };
 }
-
-// Builtin Vec2Base types
-pub const Vec2 = Vec2Base(f32);
-pub const Vec2d = Vec2Base(f64);
-pub const Vec2i = Vec2Base(i32);
-
-// Builtin Vec3Base types
-pub const Vec3 = Vec3Base(f32);
-pub const Vec3d = Vec3Base(f64);
-pub const Vec3i = Vec3Base(i32);
-
-// Builtin Vec4Base types
-pub const Vec4 = Vec4Base(f32);
-pub const Vec4d = Vec4Base(f64);
-pub const Vec4i = Vec4Base(i32);
 
 // Builtin Mat2Base types
 pub const Mat2 = Mat2Base(f32);

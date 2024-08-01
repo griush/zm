@@ -44,6 +44,19 @@ pub fn main() !void {
     std.debug.print("Done, took: {d}ms\n", .{timer.milliElapsed()});
     timer.reset();
 
+    // dot product
+    for (0..count - 1) |i| {
+        const a = vec3s.items[i];
+        const b = vec3s.items[i + 1];
+
+        const c = a.dot(b);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, timer.milliElapsed() });
+    timer.reset();
+
     // Normalize
     for (0..count) |i| {
         var v = vec3s.items[i];
@@ -57,8 +70,6 @@ pub fn main() !void {
 
     // Cross + scale
     for (0..count - 1) |i| {
-        // const a = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
-        // const b = zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32));
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
@@ -74,7 +85,6 @@ pub fn main() !void {
     // mat mul vec
     for (0..count) |i| {
         const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
-        // const v = zm.Vec4.from(random.float(f32), random.float(f32), random.float(f32), random.float(f32));
         const v = zm.Vec4.fromVec3(vec3s.items[i], 1.0);
         const r = zm.Mat4.multiplyByVec4(m, v);
 
