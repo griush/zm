@@ -1,5 +1,7 @@
 const std = @import("std");
 
+const root = @import("root.zig");
+
 pub fn Vec(comptime len: u8, comptime T: type) type {
     const type_info = @typeInfo(T);
     switch (type_info) {
@@ -217,6 +219,23 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             }
         }
 
+        /// No extrapolation. Clamps `t`.
+        ///
+        /// `T` must be `.Float`.
+        pub fn lerp(a: Self, b: Self, t: Float(precision)) Self {
+            if (type_info != .Float) {
+                @compileError("lerp is not defined for type " ++ @typeName(T));
+            }
+
+            var result = Self.zero();
+
+            for (0..len) |i| {
+                result.data[i] = root.lerp(a.data[i], b.data[i], t);
+            }
+
+            return result;
+        }
+
         // TODO: Finish format
         // /// This function allows `Vectors` to be formated by Zig's `std.fmt`.
         // /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.up() });`
@@ -231,7 +250,5 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         //
         //     try writer.print("(" ++ ("{d}, " ** len) ++ ")", .{ });
         // }
-
-        // TODO: Lerp
     };
 }

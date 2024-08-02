@@ -6,11 +6,10 @@ pub fn main() !void {
     const radians = zm.toRadians(180.0); // also toDegrees
     std.debug.print("Radians: {d}\n", .{radians});
 
-    // For each type, there is a base that tekes in the inner type
-    // Example: Vec2Base(f32), Mat3Base(u16), QuaternionBase(f64)...
-    // There are builtin types: Vec2, Vec3, Mat2, Mat4... which are aliases
-    // for ...Base(f32), there are also type aliases ending with 'i'(implementing
-    // i32) and ending with 'd'(implementing f64)
+    // Vector types are created with zm.Vec function.
+    // It takes the number of elements(size) and the base type and returns
+    // the vector type. There are however builtin types: VecX => Vector of size X
+    // and f32 as base type, and VecXd => Vector of size X and f64 as base type.
     const v1 = zm.Vec2.from(.{ 2.0, 1.5 });
     std.debug.print("v1: {any}\n", .{v1});
     std.debug.print("v1.neg(): {any}\n", .{v1.neg()});
@@ -18,10 +17,9 @@ pub fn main() !void {
     std.debug.print("v1.length(): {d}\n", .{v1.length()});
 
     // Similar operations with Vec3 and Vec4
-    // lerp temporarily removed
-    // const v2 = zm.Vec3.up();
-    // const v3 = zm.Vec3.right();
-    // std.debug.print("mid point: {any}\n", .{zm.Vec3.lerp(v2, v3, 0.5)});
+    const v2 = zm.Vec3.up();
+    const v3 = zm.Vec3.right();
+    std.debug.print("mid point: {any}\n", .{zm.Vec3.lerp(v2, v3, 0.5)});
 
     // Transformation matrices
     const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
