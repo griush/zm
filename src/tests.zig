@@ -3,6 +3,10 @@ const zm = @import("zm");
 
 const float_tolerance = std.math.floatEps(f32);
 
+// test {
+//     std.testing.refAllDeclsRecursive(zm);
+// }
+
 test "Vec initialization" {
     const v = zm.Vec2.from(.{ 2, -1 });
     const v2 = zm.Vec3.from(.{ 1.5, -2, 4.2 });
@@ -62,6 +66,20 @@ test "Vec normalize" {
     try std.testing.expectEqual(@Vector(3, f32){ 1, 0, 0 }, x.data);
     try std.testing.expectEqual(@Vector(3, f32){ 0, 1, 0 }, y.data);
     try std.testing.expectEqual(@Vector(3, f32){ 0, 0, 1 }, z.data);
+}
+
+test "Vec distance" {
+    const origin = zm.Vec3.zero();
+    const up = zm.Vec3.up();
+
+    try std.testing.expectEqual(1.0, zm.Vec3.distance(origin, up));
+}
+
+test "Vec angle" {
+    const right = zm.Vec3.right();
+    const up = zm.Vec3.up();
+
+    try std.testing.expectApproxEqAbs(zm.toRadians(90.0), right.angle(up), float_tolerance);
 }
 
 test "Mat2 scale" {

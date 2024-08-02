@@ -38,7 +38,7 @@ pub fn main() !void {
     const count = 100_000_000;
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     for (0..count) |_| {
-        try vec3s.append(zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32)));
+        try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{timer.milliElapsed()});
@@ -59,9 +59,7 @@ pub fn main() !void {
 
     // Normalize
     for (0..count) |i| {
-        var v = vec3s.items[i];
-        _ = v.normalize();
-
+        const v = vec3s.items[i].normalized();
         std.mem.doNotOptimizeAway(v);
     }
 
@@ -73,8 +71,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        var c = a.cross(b);
-        _ = c.scaleMut(0.1);
+        const c = a.cross(b).scale(2.0);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -85,7 +82,8 @@ pub fn main() !void {
     // mat mul vec
     for (0..count) |i| {
         const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
-        const v = zm.Vec4.fromVec3(vec3s.items[i], 1.0);
+        const v3 = vec3s.items[i];
+        const v = zm.Vec4.from(.{ v3.x(), v3.y(), v3.z(), 1.0 });
         const r = zm.Mat4.multiplyByVec4(m, v);
 
         std.mem.doNotOptimizeAway(r);
