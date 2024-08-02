@@ -54,17 +54,14 @@ const Vec = @import("vector.zig").Vec;
 // Builtin Vec2Base types
 pub const Vec2 = Vec(2, f32);
 pub const Vec2d = Vec(2, f64);
-pub const Vec2i = Vec(2, i32);
 
 // Builtin Vec3Base types
 pub const Vec3 = Vec(3, f32);
 pub const Vec3d = Vec(3, f64);
-pub const Vec3i = Vec(3, i32);
 
 // Builtin Vec4Base types
 pub const Vec4 = Vec(4, f32);
 pub const Vec4d = Vec(4, f64);
-pub const Vec4i = Vec(4, i32);
 
 const matrix = @import("matrix.zig");
 pub const Mat2Base = matrix.Mat2Base;
