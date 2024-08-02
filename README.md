@@ -6,7 +6,7 @@ SIMD math library fully cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.367+a57479afc`.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.781+f03d54f06`.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
