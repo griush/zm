@@ -23,7 +23,7 @@ const zm = @import("zm");
 ### Getting Started
 For a full example of the usage along with Zig's build system see: [example](/example/).
 
-Simple example for game development:
+Simple example for game development.
 ```zig
 const zm = @import("zm");
 const std = @import("std");
@@ -45,6 +45,8 @@ pub fn main() !void {
     // Cleanup
 }
 ```
+
+You can also see a full, working example  [here](https://github.com/griush/zig-opengl-example).
 
 ## Benchmarks
 See [benchmarks](/src/benchmark.zig).
