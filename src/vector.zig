@@ -183,7 +183,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return @reduce(.Add, l.data * r.data);
         }
 
-        pub fn cross(l: Self, r: Self) Self {
+        pub fn cross(l: Vec(3, T), r: Vec(3, T)) Vec(3, T) {
             if (len != 3) {
                 @compileError("Vector parameters must have three elements for cross() to be defined");
             }
@@ -193,7 +193,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             const other1 = @shuffle(T, r.data, r.data, [3]u8{ 2, 0, 1 });
             const other2 = @shuffle(T, r.data, r.data, [3]u8{ 1, 2, 0 });
 
-            return Self{
+            return Vec(3, T){
                 .data = self1 * other2 - self2 * other1,
             };
         }
