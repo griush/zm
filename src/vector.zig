@@ -188,13 +188,12 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
                 @compileError("Vector parameters must have three elements for cross() to be defined");
             }
 
-            const self1 = @shuffle(T, l.data, l.data, [3]u8{ 1, 2, 0 });
-            const self2 = @shuffle(T, l.data, l.data, [3]u8{ 2, 0, 1 });
-            const other1 = @shuffle(T, r.data, r.data, [3]u8{ 2, 0, 1 });
-            const other2 = @shuffle(T, r.data, r.data, [3]u8{ 1, 2, 0 });
-
             return Vec(3, T){
-                .data = self1 * other2 - self2 * other1,
+                .data = .{
+                    l.y() * r.z() - l.z() * r.y(),
+                    l.z() * r.x() - l.x() * r.z(),
+                    l.x() * r.y() - l.y() * r.x(),
+                },
             };
         }
 

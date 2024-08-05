@@ -68,6 +68,13 @@ test "Vec normalize" {
     try std.testing.expectEqual(@Vector(3, f32){ 0, 0, 1 }, z.data);
 }
 
+test "Vec3 cross" {
+    const v1 = zm.Vec3.up();
+    const v2 = zm.Vec3.back();
+
+    try std.testing.expectEqual(zm.Vec3.left(), v1.cross(v2));
+}
+
 test "Vec distance" {
     const origin = zm.Vec3.zero();
     const up = zm.Vec3.up();
