@@ -401,19 +401,16 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        /// From https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
         pub fn lookAt(eye: Vec(3, T), target: Vec(3, T), up: Vec(3, T)) Self {
-            const f = target.sub(eye).normalized();
-            const up_normalized = up.normalized();
-
-            const s = f.cross(up_normalized);
-            const u = s.normalized().cross(f);
+            const f = Vec(3, T).sub(target, eye).normalized();
+            const s = f.cross(up).normalized();
+            const u = s.cross(f);
 
             return Self{
                 .data = .{
-                    s.x(),  s.y(),  s.z(),  0,
-                    u.x(),  u.y(),  u.z(),  0,
-                    -f.x(), -f.y(), -f.z(), 0,
+                    s.x(),  s.y(),  s.z(),  -s.dot(eye),
+                    u.x(),  u.y(),  u.z(),  -u.dot(eye),
+                    -f.x(), -f.y(), -f.z(), f.dot(eye),
                     0,      0,      0,      1,
                 },
             };

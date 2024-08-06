@@ -6,7 +6,7 @@ SIMD math library fully cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.842+a655c15c4`.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.850+ddcb7b1c1`.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
@@ -35,7 +35,7 @@ pub fn main() !void {
 
     const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
     const view = zm.Mat4.translation(0.0, 0.75, 5.0);
-    const view_proj = zm.Mat4.multiply(projection, view);
+    const view_proj = projection.multiply(view);
 
     // Upload data to shader using `&view_proj`
     gl.NamedBufferSubData(ubo, 0, @sizeOf(zm.Mat4), &view_proj);
