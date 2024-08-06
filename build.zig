@@ -26,7 +26,7 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run zm tests");
     const tests = b.addTest(.{
         .name = "zm-tests",
-        .root_source_file = b.path("src/tests.zig"),
+        .root_source_file = b.path("test/tests.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -40,7 +40,7 @@ pub fn build(b: *std.Build) void {
     const benchmark_step = b.step("benchmark", "Run zm benchmark");
     const benchmark = b.addExecutable(.{
         .name = "zm-benchmark",
-        .root_source_file = b.path("src/benchmark.zig"),
+        .root_source_file = b.path("test/benchmark.zig"),
         .target = target,
         .optimize = optimize,
     });
