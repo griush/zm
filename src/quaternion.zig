@@ -165,7 +165,7 @@ pub fn QuaternionBase(comptime T: type) type {
 
             const theta = std.math.acos(root.clamp(cos_theta, -1, 1));
             const denominator: T = @sin(theta);
-            const pt = (1.0 - t) * theta;
+            const pt = (1.0 - tc) * theta;
             const spt = @sin(pt);
             const sptp = am.scale(spt);
 
