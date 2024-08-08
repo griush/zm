@@ -247,7 +247,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         //     _ = fmt;
         //     _ = options;
         //
-        //     try writer.print("(" ++ ("{d}, " ** len) ++ ")", .{ });
+        //     try writer.print("(" ++ ("{d}, " ** len) ++ ")", .{});
         // }
     };
 }
