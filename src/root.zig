@@ -36,16 +36,9 @@ pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(
 }
 
 /// No extrapolation, clamps `t`.
-pub fn lerp(a: anytype, b: @TypeOf(a), t: @TypeOf(a)) @TypeOf(a) {
-    const T = @TypeOf(a);
-    const type_info = @typeInfo(T);
-    return switch (type_info) {
-        .Float, .ComptimeFloat => {
-            const l = clamp(t, 0.0, 1.0);
-            return (1 - l) * a + l * b;
-        },
-        else => @compileError("lerp not implemented for " ++ @typeName(T)),
-    };
+pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
+    const T = @TypeOf(a, b, t);
+    return @mulAdd(T, b - a, t, a);
 }
 
 // Vectors

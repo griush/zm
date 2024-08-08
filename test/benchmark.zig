@@ -18,7 +18,7 @@ pub fn main() !void {
         try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
     }
 
-    std.debug.print("Done, took: {d}ms\n", .{timer.lap()});
+    std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
 
     // dot product
     for (0..count - 1) |i| {
@@ -39,6 +39,18 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // Lerp
+    for (0..count - 1) |i| {
+        const a = vec3s.items[i];
+        const b = vec3s.items[i + 1];
+
+        const c = zm.Vec3.lerp(a, b, 0.5);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec3 Lerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
     // Cross + scale
     for (0..count - 1) |i| {

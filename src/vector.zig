@@ -29,7 +29,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
 
         pub fn zero() Self {
             return Self{
-                .data = @splat(0.0),
+                .data = @splat(@as(T, 0)),
             };
         }
 
@@ -163,20 +163,10 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn normalized(self: Self) Vec(len, Float(precision)) {
-            if (self.length() == 0.0) {
-                return Vec(len, Float(precision)).zero();
-            }
+            const norm = self.length();
+            if (len == 0.0) return Vec(len, Float(precision)).zero();
 
-            switch (type_info) {
-                .Float => {
-                    return self.scale(1.0 / self.length());
-                },
-                .Int => {
-                    const v = Vec(len, Float(precision)).from(@floatFromInt(self.data));
-                    return v.scale(1.0 / v.length());
-                },
-                else => unreachable,
-            }
+            return self.scale(1.0 / norm);
         }
 
         pub fn dot(l: Self, r: Self) T {
@@ -222,17 +212,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         ///
         /// `T` must be `.Float`.
         pub fn lerp(a: Self, b: Self, t: Float(precision)) Self {
-            if (type_info != .Float) {
-                @compileError("lerp is not defined for type " ++ @typeName(T));
-            }
-
-            var result = Self.zero();
-
-            for (0..len) |i| {
-                result.data[i] = root.lerp(a.data[i], b.data[i], t);
-            }
-
-            return result;
+            return Self{
+                .data = @mulAdd(@Vector(len, T), b.data - a.data, @splat(t), a.data),
+            };
         }
 
         // TODO: Finish format
