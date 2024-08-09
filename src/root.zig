@@ -41,6 +41,10 @@ pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     return @mulAdd(T, b - a, t, a);
 }
 
+pub fn sigmoid(value: anytype) @TypeOf(value) {
+    return 1.0 / (1.0 + @exp(-value));
+}
+
 // Vectors
 const Vec = @import("vector.zig").Vec;
 

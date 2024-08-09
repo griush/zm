@@ -12,7 +12,7 @@ pub fn main() !void {
 
     var timer = try std.time.Timer.start();
     std.debug.print("Generating random data...\n", .{});
-    const count = 100_000_000;
+    const count = 50_000_000;
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     for (0..count) |_| {
         try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
@@ -69,7 +69,7 @@ pub fn main() !void {
         const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
         const v3 = vec3s.items[i];
         const v = zm.Vec4.from(.{ v3.x(), v3.y(), v3.z(), 1.0 });
-        const r = zm.Mat4.multiplyByVec4(m, v);
+        const r = zm.Mat4.multiplyVec4(m, v);
 
         std.mem.doNotOptimizeAway(r);
     }

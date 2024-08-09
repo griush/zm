@@ -473,7 +473,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn multiplyByVec4(m: Self, v: Vec(4, T)) Vec(4, T) {
+        pub fn multiplyVec4(m: Self, v: Vec(4, T)) Vec(4, T) {
             return Vec(4, T){
                 .data = .{
                     m.data[0] * v.x() + m.data[1] * v.y() + m.data[2] * v.z() + m.data[3] * v.w(),

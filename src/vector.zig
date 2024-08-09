@@ -4,10 +4,10 @@ const root = @import("root.zig");
 
 pub fn Vec(comptime len: u8, comptime T: type) type {
     const type_info = @typeInfo(T);
-    switch (type_info) {
+    comptime switch (type_info) {
         .Int, .Float => {},
         else => @compileError("Vec only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
-    }
+    };
 
     return struct {
         const Self = @This();
@@ -34,9 +34,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn right() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ 1, 0, 0 },
@@ -44,9 +44,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn left() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ -1, 0, 0 },
@@ -54,9 +54,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn up() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ 0, 1, 0 },
@@ -64,9 +64,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn down() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ 0, -1, 0 },
@@ -74,9 +74,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn forward() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ 0, 0, 1 },
@@ -84,9 +84,9 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         }
 
         pub fn back() Self {
-            if (len != 3) {
+            comptime if (len != 3) {
                 @compileError("Vector must have three elements");
-            }
+            };
 
             return Self{
                 .data = .{ 0, 0, -1 },
