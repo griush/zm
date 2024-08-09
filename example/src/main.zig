@@ -23,7 +23,11 @@ pub fn main() !void {
 
     // Transformation matrices
     const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
-    const view = zm.Mat4.translation(0.0, 0.75, 5.0);
+    const view = zm.Mat4.lookAt(zm.Vec3.from(.{ 3, 3, 3 }), zm.Vec3.zero(), zm.Vec3.up());
     const view_proj = zm.Mat4.multiply(projection, view);
     _ = view_proj; // Use view proj
+
+    const rotation = zm.Quaternion.fromEulerAngles(zm.Vec3.up().scale(zm.toRadians(45.0))); // Set rotation matrix 45 degrees on y axis
+    const model = zm.Mat4.translation(2, -3, 0).multiply(zm.Mat4.fromQuaternion(rotation)).multiply(zm.Mat4.scaling(1.5, 1.5, 1.5));
+    _ = model; // Use model
 }
