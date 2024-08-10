@@ -1,6 +1,6 @@
 const Vec = @import("vector.zig").Vec;
-const clamp = @import("root.zig").clamp;
-const lerp = @import("root.zig").lerp;
+const clamp = @import("zm.zig").clamp;
+const lerp = @import("zm.zig").lerp;
 
 const std = @import("std");
 

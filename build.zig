@@ -3,7 +3,7 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const root_source_file = b.path("src/root.zig");
+    const root_source_file = b.path("src/zm.zig");
 
     // Zig module
     const zm = b.addModule("zm", .{
