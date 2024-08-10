@@ -52,4 +52,4 @@ pub fn main() !void {
 You can also see a full, working example  [here](https://github.com/griush/zig-opengl-example).
 
 ## Benchmarks
-See [benchmarks](/src/benchmark.zig).
+See [benchmarks](/test/benchmark.zig).
