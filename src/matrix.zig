@@ -18,11 +18,11 @@ pub fn Mat2Base(comptime Element: type) type {
         data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: Element) Self {
+        pub inline fn diagonal(value: Element) Self {
             return Self{
                 .data = .{
-                    r, 0,
-                    0, r,
+                    value, 0,
+                    0,     value,
                 },
             };
         }
@@ -168,12 +168,12 @@ pub fn Mat3Base(comptime Element: type) type {
         data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: Element) Self {
+        pub inline fn diagonal(value: Element) Self {
             return Self{
                 .data = .{
-                    r, 0, 0,
-                    0, r, 0,
-                    0, 0, r,
+                    value, 0,     0,
+                    0,     value, 0,
+                    0,     0,     value,
                 },
             };
         }
@@ -318,13 +318,13 @@ pub fn Mat4Base(comptime Element: type) type {
         data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: Element) Self {
+        pub inline fn diagonal(value: Element) Self {
             return Self{
                 .data = .{
-                    r, 0, 0, 0,
-                    0, r, 0, 0,
-                    0, 0, r, 0,
-                    0, 0, 0, r,
+                    value, 0,     0,     0,
+                    0,     value, 0,     0,
+                    0,     0,     value, 0,
+                    0,     0,     0,     value,
                 },
             };
         }
