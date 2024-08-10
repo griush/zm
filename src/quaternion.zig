@@ -6,21 +6,21 @@ const std = @import("std");
 
 const root = @This();
 
-pub fn QuaternionBase(comptime T: type) type {
-    const type_info = @typeInfo(T);
+pub fn QuaternionBase(comptime Element: type) type {
+    const type_info = @typeInfo(Element);
     switch (type_info) {
         .Float => {},
-        else => @compileError("QuaternionBase only supports floating point types. Type '" ++ @typeName(T) ++ "' is not supported"),
+        else => @compileError("QuaternionBase only supports floating point types. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
     return struct {
         const Self = @This();
 
         // Data
-        w: T,
-        x: T,
-        y: T,
-        z: T,
+        w: Element,
+        x: Element,
+        y: Element,
+        z: Element,
 
         pub inline fn identity() Self {
             return Self{
@@ -31,7 +31,7 @@ pub fn QuaternionBase(comptime T: type) type {
             };
         }
 
-        pub inline fn from(w: T, x: T, y: T, z: T) Self {
+        pub inline fn from(w: Element, x: Element, y: Element, z: Element) Self {
             return Self{
                 .w = w,
                 .x = x,
@@ -40,43 +40,43 @@ pub fn QuaternionBase(comptime T: type) type {
             };
         }
 
-        pub fn fromVec3(w: T, axis: Vec(3, T)) Self {
+        pub fn fromVec3(w: Element, axis: Vec(3, Element)) Self {
             return Self.from(w, axis.x(), axis.y(), axis.z());
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: Vec(3, T), radians: T) Self {
+        pub fn fromAxisAngle(axis: Vec(3, Element), radians: Element) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
             return Self.fromVec3(w, axis.normalized().scale(sin_half_angle));
         }
 
         /// `v` components take in radians
-        pub fn fromEulerAngles(v: Vec(3, T)) Self {
-            const x = Self.fromAxisAngle(Vec(3, T).right(), v.x());
-            const y = Self.fromAxisAngle(Vec(3, T).up(), v.y());
-            const z = Self.fromAxisAngle(Vec(3, T).forward(), v.z());
+        pub fn fromEulerAngles(v: Vec(3, Element)) Self {
+            const x = Self.fromAxisAngle(Vec(3, Element).right(), v.x());
+            const y = Self.fromAxisAngle(Vec(3, Element).up(), v.y());
+            const z = Self.fromAxisAngle(Vec(3, Element).forward(), v.z());
 
             return z.multiply(y.multiply(x));
         }
 
         // TODO: Constructor from rotation matrix
 
-        pub fn add(self: Self, other: Self) Self {
-            return Self.from(self.w + other.w, self.x + other.x, self.y + other.y, self.z + other.z);
+        pub fn add(lhs: Self, rhs: Self) Self {
+            return Self.from(lhs.w + rhs.w, lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
         }
 
-        pub fn sub(self: Self, other: Self) Self {
-            return Self.from(self.w - other.w, self.x - other.x, self.y - other.y, self.z - other.z);
+        pub fn sub(lhs: Self, rhs: Self) Self {
+            return Self.from(lhs.w - rhs.w, lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
         }
 
         /// Non-mutable scale function
-        pub fn scale(self: Self, scalar: T) Self {
+        pub fn scale(self: Self, scalar: Element) Self {
             return Self.from(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
         }
 
         /// Mutable scale function
-        pub fn scaleMut(self: *Self, scalar: T) Self {
+        pub fn scaleMut(self: *Self, scalar: Element) Self {
             self.w *= scalar;
             self.x *= scalar;
             self.y *= scalar;
@@ -106,12 +106,12 @@ pub fn QuaternionBase(comptime T: type) type {
             return Self.from(self.w, -self.x, -self.y, -self.z);
         }
 
-        pub fn multiply(self: Self, other: Self) Self {
+        pub fn multiply(lhs: Self, rhs: Self) Self {
             return Self{
-                .w = self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
-                .x = self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
-                .y = self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
-                .z = self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w,
+                .w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z,
+                .x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
+                .y = lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x,
+                .z = lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w,
             };
         }
 
@@ -129,22 +129,22 @@ pub fn QuaternionBase(comptime T: type) type {
             };
         }
 
-        pub fn dot(left: Self, right: Self) T {
-            return left.w * right.w + left.x * right.x + left.y * right.y + left.z * right.z;
+        pub fn dot(lhs: Self, rhs: Self) Element {
+            return lhs.w * rhs.w + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
         }
 
         /// No extrapolation. Clamps `t`.
-        pub fn lerp(self: Self, other: Self, t: T) Self {
-            const w = root.lerp(self.w, other.w, t);
-            const x = root.lerp(self.x, other.x, t);
-            const y = root.lerp(self.y, other.y, t);
-            const z = root.lerp(self.z, other.z, t);
+        pub fn lerp(a: Self, b: Self, t: Element) Self {
+            const w = root.lerp(a.w, b.w, t);
+            const x = root.lerp(a.x, b.x, t);
+            const y = root.lerp(a.y, b.y, t);
+            const z = root.lerp(a.z, b.z, t);
 
             return Self.from(w, x, y, z);
         }
 
         /// No extrapolation. Clamps `t`.
-        pub fn slerp(a: Self, b: Self, t: T) Self {
+        pub fn slerp(a: Self, b: Self, t: Element) Self {
             // TODO: Look at https://gitlab.com/bztsrc/slerp-opt
             // and implement fastSlerp
             const tc = clamp(t, 0.0, 1.0);
@@ -164,7 +164,7 @@ pub fn QuaternionBase(comptime T: type) type {
             }
 
             const theta = std.math.acos(root.clamp(cos_theta, -1, 1));
-            const denominator: T = @sin(theta);
+            const denominator: Element = @sin(theta);
             const pt = (1.0 - tc) * theta;
             const spt = @sin(pt);
             const sptp = am.scale(spt);

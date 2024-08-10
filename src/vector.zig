@@ -203,7 +203,7 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
         }
 
         pub fn distance(a: Self, b: Self) Float(precision) {
-            return Self.from(b.sub(a)).length();
+            return b.sub(a).length();
         }
 
         pub fn angle(a: Self, b: Self) Float(precision) {

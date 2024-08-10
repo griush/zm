@@ -73,9 +73,10 @@ pub fn Mat2Base(comptime Element: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: Element) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(@Vector(4, Element), @splat(scalar)),
+            };
         }
 
         pub fn multiply(lhs: Self, rhs: Self) Self {
@@ -241,9 +242,10 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: Element) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(@Vector(9, Element), @splat(scalar)),
+            };
         }
 
         pub fn multiplyVec3(self: Self, vec: Vec(3, Element)) Vec(3, Element) {
@@ -449,9 +451,10 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: Element) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(@Vector(16, Element), @splat(scalar)),
+            };
         }
 
         pub fn multiply(lhs: Self, rhs: Self) Self {
