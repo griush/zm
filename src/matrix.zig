@@ -1,7 +1,8 @@
 const Vec = @import("vector.zig").Vec;
 const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 
-/// Returns a Mat2 type with T being the element type.
+/// Returns a Mat2 type with `Element` being the element type.
+/// Matrices are row-major.
 pub fn Mat2Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
@@ -12,7 +13,9 @@ pub fn Mat2Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        data: @Vector(4, Element),
+        const DataType = @Vector(4, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(r: Element) Self {
@@ -75,12 +78,12 @@ pub fn Mat2Base(comptime Element: type) type {
 
         pub fn scale(self: Self, scalar: Element) Self {
             return Self{
-                .data = self.data * @as(@Vector(4, Element), @splat(scalar)),
+                .data = self.data * @as(DataType, @splat(scalar)),
             };
         }
 
         pub fn multiply(lhs: Self, rhs: Self) Self {
-            var data: @Vector(4, Element) = @splat(0.0);
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 2) : (row += 1) {
@@ -148,7 +151,8 @@ pub fn Mat2Base(comptime Element: type) type {
     };
 }
 
-/// Returns a Mat2 type with T being the element type.
+/// Returns a Mat2 type with `Element` being the element type.
+/// Matrices are row-major.
 pub fn Mat3Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
@@ -159,7 +163,9 @@ pub fn Mat3Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        data: @Vector(9, Element),
+        const DataType = @Vector(9, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(r: Element) Self {
@@ -244,7 +250,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn scale(self: Self, scalar: Element) Self {
             return Self{
-                .data = self.data * @as(@Vector(9, Element), @splat(scalar)),
+                .data = self.data * @as(DataType, @splat(scalar)),
             };
         }
 
@@ -260,7 +266,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         /// Multiplies two matrices together
         pub fn multiply(lhs: Self, rhs: Self) Self {
-            var data: @Vector(9, Element) = @splat(0.0);
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 3) : (row += 1) {
@@ -295,7 +301,8 @@ pub fn Mat3Base(comptime Element: type) type {
     };
 }
 
-/// Returns a Mat4 type with T being the element type.
+/// Returns a Mat4 type with `Element` being the element type.
+/// Matrices are row-major.
 pub fn Mat4Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
@@ -306,7 +313,9 @@ pub fn Mat4Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        data: @Vector(16, Element),
+        const DataType = @Vector(16, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(r: Element) Self {
@@ -453,12 +462,12 @@ pub fn Mat4Base(comptime Element: type) type {
 
         pub fn scale(self: Self, scalar: Element) Self {
             return Self{
-                .data = self.data * @as(@Vector(16, Element), @splat(scalar)),
+                .data = self.data * @as(DataType, @splat(scalar)),
             };
         }
 
         pub fn multiply(lhs: Self, rhs: Self) Self {
-            var data: @Vector(16, Element) = @splat(0.0);
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 4) : (row += 1) {

@@ -2,6 +2,7 @@ const std = @import("std");
 
 const root = @import("root.zig");
 
+/// Returns a vector type of dimension `len` and `Element` as the element type.
 pub fn Vec(len: comptime_int, comptime Element: type) type {
     const type_info = @typeInfo(Element);
     comptime switch (type_info) {

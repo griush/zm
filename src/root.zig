@@ -1,4 +1,4 @@
-//! zm - SIMD Math library fully cross-platform
+//! zm - Fast, Zig math library, fully cross-platform
 
 const std = @import("std");
 
@@ -26,12 +26,13 @@ pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     return @mulAdd(T, b - a, t, a);
 }
 
+/// `value` must be numeric.
 pub fn sigmoid(value: anytype) @TypeOf(value) {
     return 1.0 / (1.0 + @exp(-value));
 }
 
 // Vectors
-const Vec = @import("vector.zig").Vec;
+pub const Vec = @import("vector.zig").Vec;
 
 // Builtin Vec2Base types
 pub const Vec2 = Vec(2, f32);
