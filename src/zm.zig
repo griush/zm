@@ -1,4 +1,5 @@
-//! zm - Fast, Zig math library, fully cross-platform
+//! zm - Fast, Zig math library, fully cross-platform.
+//! zm uses a +Y-up, right-handed coordinate system
 
 const std = @import("std");
 
