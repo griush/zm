@@ -12,10 +12,14 @@ pub fn main() !void {
 
     var timer = try std.time.Timer.start();
     std.debug.print("Generating random data...\n", .{});
-    const count = 50_000_000;
+    const count = 75_000_000;
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     for (0..count) |_| {
         try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
+    }
+    var vec4s = try std.ArrayList(zm.Vec4).initCapacity(g_allocator, count);
+    for (0..count) |_| {
+        try vec4s.append(zm.Vec4.from(.{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) }));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
@@ -31,6 +35,17 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    for (0..count - 1) |i| {
+        const a = vec4s.items[i];
+        const b = vec4s.items[i + 1];
+
+        const c = a.dot(b);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec4 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
     // Normalize
     for (0..count) |i| {
@@ -75,4 +90,22 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Mat4 multiply Vec4({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // create translation + transpose
+    for (0..count) |i| {
+        const m = zm.Mat4.translation(0, @floatFromInt(i), 0);
+        const t = m.transpose();
+        std.mem.doNotOptimizeAway(t);
+    }
+
+    std.debug.print("Test - Mat4 translation + transpose({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // create translation + inverse
+    for (0..count) |i| {
+        const m = zm.Mat4.translation(0, @floatFromInt(i), 0);
+        const t = m.inverse();
+        std.mem.doNotOptimizeAway(t);
+    }
+
+    std.debug.print("Test - Mat4 translation + iverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 }

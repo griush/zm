@@ -97,17 +97,13 @@ test "Mat2 scale" {
 }
 
 test "Mat3 scale" {
-    var identity = zm.Mat3.identity();
-    _ = identity.scaleMut(3.0);
-
-    try std.testing.expectEqual(zm.Mat3.diagonal(3.0).data, identity.data);
+    const result = zm.Mat3.identity().scale(3.0);
+    try std.testing.expectEqual(zm.Mat3.diagonal(3.0).data, result.data);
 }
 
 test "Mat4 scale" {
-    var identity = zm.Mat4.identity();
-    _ = identity.scaleMut(3.0);
-
-    try std.testing.expectEqual(zm.Mat4.diagonal(3.0).data, identity.data);
+    const result = zm.Mat4.identity().scale(3.0);
+    try std.testing.expectEqual(zm.Mat4.diagonal(3.0).data, result.data);
 }
 
 test "Mat4 multiply" {

@@ -1,21 +1,24 @@
 const Vec = @import("vector.zig").Vec;
 const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 
-/// Returns a Mat2 type with T being the element type.
-pub fn Mat2Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
+/// Returns a Mat2 type with `Element` being the element type.
+/// Matrices are row-major.
+pub fn Mat2Base(comptime Element: type) type {
+    const type_info = @typeInfo(Element);
     switch (type_info) {
         .Float => {},
-        else => @compileError("Mat2Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+        else => @compileError("Mat2Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
     return struct {
         const Self = @This();
 
-        data: @Vector(4, T),
+        const DataType = @Vector(4, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: T) Self {
+        pub inline fn diagonal(r: Element) Self {
             return Self{
                 .data = .{
                     r, 0,
@@ -32,7 +35,7 @@ pub fn Mat2Base(comptime T: type) type {
         // Transformations
 
         /// `angle` takes in radians
-        pub fn rotation(angle: T) Self {
+        pub fn rotation(angle: Element) Self {
             const a = angle;
 
             return Self{
@@ -43,7 +46,7 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn scaling(sx: T, sy: T) Self {
+        pub fn scaling(sx: Element, sy: Element) Self {
             return Self{
                 .data = .{
                     sx, 0,
@@ -52,7 +55,7 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn scalingVec2(s: Vec(2, T)) Self {
+        pub fn scalingVec2(s: Vec(2, Element)) Self {
             return Self{
                 .data = .{
                     s.x(), 0,
@@ -61,9 +64,9 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn add(l: Self, r: Self) Self {
+        pub fn add(lhs: Self, rhs: Self) Self {
             return Self{
-                .data = l.data + r.data,
+                .data = lhs.data + rhs.data,
             };
         }
 
@@ -73,13 +76,14 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(DataType, @splat(scalar)),
+            };
         }
 
-        pub fn multiply(l: Self, r: Self) Self {
-            var data: @Vector(4, T) = @splat(0.0);
+        pub fn multiply(lhs: Self, rhs: Self) Self {
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 2) : (row += 1) {
@@ -87,7 +91,7 @@ pub fn Mat2Base(comptime T: type) type {
                 while (col < 2) : (col += 1) {
                     var e: usize = 0;
                     while (e < 2) : (e += 1) {
-                        data[col + row * 2] += l.data[e + row * 2] * r.data[e * 2 + col];
+                        data[col + row * 2] += lhs.data[e + row * 2] * rhs.data[e * 2 + col];
                     }
                 }
             }
@@ -97,8 +101,8 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn multiplyVec2(self: Self, vec: Vec(2, T)) Vec(2, T) {
-            return Vec(2, T){
+        pub fn multiplyVec2(self: Self, vec: Vec(2, Element)) Vec(2, Element) {
+            return Vec(2, Element){
                 .data = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y(),
                     self.data[2] * vec.x() + self.data[3] * vec.y(),
@@ -106,7 +110,7 @@ pub fn Mat2Base(comptime T: type) type {
             };
         }
 
-        pub fn determinant(self: Self) T {
+        pub fn determinant(self: Self) Element {
             const a = self.data[0];
             const b = self.data[1];
             const c = self.data[2];
@@ -147,21 +151,24 @@ pub fn Mat2Base(comptime T: type) type {
     };
 }
 
-/// Returns a Mat2 type with T being the element type.
-pub fn Mat3Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
+/// Returns a Mat2 type with `Element` being the element type.
+/// Matrices are row-major.
+pub fn Mat3Base(comptime Element: type) type {
+    const type_info = @typeInfo(Element);
     switch (type_info) {
         .Float => {},
-        else => @compileError("Mat3Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+        else => @compileError("Mat3Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
     return struct {
         const Self = @This();
 
-        data: @Vector(9, T),
+        const DataType = @Vector(9, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: T) Self {
+        pub inline fn diagonal(r: Element) Self {
             return Self{
                 .data = .{
                     r, 0, 0,
@@ -176,7 +183,7 @@ pub fn Mat3Base(comptime T: type) type {
             return Self.diagonal(1);
         }
 
-        pub fn translation(tx: T, ty: T) Self {
+        pub fn translation(tx: Element, ty: Element) Self {
             return Self{
                 .data = .{
                     1, 0, tx,
@@ -186,7 +193,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn translationVec2(v: Vec(2, T)) Self {
+        pub fn translationVec2(v: Vec(2, Element)) Self {
             return Self{
                 .data = .{
                     1, 0, v.x(),
@@ -197,7 +204,7 @@ pub fn Mat3Base(comptime T: type) type {
         }
 
         /// `angle` takes in radians
-        pub fn rotation(angle: T) Self {
+        pub fn rotation(angle: Element) Self {
             const a = angle;
 
             return Self{
@@ -209,7 +216,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn scaling(sx: T, sy: T) Self {
+        pub fn scaling(sx: Element, sy: Element) Self {
             return Self{
                 .data = .{
                     sx, 0,  0,
@@ -219,7 +226,7 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn scalingVec2(v: Vec(2, T)) Self {
+        pub fn scalingVec2(v: Vec(2, Element)) Self {
             return Self{
                 .data = .{
                     v.x(), 0,     0,
@@ -229,9 +236,9 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub inline fn add(l: Self, r: Self) Self {
+        pub inline fn add(lhs: Self, rhs: Self) Self {
             return Self{
-                .data = l.data + r.data,
+                .data = lhs.data + rhs.data,
             };
         }
 
@@ -241,13 +248,14 @@ pub fn Mat3Base(comptime T: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(DataType, @splat(scalar)),
+            };
         }
 
-        pub fn multiplyVec3(self: Self, vec: Vec(3, T)) Vec(3, T) {
-            return Vec(3, T){
+        pub fn multiplyVec3(self: Self, vec: Vec(3, Element)) Vec(3, Element) {
+            return Vec(3, Element){
                 .data = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y() + self.data[2] * vec.z(),
                     self.data[3] * vec.x() + self.data[4] * vec.y() + self.data[5] * vec.z(),
@@ -257,8 +265,8 @@ pub fn Mat3Base(comptime T: type) type {
         }
 
         /// Multiplies two matrices together
-        pub fn multiply(l: Self, r: Self) Self {
-            var data: @Vector(9, T) = @splat(0.0);
+        pub fn multiply(lhs: Self, rhs: Self) Self {
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 3) : (row += 1) {
@@ -266,7 +274,7 @@ pub fn Mat3Base(comptime T: type) type {
                 while (col < 3) : (col += 1) {
                     var e: usize = 0;
                     while (e < 3) : (e += 1) {
-                        data[col + row * 3] += l.data[e + row * 3] * r.data[e * 3 + col];
+                        data[col + row * 3] += lhs.data[e + row * 3] * rhs.data[e * 3 + col];
                     }
                 }
             }
@@ -293,21 +301,24 @@ pub fn Mat3Base(comptime T: type) type {
     };
 }
 
-/// Returns a Mat4 type with T being the element type.
-pub fn Mat4Base(comptime T: type) type {
-    const type_info = @typeInfo(T);
+/// Returns a Mat4 type with `Element` being the element type.
+/// Matrices are row-major.
+pub fn Mat4Base(comptime Element: type) type {
+    const type_info = @typeInfo(Element);
     switch (type_info) {
         .Float => {},
-        else => @compileError("Mat4Base only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+        else => @compileError("Mat4Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
     return struct {
         const Self = @This();
 
-        data: @Vector(16, T),
+        const DataType = @Vector(16, Element);
+
+        data: DataType,
 
         /// Creates a diagonal matrix with the given value.
-        pub inline fn diagonal(r: T) Self {
+        pub inline fn diagonal(r: Element) Self {
             return Self{
                 .data = .{
                     r, 0, 0, 0,
@@ -323,7 +334,7 @@ pub fn Mat4Base(comptime T: type) type {
             return Self.diagonal(1);
         }
 
-        pub fn orthographic(left: T, right: T, bottom: T, top: T, near: T, far: T) Self {
+        pub fn orthographic(left: Element, right: Element, bottom: Element, top: Element, near: Element, far: Element) Self {
             return Self{
                 .data = .{
                     2 / (right - left), 0,                  0,                 -(right + left) / (right - left),
@@ -335,7 +346,7 @@ pub fn Mat4Base(comptime T: type) type {
         }
 
         /// `fov` takes in radians
-        pub fn perspective(fov: T, aspect: T, near: T, far: T) Self {
+        pub fn perspective(fov: Element, aspect: Element, near: Element, far: Element) Self {
             return Self{
                 .data = .{
                     1 / (aspect * @tan(fov / 2)), 0,                 0,                            0,
@@ -346,7 +357,7 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn translation(x: T, y: T, z: T) Self {
+        pub fn translation(x: Element, y: Element, z: Element) Self {
             return Self{
                 .data = .{
                     1, 0, 0, x,
@@ -357,13 +368,13 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn translationVec3(vec: Vec(3, T)) Self {
+        pub fn translationVec3(vec: Vec(3, Element)) Self {
             return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
         /// Returns a rotation transformation matrix
         /// `angle` takes in radians
-        pub fn rotation(axis: Vec(3, T), angle: T) Self {
+        pub fn rotation(axis: Vec(3, Element), angle: Element) Self {
             var result = Self.identity();
 
             const r = angle;
@@ -390,7 +401,7 @@ pub fn Mat4Base(comptime T: type) type {
             return result;
         }
 
-        pub fn scaling(x: T, y: T, z: T) Self {
+        pub fn scaling(x: Element, y: Element, z: Element) Self {
             return Self{
                 .data = .{
                     x, 0, 0, 0,
@@ -401,8 +412,8 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn lookAt(eye: Vec(3, T), target: Vec(3, T), up: Vec(3, T)) Self {
-            const f = Vec(3, T).sub(target, eye).normalized();
+        pub fn lookAt(eye: Vec(3, Element), target: Vec(3, Element), up: Vec(3, Element)) Self {
+            const f = Vec(3, Element).sub(target, eye).normalized();
             const s = f.cross(up).normalized();
             const u = s.cross(f);
 
@@ -417,7 +428,7 @@ pub fn Mat4Base(comptime T: type) type {
         }
 
         /// Returns a `Mat4Base(T)` from a `QuaternionBase(T)`
-        pub fn fromQuaternion(q: QuaternionBase(T)) Self {
+        pub fn fromQuaternion(q: QuaternionBase(Element)) Self {
             // From https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
             var result = Self.identity();
 
@@ -437,9 +448,9 @@ pub fn Mat4Base(comptime T: type) type {
             return result;
         }
 
-        pub fn add(l: Self, r: Self) Self {
+        pub fn add(lhs: Self, rhs: Self) Self {
             return Self{
-                .data = l.data + r.data,
+                .data = lhs.data + rhs.data,
             };
         }
 
@@ -449,13 +460,14 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn scaleMut(self: *Self, s: T) Self {
-            self.data *= @splat(s);
-            return self.*;
+        pub fn scale(self: Self, scalar: Element) Self {
+            return Self{
+                .data = self.data * @as(DataType, @splat(scalar)),
+            };
         }
 
-        pub fn multiply(l: Self, r: Self) Self {
-            var data: @Vector(16, T) = @splat(0.0);
+        pub fn multiply(lhs: Self, rhs: Self) Self {
+            var data: DataType = @splat(0.0);
 
             var row: usize = 0;
             while (row < 4) : (row += 1) {
@@ -463,7 +475,7 @@ pub fn Mat4Base(comptime T: type) type {
                 while (col < 4) : (col += 1) {
                     var e: usize = 0;
                     while (e < 4) : (e += 1) {
-                        data[col + row * 4] += l.data[e + row * 4] * r.data[e * 4 + col];
+                        data[col + row * 4] += lhs.data[e + row * 4] * rhs.data[e * 4 + col];
                     }
                 }
             }
@@ -473,8 +485,8 @@ pub fn Mat4Base(comptime T: type) type {
             };
         }
 
-        pub fn multiplyVec4(m: Self, v: Vec(4, T)) Vec(4, T) {
-            return Vec(4, T){
+        pub fn multiplyVec4(m: Self, v: Vec(4, Element)) Vec(4, Element) {
+            return Vec(4, Element){
                 .data = .{
                     m.data[0] * v.x() + m.data[1] * v.y() + m.data[2] * v.z() + m.data[3] * v.w(),
                     m.data[4] * v.x() + m.data[5] * v.y() + m.data[6] * v.z() + m.data[7] * v.w(),

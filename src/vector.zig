@@ -2,18 +2,23 @@ const std = @import("std");
 
 const root = @import("root.zig");
 
-pub fn Vec(comptime len: u8, comptime T: type) type {
-    const type_info = @typeInfo(T);
+/// Returns a vector type of dimension `len` and `Element` as the element type.
+pub fn Vec(len: comptime_int, comptime Element: type) type {
+    const type_info = @typeInfo(Element);
     comptime switch (type_info) {
         .Int, .Float => {},
-        else => @compileError("Vec only supports numerical type. Type '" ++ @typeName(T) ++ "' is not supported"),
+        else => @compileError("Vec only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     };
+
+    if (len < 1) @compileError("Vector len must be positive and non-zero");
 
     return struct {
         const Self = @This();
         const Float = std.meta.Float;
 
-        data: @Vector(len, T),
+        const DataType = [len]Element;
+
+        data: DataType,
 
         pub const precision = switch (type_info) {
             .Int => |int| int.bits,
@@ -21,7 +26,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             else => unreachable,
         };
 
-        pub fn from(in: @Vector(len, T)) Self {
+        pub fn from(in: DataType) Self {
             return Self{
                 .data = in,
             };
@@ -29,7 +34,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
 
         pub fn zero() Self {
             return Self{
-                .data = @splat(@as(T, 0)),
+                .data = [_]Element{0} ** len,
             };
         }
 
@@ -93,7 +98,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             };
         }
 
-        pub fn x(self: Self) T {
+        pub fn x(self: Self) Element {
             if (len < 1) {
                 @compileError("len must be at least 1 to get x component");
             }
@@ -101,7 +106,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return self.data[0];
         }
 
-        pub fn y(self: Self) T {
+        pub fn y(self: Self) Element {
             if (len < 2) {
                 @compileError("len must be at least 2 to get y component");
             }
@@ -109,7 +114,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return self.data[1];
         }
 
-        pub fn z(self: Self) T {
+        pub fn z(self: Self) Element {
             if (len < 3) {
                 @compileError("len must be at least 3 to get z component");
             }
@@ -117,7 +122,7 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return self.data[2];
         }
 
-        pub fn w(self: Self) T {
+        pub fn w(self: Self) Element {
             if (len < 4) {
                 @compileError("len must be at least 4 to get w component");
             }
@@ -125,37 +130,44 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return self.data[3];
         }
 
-        pub fn add(l: Self, r: Self) Self {
-            return Self{
-                .data = l.data + r.data,
-            };
+        pub fn add(lhs: Self, rhs: Self) Self {
+            var result = Self.zero();
+            inline for (0..len) |i| {
+                result.data[i] = lhs.data[i] + rhs.data[i];
+            }
+            return result;
         }
 
-        pub fn sub(l: Self, r: Self) Self {
-            return Self{
-                .data = l.data - r.data,
-            };
+        pub fn sub(lhs: Self, rhs: Self) Self {
+            var result = Self.zero();
+            inline for (0..len) |i| {
+                result.data[i] = lhs.data[i] - rhs.data[i];
+            }
+            return result;
         }
 
         pub fn neg(self: Self) Self {
-            return Self{
-                .data = -self.data,
-            };
+            var result = self;
+            inline for (0..len) |i| {
+                result.data[i] = -self.data[i];
+            }
+            return result;
         }
 
-        pub inline fn scale(self: Self, s: T) Self {
-            return Self{
-                .data = self.data * @as(@Vector(len, T), @splat(s)),
-            };
+        pub inline fn scale(self: Self, scalar: Element) Self {
+            var result = Self.zero();
+            inline for (0..len) |i| {
+                result.data[i] = self.data[i] * scalar;
+            }
+            return result;
         }
 
         pub fn squareLength(self: Self) Float(precision) {
-            const l = @reduce(.Add, self.data * self.data);
-            switch (type_info) {
-                .Int => return @floatFromInt(l),
-                .Float => return l,
-                else => unreachable,
+            var l: Float(precision) = 0.0;
+            inline for (0..len) |i| {
+                l += self.data[i] * self.data[i];
             }
+            return l;
         }
 
         pub fn length(self: Self) Float(precision) {
@@ -169,26 +181,30 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
             return self.scale(1.0 / norm);
         }
 
-        pub fn dot(l: Self, r: Self) T {
-            return @reduce(.Add, l.data * r.data);
+        pub fn dot(lhs: Self, rhs: Self) Element {
+            var d: Element = 0.0;
+            inline for (0..len) |i| {
+                d += lhs.data[i] * rhs.data[i];
+            }
+            return d;
         }
 
-        pub fn cross(l: Vec(3, T), r: Vec(3, T)) Vec(3, T) {
+        pub fn cross(lhs: Vec(3, Element), rhs: Vec(3, Element)) Vec(3, Element) {
             if (len != 3) {
                 @compileError("Vector parameters must have three elements for cross() to be defined");
             }
 
-            return Vec(3, T){
+            return Vec(3, Element){
                 .data = .{
-                    l.y() * r.z() - l.z() * r.y(),
-                    l.z() * r.x() - l.x() * r.z(),
-                    l.x() * r.y() - l.y() * r.x(),
+                    lhs.y() * rhs.z() - lhs.z() * rhs.y(),
+                    lhs.z() * rhs.x() - lhs.x() * rhs.z(),
+                    lhs.x() * rhs.y() - lhs.y() * rhs.x(),
                 },
             };
         }
 
         pub fn distance(a: Self, b: Self) Float(precision) {
-            return Self.from(b.data - a.data).length();
+            return b.sub(a).length();
         }
 
         pub fn angle(a: Self, b: Self) Float(precision) {
@@ -212,9 +228,11 @@ pub fn Vec(comptime len: u8, comptime T: type) type {
         ///
         /// `T` must be `.Float`.
         pub fn lerp(a: Self, b: Self, t: Float(precision)) Self {
-            return Self{
-                .data = @mulAdd(@Vector(len, T), b.data - a.data, @splat(t), a.data),
-            };
+            var result = Self.zero();
+            inline for (0..len) |i| {
+                result.data[i] = root.lerp(a.data[i], b.data[i], t);
+            }
+            return result;
         }
 
         // TODO: Finish format
