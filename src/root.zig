@@ -5,34 +5,19 @@ const std = @import("std");
 /// Takes in a floating point type representing degrees.
 /// Returns the equivalent in radians.
 pub fn toRadians(degress: anytype) @TypeOf(degress) {
-    const T = @TypeOf(degress);
-    const type_info = @typeInfo(T);
-    return switch (type_info) {
-        .Float, .ComptimeFloat => degress * std.math.rad_per_deg,
-        else => @compileError("toRadians not implemented for " ++ @typeName(T)),
-    };
+    return degress * std.math.rad_per_deg;
 }
 
 /// Takes in a floating point type representing radians.
 /// Returns the equivalent in degrees.
 pub fn toDegrees(radians: anytype) @TypeOf(radians) {
-    const T = @TypeOf(radians);
-    const type_info = @typeInfo(T);
-    return switch (type_info) {
-        .Float, .ComptimeFloat => radians * std.math.deg_per_rad,
-        else => @compileError("toDegrees not implemented for " ++ @typeName(T)),
-    };
+    return radians * std.math.deg_per_rad;
 }
 
 /// Clamps the value `n` between `low_bound` and `high_bound`.
 /// Must be a floating point type.
-pub fn clamp(n: anytype, low_bound: @TypeOf(n), high_bound: @TypeOf(n)) @TypeOf(n) {
-    const T = @TypeOf(n);
-    const type_info = @typeInfo(T);
-    return switch (type_info) {
-        .Int, .Float, .ComptimeInt, .ComptimeFloat => @max(low_bound, @min(n, high_bound)),
-        else => @compileError("clamp not implemented for " ++ @typeName(T)),
-    };
+pub fn clamp(n: anytype, low_bound: anytype, high_bound: anytype) @TypeOf(n, low_bound, high_bound) {
+    return @max(low_bound, @min(n, high_bound));
 }
 
 /// No extrapolation, clamps `t`.
