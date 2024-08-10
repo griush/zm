@@ -170,10 +170,12 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
             return l;
         }
 
+        /// Returns the length or norm of a vector
         pub fn length(self: Self) Float(precision) {
             return @sqrt(self.squareLength());
         }
 
+        /// Returns the unit vector with the same direction as `self`
         pub fn normalized(self: Self) Vec(len, Float(precision)) {
             const norm = self.length();
             if (len == 0.0) return Vec(len, Float(precision)).zero();
@@ -181,6 +183,7 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
             return self.scale(1.0 / norm);
         }
 
+        /// Returns the dot product of `lhs` and `rhs`
         pub fn dot(lhs: Self, rhs: Self) Element {
             var d: Element = 0.0;
             inline for (0..len) |i| {
@@ -189,6 +192,7 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
             return d;
         }
 
+        /// Returns the cross product of `lhs` and `rhs` in a right-handed coordinate system
         pub fn cross(lhs: Vec(3, Element), rhs: Vec(3, Element)) Vec(3, Element) {
             if (len != 3) {
                 @compileError("Vector parameters must have three elements for cross() to be defined");
@@ -203,10 +207,12 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
             };
         }
 
+        /// Returns the distance between two vectors
         pub fn distance(a: Self, b: Self) Float(precision) {
             return b.sub(a).length();
         }
 
+        /// Returns the angle (in radians) between two vectors
         pub fn angle(a: Self, b: Self) Float(precision) {
             switch (type_info) {
                 .Float => {
@@ -226,7 +232,7 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
 
         /// No extrapolation. Clamps `t`.
         ///
-        /// `T` must be `.Float`.
+        /// `t` must be `.Float`.
         pub fn lerp(a: Self, b: Self, t: Float(precision)) Self {
             var result = Self.zero();
             inline for (0..len) |i| {

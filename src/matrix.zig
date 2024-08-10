@@ -122,10 +122,8 @@ pub fn Mat2Base(comptime Element: type) type {
         pub fn transpose(self: Self) Self {
             var result = Self.identity();
 
-            var row: usize = 0;
-            while (row < 2) : (row += 1) {
-                var col: usize = 0;
-                while (col < 2) : (col += 1) {
+            for (0..2) |row| {
+                for (0..2) |col| {
                     result.data[col * 2 + row] = self.data[row * 2 + col];
                 }
             }
@@ -284,14 +282,11 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        /// Transposes the matrix.
         pub fn transpose(self: Self) Self {
             var result = Self.identity();
 
-            var row: usize = 0;
-            while (row < 3) : (row += 1) {
-                var col: usize = 0;
-                while (col < 3) : (col += 1) {
+            for (0..3) |row| {
+                for (0..3) |col| {
                     result.data[col * 3 + row] = self.data[row * 3 + col];
                 }
             }
@@ -496,14 +491,12 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        /// This is useful as you need to transpose matrices for OpenGL
+        /// As `zm` is row-major, matrices should be transposed before passing into OpenGL (which is column-major)
         pub fn transpose(self: Self) Self {
             var result = Self.identity();
 
-            var row: usize = 0;
-            while (row < 4) : (row += 1) {
-                var col: usize = 0;
-                while (col < 4) : (col += 1) {
+            for (0..4) |row| {
+                for (0..4) |col| {
                     result.data[col * 4 + row] = self.data[row * 4 + col];
                 }
             }

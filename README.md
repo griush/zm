@@ -1,10 +1,9 @@
 <img src="./res/zm-dark.svg#gh-dark-mode-only" alt="zm Logo" width="400px">
 <img src="./res/zm-light.svg#gh-light-mode-only" alt="zm Logo" width="400px">
 
-# zm
-![Codacy grade](https://img.shields.io/codacy/grade/2b4cfca0999e48028fe6b83cf4002496?style=for-the-badge)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/.github%2Fworkflows%2Fci.yaml?branch=master&style=for-the-badge)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/ci.yaml?style=flat&logo=github&label=CI)
 
+# zm
 Fast, Zig math library, fully cross-platform.
 
 ## Usage
