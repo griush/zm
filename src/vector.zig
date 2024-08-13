@@ -20,7 +20,7 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
 
         data: DataType,
 
-        pub const precision = switch (type_info) {
+        const precision = switch (type_info) {
             .Int => |int| int.bits,
             .Float => |float| float.bits,
             else => unreachable,
