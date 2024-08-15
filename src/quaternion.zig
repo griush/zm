@@ -144,37 +144,22 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         /// No extrapolation. Clamps `t`.
-        pub fn slerp(a: Self, b: Self, t: Element) Self {
-            // TODO: Look at https://gitlab.com/bztsrc/slerp-opt
-            // and implement fastSlerp
-            const tc = clamp(t, 0.0, 1.0);
-            var am = a;
-            var cos_theta = am.dot(b);
+        /// Implementation from: https://gitlab.com/bztsrc/slerp-opt/-/blob/master/slerp_cross.c
+        pub fn slerp(qa: Self, qb: Self, t: Element) Self {
+            var a = 1.0 - t;
+            var b = t;
+            const d = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z;
+            var c = @abs(d);
 
-            if (cos_theta <= 0.0) {
-                _ = am.scaleMut(-1);
-                cos_theta = -cos_theta;
+            if (c < 0.999) {
+                c = std.math.acos(c);
+                b = 1 / @sin(c);
+                a = @sin(a * c) * b;
+                b *= @sin(t * c);
+                if (d < 0) b = -b;
             }
 
-            if (cos_theta > 0.9995) {
-                // If mostly identical, lerp
-                var result = Self.lerp(am, b, tc);
-                result.normalize();
-                return result;
-            }
-
-            const theta = std.math.acos(root.clamp(cos_theta, -1, 1));
-            const denominator: Element = @sin(theta);
-            const pt = (1.0 - tc) * theta;
-            const spt = @sin(pt);
-            const sptp = am.scale(spt);
-
-            const sqt = @sin(tc * theta);
-            const sqtq = b.scale(sqt);
-
-            const numerator = sptp.add(sqtq);
-
-            return numerator.scale(1.0 / denominator);
+            return Self.from(qa.w * a + qb.w * b, qa.x * a + qb.x * b, qa.y * a + qb.y * b, qa.z * a + qb.z * b);
         }
 
         /// This function allows `Quaternion`s to be formated by Zig's `std.fmt`.

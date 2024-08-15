@@ -14,12 +14,12 @@ pub fn main() !void {
     std.debug.print("Generating random data...\n", .{});
     const count = 75_000_000;
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
+    var vec4s = try std.ArrayList(zm.Vec4).initCapacity(g_allocator, count);
+    var quaternions = try std.ArrayList(zm.Quaternion).initCapacity(g_allocator, count);
     for (0..count) |_| {
         try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
-    }
-    var vec4s = try std.ArrayList(zm.Vec4).initCapacity(g_allocator, count);
-    for (0..count) |_| {
         try vec4s.append(zm.Vec4.from(.{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) }));
+        try quaternions.append(zm.Quaternion.from(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
@@ -116,4 +116,14 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Mat4 translation + inverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // quaternion slerp
+    for (0..count - 1) |i| {
+        const a = quaternions.items[i];
+        const b = quaternions.items[i + 1];
+        const t = zm.Quaternion.slerp(a, b, 0.5);
+        std.mem.doNotOptimizeAway(t);
+    }
+
+    std.debug.print("Test - Quaternion slerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 }
