@@ -237,7 +237,7 @@ test "Quaternion slerp" {
     try std.testing.expectApproxEqAbs(expected.z, qs.z, float_tolerance);
 
     const c = zm.Quaternion.slerp(a, b, 0.5);
-    var d = zm.Quaternion.from(-0.7071067811865475, 0, 0.7071067811865475, 0);
+    var d = zm.Quaternion.from(0.7071067811865475, 0, -0.7071067811865475, 0);
     d.normalize();
 
     try std.testing.expectApproxEqAbs(d.w, c.w, float_tolerance);
