@@ -6,6 +6,9 @@ pub fn main() !void {
     const radians = zm.toRadians(180.0); // also toDegrees
     std.debug.print("Radians: {d}\n", .{radians});
 
+    // Useful functions for animation
+    _ = zm.easeInOutCubic(@as(f32, 0.75));
+
     // Vector types are created with zm.Vec function.
     // It takes the number of elements(size) and the base type and returns
     // the vector type. There are however builtin types: VecX => Vector of size X
@@ -27,6 +30,7 @@ pub fn main() !void {
     const view_proj = zm.Mat4.multiply(projection, view);
     _ = view_proj; // Use view proj
 
+    // Quaternions for rotations
     const rotation = zm.Quaternion.fromEulerAngles(zm.Vec3.up().scale(zm.toRadians(45.0))); // Set rotation matrix 45 degrees on y axis
     const model = zm.Mat4.translation(2, -3, 0).multiply(zm.Mat4.fromQuaternion(rotation)).multiply(zm.Mat4.scaling(1.5, 1.5, 1.5));
     _ = model; // Use model

@@ -60,8 +60,6 @@ pub fn QuaternionBase(comptime Element: type) type {
             return z.multiply(y.multiply(x));
         }
 
-        // TODO: Constructor from rotation matrix
-
         pub fn add(lhs: Self, rhs: Self) Self {
             return Self.from(lhs.w + rhs.w, lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
         }
