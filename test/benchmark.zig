@@ -87,6 +87,17 @@ pub fn main() !void {
 
     std.debug.print("Test - Vec3 Cross + Vec3 scale({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
+    // angle
+    for (0..count - 1) |i| {
+        const a = vec3s.items[i];
+        const b = vec3s.items[i + 1];
+
+        const c = a.angle(b);
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec3 angle({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
     // mat mul vec
     for (0..count) |i| {
         const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);

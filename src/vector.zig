@@ -214,20 +214,10 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
 
         /// Returns the angle (in radians) between two vectors
         pub fn angle(a: Self, b: Self) Float(precision) {
-            switch (type_info) {
-                .Float => {
-                    const dot_product = a.dot(b);
-                    return std.math.acos(dot_product / (a.length() * b.length()));
-                },
-                .Int => {
-                    const fa = Vec(len, Float(precision)).from(@floatFromInt(a.data));
-                    const fb = Vec(len, Float(precision)).from(@floatFromInt(b.data));
-
-                    const dot_product = fa.dot(fb);
-                    return std.math.acos(dot_product / (fa.length() * fb.length()));
-                },
-                else => unreachable,
-            }
+            const len_a = a.length();
+            const len_b = b.length();
+            const dot_product = a.dot(b);
+            return std.math.acos(dot_product / (len_a * len_b));
         }
 
         /// No extrapolation. Clamps `t`.
