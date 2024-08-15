@@ -55,6 +55,14 @@ pub fn main() !void {
 
     std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
+    // Length
+    for (0..count) |i| {
+        const length = vec3s.items[i].length();
+        std.mem.doNotOptimizeAway(length);
+    }
+
+    std.debug.print("Test - Vec3 Length({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
     // Lerp
     for (0..count - 1) |i| {
         const a = vec3s.items[i];
@@ -107,5 +115,5 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(t);
     }
 
-    std.debug.print("Test - Mat4 translation + iverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Mat4 translation + inverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 }
