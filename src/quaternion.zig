@@ -188,7 +188,7 @@ pub fn QuaternionBase(comptime Element: type) type {
             _ = fmt;
             _ = options;
 
-            try writer.print("(w: {d}, v: ({d}, {d}, {d}))", .{
+            try writer.print("Quat(w: {d}, v: ({d}, {d}, {d}))", .{
                 q.w,
                 q.x,
                 q.y,

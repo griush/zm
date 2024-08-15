@@ -7,6 +7,11 @@ const float_tolerance = std.math.floatEps(f32);
 //     std.testing.refAllDeclsRecursive(zm);
 // }
 
+test "easeInOutCubic" {
+    try std.testing.expectEqual(0.0, zm.easeInOutCubic(@as(f32, 0.0)));
+    try std.testing.expectEqual(1.0, zm.easeInOutCubic(@as(f32, 1.0)));
+}
+
 test "Vec initialization" {
     const v = zm.Vec2.from(.{ 2, -1 });
     const v2 = zm.Vec3.from(.{ 1.5, -2, 4.2 });

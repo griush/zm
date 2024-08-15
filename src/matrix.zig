@@ -17,6 +17,13 @@ pub fn Mat2Base(comptime Element: type) type {
 
         data: DataType,
 
+        /// Creates a matrix with al zeroes as values
+        pub fn zero() Self {
+            return Self{
+                .data = @splat(0.0),
+            };
+        }
+
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {
             return Self{
@@ -165,6 +172,13 @@ pub fn Mat3Base(comptime Element: type) type {
 
         data: DataType,
 
+        /// Creates a matrix with al zeroes as values
+        pub fn zero() Self {
+            return Self{
+                .data = @splat(0.0),
+            };
+        }
+
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {
             return Self{
@@ -311,6 +325,13 @@ pub fn Mat4Base(comptime Element: type) type {
         const DataType = @Vector(16, Element);
 
         data: DataType,
+
+        /// Creates a matrix with al zeroes as values
+        pub fn zero() Self {
+            return Self{
+                .data = @splat(0.0),
+            };
+        }
 
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {

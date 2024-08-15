@@ -241,19 +241,24 @@ pub fn Vec(len: comptime_int, comptime Element: type) type {
             return result;
         }
 
-        // TODO: Finish format
-        // /// This function allows `Vectors` to be formated by Zig's `std.fmt`.
-        // /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.up() });`
-        // pub fn format(
-        //     v: Self,
-        //     comptime fmt: []const u8,
-        //     options: std.fmt.FormatOptions,
-        //     writer: anytype,
-        // ) !void {
-        //     _ = fmt;
-        //     _ = options;
-        //
-        //     try writer.print("(" ++ ("{d}, " ** len) ++ ")", .{});
-        // }
+        /// This function allows `Vectors` to be formated by Zig's `std.fmt`.
+        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.up() });`
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+
+            if (len == 2) {
+                try writer.print("Vec2({d}, {d})", .{ v.data[0], v.data[1] });
+            } else if (len == 3) {
+                try writer.print("Vec3({d}, {d}, {d})", .{ v.data[0], v.data[1], v.data[2] });
+            } else if (len == 4) {
+                try writer.print("Vec4({d}, {d}, {d}, {d})", .{ v.data[0], v.data[1], v.data[2], v.data[3] });
+            }
+        }
     };
 }

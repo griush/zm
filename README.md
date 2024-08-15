@@ -8,7 +8,7 @@ Fast, Zig math library, fully cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1063+1018cdc0a`.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1076+78fb9c0a1`.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
