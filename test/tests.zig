@@ -263,3 +263,10 @@ test "Quaternion to Mat4" {
         try std.testing.expectApproxEqAbs(expected.data[i], m.data[i], float_tolerance);
     }
 }
+
+test "Ray" {
+    const ray = zm.Ray.from(zm.Vec3.zero(), zm.Vec3.right());
+    const expect = zm.Vec3.right();
+
+    try std.testing.expectEqual(expect, ray.at(1.0));
+}

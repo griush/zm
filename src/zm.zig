@@ -59,6 +59,7 @@ pub const Vec3d = Vec(3, f64);
 pub const Vec4 = Vec(4, f32);
 pub const Vec4d = Vec(4, f64);
 
+// Matrices
 const matrix = @import("matrix.zig");
 pub const Mat2Base = matrix.Mat2Base;
 pub const Mat3Base = matrix.Mat3Base;
@@ -81,3 +82,6 @@ pub const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 // Builtin Quaternion types
 pub const Quaternion = QuaternionBase(f32);
 pub const Quaterniond = QuaternionBase(f64);
+
+// Ray
+pub const Ray = @import("ray.zig");
