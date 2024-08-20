@@ -12,11 +12,13 @@ pub fn main() !void {
 
     var timer = try std.time.Timer.start();
     std.debug.print("Generating random data...\n", .{});
-    const count = 75_000_000;
+    const count = 1_000_000;
+    var vec2s = try std.ArrayList(zm.Vec2).initCapacity(g_allocator, count);
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     var vec4s = try std.ArrayList(zm.Vec4).initCapacity(g_allocator, count);
     var quaternions = try std.ArrayList(zm.Quaternion).initCapacity(g_allocator, count);
     for (0..count) |_| {
+        try vec2s.append(zm.Vec2.from(.{ random.float(f32), random.float(f32) }));
         try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
         try vec4s.append(zm.Vec4.from(.{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) }));
         try quaternions.append(zm.Quaternion.from(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
@@ -24,7 +26,70 @@ pub fn main() !void {
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
 
-    // dot product
+    // simd add
+    var v1: @Vector(2, f32) = .{ 0.05, 0.002 };
+    const v2: @Vector(2, f32) = .{ 0.001, 0.003 };
+    for (0..count) |_| {
+        v1 += v2;
+    }
+    std.debug.print("Test - @Vector(2, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.mem.doNotOptimizeAway(v1);
+
+    // simd add
+    var v3: @Vector(3, f32) = .{ 0.05, 0.002, 0.005 };
+    const v4: @Vector(3, f32) = .{ 0.001, 0.003, 0.001 };
+    for (0..count) |_| {
+        v3 += v4;
+    }
+    std.debug.print("Test - @Vector(3, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.mem.doNotOptimizeAway(v1);
+
+    // simd add
+    var v5: @Vector(4, f32) = .{ 0.05, 0.002, 0.005, 0.008 };
+    const v6: @Vector(4, f32) = .{ 0.001, 0.003, 0.001, 0.002 };
+    for (0..count) |_| {
+        v5 += v6;
+    }
+    std.debug.print("Test - @Vector(4, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.mem.doNotOptimizeAway(v1);
+
+    // vec2 add
+    for (0..count - 1) |i| {
+        const a = vec2s.items[i];
+        const b = vec2s.items[i + 1];
+
+        const c = a.add(b);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec2 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // vec3 add
+    for (0..count - 1) |i| {
+        const a = vec3s.items[i];
+        const b = vec3s.items[i + 1];
+
+        const c = a.add(b);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec3 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // vec4 add
+    for (0..count - 1) |i| {
+        const a = vec4s.items[i];
+        const b = vec4s.items[i + 1];
+
+        const c = a.add(b);
+
+        std.mem.doNotOptimizeAway(c);
+    }
+
+    std.debug.print("Test - Vec4 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+
+    // vec3 dot product
     for (0..count - 1) |i| {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
@@ -36,6 +101,7 @@ pub fn main() !void {
 
     std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
+    // vec4 dot
     for (0..count - 1) |i| {
         const a = vec4s.items[i];
         const b = vec4s.items[i + 1];
@@ -101,8 +167,7 @@ pub fn main() !void {
     // mat mul vec
     for (0..count) |i| {
         const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
-        const v3 = vec3s.items[i];
-        const v = zm.Vec4.from(.{ v3.x(), v3.y(), v3.z(), 1.0 });
+        const v = vec4s.items[i];
         const r = zm.Mat4.multiplyVec4(m, v);
 
         std.mem.doNotOptimizeAway(r);
