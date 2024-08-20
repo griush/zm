@@ -27,7 +27,7 @@ pub fn Mat2Base(comptime Element: type) type {
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     value, 0,
                     0,     value,
                 },
@@ -46,7 +46,7 @@ pub fn Mat2Base(comptime Element: type) type {
             const a = angle;
 
             return Self{
-                .data = Self{
+                .data = .{
                     @cos(a), -@sin(a),
                     @sin(a), @cos(a),
                 },
@@ -55,7 +55,7 @@ pub fn Mat2Base(comptime Element: type) type {
 
         pub fn scaling(sx: Element, sy: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     sx, 0,
                     0,  sy,
                 },
@@ -64,7 +64,7 @@ pub fn Mat2Base(comptime Element: type) type {
 
         pub fn scalingVec2(s: Vec(2, Element)) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     s.x(), 0,
                     0,     s.y(),
                 },
@@ -182,7 +182,7 @@ pub fn Mat3Base(comptime Element: type) type {
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     value, 0,     0,
                     0,     value, 0,
                     0,     0,     value,
@@ -197,7 +197,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn translation(tx: Element, ty: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     1, 0, tx,
                     0, 1, ty,
                     0, 0, 1,
@@ -207,7 +207,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn translationVec2(v: Vec(2, Element)) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     1, 0, v.x(),
                     0, 1, v.y(),
                     0, 0, 1,
@@ -220,7 +220,7 @@ pub fn Mat3Base(comptime Element: type) type {
             const a = angle;
 
             return Self{
-                .data = Self{
+                .data = .{
                     @cos(a), -@sin(a), 0,
                     @sin(a), @cos(a),  0,
                     0,       0,        1,
@@ -230,7 +230,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn scaling(sx: Element, sy: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     sx, 0,  0,
                     0,  sy, 0,
                     0,  0,  1,
@@ -240,7 +240,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn scalingVec2(v: Vec(2, Element)) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     v.x(), 0,     0,
                     0,     v.y(), 0,
                     0,     0,     1,
@@ -336,7 +336,7 @@ pub fn Mat4Base(comptime Element: type) type {
         /// Creates a diagonal matrix with the given value.
         pub inline fn diagonal(value: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     value, 0,     0,     0,
                     0,     value, 0,     0,
                     0,     0,     value, 0,
@@ -364,7 +364,7 @@ pub fn Mat4Base(comptime Element: type) type {
         /// `fov` takes in radians
         pub fn perspective(fov: Element, aspect: Element, near: Element, far: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     1 / (aspect * @tan(fov / 2)), 0,                 0,                            0,
                     0,                            1 / @tan(fov / 2), 0,                            0,
                     0,                            0,                 -(far + near) / (far - near), -(2 * far * near) / (far - near),
@@ -375,7 +375,7 @@ pub fn Mat4Base(comptime Element: type) type {
 
         pub fn translation(x: Element, y: Element, z: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     1, 0, 0, x,
                     0, 1, 0, y,
                     0, 0, 1, z,
@@ -419,7 +419,7 @@ pub fn Mat4Base(comptime Element: type) type {
 
         pub fn scaling(x: Element, y: Element, z: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     x, 0, 0, 0,
                     0, y, 0, 0,
                     0, 0, z, 0,
