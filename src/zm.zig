@@ -49,15 +49,15 @@ pub const Vec = @import("vector.zig").Vec;
 
 // Builtin Vec2Base types
 pub const Vec2 = Vec(2, f32);
-pub const Vec2d = Vec(2, f64);
+pub const DVec2 = Vec(2, f64);
 
 // Builtin Vec3Base types
 pub const Vec3 = Vec(3, f32);
-pub const Vec3d = Vec(3, f64);
+pub const DVec3 = Vec(3, f64);
 
 // Builtin Vec4Base types
 pub const Vec4 = Vec(4, f32);
-pub const Vec4d = Vec(4, f64);
+pub const DVec4 = Vec(4, f64);
 
 // Matrices
 const matrix = @import("matrix.zig");
@@ -67,21 +67,21 @@ pub const Mat4Base = matrix.Mat4Base;
 
 // Builtin Mat2Base types
 pub const Mat2 = Mat2Base(f32);
-pub const Mat2d = Mat2Base(f64);
+pub const DMat2 = Mat2Base(f64);
 
 // Builtin Mat3Base types
 pub const Mat3 = Mat3Base(f32);
-pub const Mat3d = Mat3Base(f64);
+pub const DMat3 = Mat3Base(f64);
 
 // Builtin Mat4Base types
 pub const Mat4 = Mat4Base(f32);
-pub const Mat4d = Mat4Base(f64);
+pub const DMat4 = Mat4Base(f64);
 
 pub const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 
 // Builtin Quaternion types
 pub const Quaternion = QuaternionBase(f32);
-pub const Quaterniond = QuaternionBase(f64);
+pub const DQuaternion = QuaternionBase(f64);
 
 // Ray
 pub const Ray = @import("ray.zig");
