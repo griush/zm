@@ -1,18 +1,29 @@
 const Vec = @import("vector.zig").Vec;
-const Vec3 = Vec(3, f32);
 
-const Ray = @This();
-
-origin: Vec3,
-direction: Vec3,
-
-pub fn from(origin: Vec3, direction: Vec3) Ray {
-    return Ray{
-        .origin = origin,
-        .direction = direction,
+pub fn RayBase(comptime T: type) type {
+    const type_info = @typeInfo(T);
+    comptime switch (type_info) {
+        .Float => {},
+        else => @compileError("Ray only supports floating point type. Ray is not implemented for type " ++ @typeName(T)),
     };
-}
 
-pub fn at(self: Ray, t: f32) Vec3 {
-    return self.origin.add(self.direction.scale(t));
+    return struct {
+        const Self = @This();
+
+        const DataType = Vec(3, T);
+
+        origin: DataType,
+        direction: DataType,
+
+        pub fn from(origin: DataType, direction: DataType) Self {
+            return Self{
+                .origin = origin,
+                .direction = direction,
+            };
+        }
+
+        pub fn at(self: Self, t: f32) DataType {
+            return self.origin.add(self.direction.scale(t));
+        }
+    };
 }

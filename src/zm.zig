@@ -83,5 +83,9 @@ pub const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 pub const Quaternion = QuaternionBase(f32);
 pub const DQuaternion = QuaternionBase(f64);
 
-// Ray
-pub const Ray = @import("ray.zig");
+// Rays
+pub const RayBase = @import("ray.zig").RayBase;
+
+// Builtin Ray types
+pub const Ray = RayBase(f32);
+pub const DRay = RayBase(f32);
