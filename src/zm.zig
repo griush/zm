@@ -27,20 +27,20 @@ pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     return @mulAdd(T, b - a, t, a);
 }
 
-/// `value` must be numeric.
-pub fn sigmoid(value: anytype) @TypeOf(value) {
-    return 1.0 / (1.0 + @exp(-value));
+/// `t` must be numeric.
+pub fn sigmoid(t: anytype) @TypeOf(t) {
+    return 1.0 / (1.0 + @exp(-t));
 }
 
-/// `value` must be a floating point number.
-/// It must be between `0`(beginning of the animation) and `1`(end of the animation)
-pub fn easeInOutCubic(value: anytype) @TypeOf(value) {
-    if (@typeInfo(@TypeOf(value)) != .Float) @compileError("easeInOutCubic not implemented for " ++ @typeName(@TypeOf(value)));
+/// `t` must be a floating point number.
+/// `t` must be between `0`(beginning of the animation) and `1`(end of the animation)
+pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
+    if (@typeInfo(@TypeOf(t)) != .Float) @compileError("easeInOutCubic not implemented for " ++ @typeName(@TypeOf(t)));
 
-    if (value < 0.5) {
-        return 4 * value * value * value;
+    if (t < 0.5) {
+        return 4 * t * t * t;
     } else {
-        return 1 - std.math.pow(@TypeOf(value), -2 * value + 2, 3) / 2;
+        return 1 - std.math.pow(@TypeOf(t), -2 * t + 2, 3) / 2;
     }
 }
 
