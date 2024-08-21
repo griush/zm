@@ -1,3 +1,5 @@
+const std = @import("std");
+
 pub const VecComponent = enum { x, y, z, w };
 
 pub fn Vec2(Element: type) type {
@@ -35,6 +37,7 @@ pub fn Vec2(Element: type) type {
         pub const normalized = Generic.normalized;
         pub const lerp = Generic.lerp;
         pub const distance = Generic.distance;
+        pub const angle = Generic.angle;
     };
 }
 
@@ -124,6 +127,7 @@ pub fn Vec3(Element: type) type {
         pub const normalized = Generic.normalized;
         pub const lerp = Generic.lerp;
         pub const distance = Generic.distance;
+        pub const angle = Generic.angle;
     };
 }
 
@@ -168,6 +172,7 @@ pub fn Vec4(Element: type) type {
         pub const normalized = Generic.normalized;
         pub const lerp = Generic.lerp;
         pub const distance = Generic.distance;
+        pub const angle = Generic.angle;
     };
 }
 
@@ -230,6 +235,14 @@ fn VecGeneric(Element: type, Vector: type) type {
         /// Returns the distance between two points
         pub fn distance(a: Vector, b: Vector) Element {
             return b.sub(a).len();
+        }
+
+        /// Returns the angle (in radians) between two vectors
+        pub fn angle(a: Vector, b: Vector) Element {
+            const len_a = a.len();
+            const len_b = b.len();
+            const dot_product = a.dot(b);
+            return std.math.acos(dot_product / (len_a * len_b));
         }
     };
 }

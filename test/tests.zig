@@ -88,19 +88,19 @@ test "Vec distance" {
 }
 
 // TODO: bring back angle
-// test "Vec angle" {
-//     const right = zm.Vec3.right();
-//     const up = zm.Vec3.up();
-//
-//     try std.testing.expectApproxEqAbs(zm.toRadians(90.0), right.angle(up), float_tolerance);
-// }
-//
-// test "Vec angle with len 0" {
-//     const zero = zm.Vec3.zero();
-//     const up = zm.Vec3.up();
-//
-//     try std.testing.expect(std.math.isNan(zero.angle(up)));
-// }
+test "Vec angle" {
+    const right = zm.Vec3.right();
+    const up = zm.Vec3.up();
+
+    try std.testing.expectApproxEqAbs(zm.toRadians(90.0), right.angle(up), float_tolerance);
+}
+
+test "Vec angle with len 0" {
+    const zero = zm.Vec3.zero();
+    const up = zm.Vec3.up();
+
+    try std.testing.expect(std.math.isNan(zero.angle(up)));
+}
 
 test "Mat2 scale" {
     const m = zm.Mat2.scaling(1.0, 2.0);
