@@ -13,8 +13,8 @@ test "easeInOutCubic" {
 }
 
 test "Vec initialization" {
-    const v = zm.Vec2.from(.{ 2, -1 });
-    const v2 = zm.Vec3.from(.{ 1.5, -2, 4.2 });
+    const v = zm.Vec2.from(2, -1);
+    const v2 = zm.Vec3.from(1.5, -2, 4.2);
 
     try std.testing.expectApproxEqAbs(2, v.x(), float_tolerance);
     try std.testing.expectApproxEqAbs(-1, v.y(), float_tolerance);
@@ -25,8 +25,8 @@ test "Vec initialization" {
 }
 
 test "vec arithmetic" {
-    const v = zm.Vec2.from(.{ 2, -1 });
-    const v2 = zm.Vec2.from(.{ 1.5, 4.5 });
+    const v = zm.Vec2.from(2, -1);
+    const v2 = zm.Vec2.from(1.5, 4.5);
 
     const sum = zm.Vec2.add(v, v2);
     const diff = zm.Vec2.add(v, v2.neg());
@@ -39,24 +39,24 @@ test "vec arithmetic" {
 }
 
 test "Vec2 scale" {
-    const v = zm.Vec2.from(.{ 2, -1 }).scale(3.0);
+    const v = zm.Vec2.from(2, -1).scale(3.0);
 
     try std.testing.expectApproxEqAbs(6, v.x(), float_tolerance);
     try std.testing.expectApproxEqAbs(-3, v.y(), float_tolerance);
 }
 
 test "Vec length" {
-    const v = zm.Vec2.from(.{ 2, -1 });
-    const len = v.length();
-    const square_len = v.squareLength();
+    const v = zm.Vec2.from(2, -1);
+    const len = v.len();
+    const square_len = v.lenSq();
 
     try std.testing.expectApproxEqAbs(@sqrt(5.0), len, float_tolerance);
     try std.testing.expectApproxEqAbs(5.0, square_len, float_tolerance);
 }
 
 test "Vec dot" {
-    const v = zm.Vec3.from(.{ 1, 2, 3 });
-    const v2 = zm.Vec3.from(.{ 4, 5, 6 });
+    const v = zm.Vec3.from(1, 2, 3);
+    const v2 = zm.Vec3.from(4, 5, 6);
 
     const dot = zm.Vec3.dot(v, v2);
 
@@ -64,13 +64,13 @@ test "Vec dot" {
 }
 
 test "Vec normalize" {
-    const x = zm.Vec3.from(.{ 1, 0, 0 }).normalized();
-    const y = zm.Vec3.from(.{ 0, 1, 0 }).normalized();
-    const z = zm.Vec3.from(.{ 0, 0, 1 }).normalized();
+    const x = zm.Vec3.from(1, 0, 0).normalized();
+    const y = zm.Vec3.from(0, 1, 0).normalized();
+    const z = zm.Vec3.from(0, 0, 1).normalized();
 
-    try std.testing.expectEqual(@Vector(3, f32){ 1, 0, 0 }, x.data);
-    try std.testing.expectEqual(@Vector(3, f32){ 0, 1, 0 }, y.data);
-    try std.testing.expectEqual(@Vector(3, f32){ 0, 0, 1 }, z.data);
+    try std.testing.expectEqual(@Vector(3, f32){ 1, 0, 0 }, x.v);
+    try std.testing.expectEqual(@Vector(3, f32){ 0, 1, 0 }, y.v);
+    try std.testing.expectEqual(@Vector(3, f32){ 0, 0, 1 }, z.v);
 }
 
 test "Vec3 cross" {
@@ -87,6 +87,7 @@ test "Vec distance" {
     try std.testing.expectEqual(1.0, zm.Vec3.distance(origin, up));
 }
 
+// TODO: bring back angle
 test "Vec angle" {
     const right = zm.Vec3.right();
     const up = zm.Vec3.up();
@@ -103,9 +104,9 @@ test "Vec angle with len 0" {
 
 test "Mat2 scale" {
     const m = zm.Mat2.scaling(1.0, 2.0);
-    const v = zm.Vec2.from(.{ 3, 1.5 });
+    const v = zm.Vec2.from(3, 1.5);
 
-    try std.testing.expectEqual(zm.Vec2.from(.{ 3, 3 }), m.multiplyVec2(v));
+    try std.testing.expectEqual(zm.Vec2.from(3, 3), m.multiplyVec2(v));
 }
 
 test "Mat3 scale" {
@@ -173,19 +174,19 @@ test "clamp" {
 }
 
 test "Vec2 lerp" {
-    const a = zm.Vec2.from(.{ 1.0, 2.0 });
-    const b = zm.Vec2.from(.{ 4.0, 6.0 });
+    const a = zm.Vec2.from(1.0, 2.0);
+    const b = zm.Vec2.from(4.0, 6.0);
 
-    try std.testing.expectEqual(zm.Vec2.from(.{ 1.0, 2.0 }), zm.Vec2.lerp(a, b, 0.0));
-    try std.testing.expectEqual(zm.Vec2.from(.{ 4.0, 6.0 }), zm.Vec2.lerp(a, b, 1.0));
-    try std.testing.expectEqual(zm.Vec2.from(.{ 2.5, 4.0 }), zm.Vec2.lerp(a, b, 0.5));
-    try std.testing.expectEqual(zm.Vec2.from(.{ 1.75, 3.0 }), zm.Vec2.lerp(a, b, 0.25));
-    try std.testing.expectEqual(zm.Vec2.from(.{ 3.25, 5.0 }), zm.Vec2.lerp(a, b, 0.75));
+    try std.testing.expectEqual(zm.Vec2.from(1.0, 2.0), zm.Vec2.lerp(a, b, 0.0));
+    try std.testing.expectEqual(zm.Vec2.from(4.0, 6.0), zm.Vec2.lerp(a, b, 1.0));
+    try std.testing.expectEqual(zm.Vec2.from(2.5, 4.0), zm.Vec2.lerp(a, b, 0.5));
+    try std.testing.expectEqual(zm.Vec2.from(1.75, 3.0), zm.Vec2.lerp(a, b, 0.25));
+    try std.testing.expectEqual(zm.Vec2.from(3.25, 5.0), zm.Vec2.lerp(a, b, 0.75));
 }
 
 test "Mat2 multiply Vec2" {
     const transform = zm.Mat2.rotation(-std.math.pi / 2.0);
-    const vec = zm.Vec2.from(.{ 0.0, 1.0 });
+    const vec = zm.Vec2.from(0.0, 1.0);
 
     const rotated = transform.multiplyVec2(vec);
 
@@ -194,9 +195,9 @@ test "Mat2 multiply Vec2" {
 }
 
 test "print" {
-    const v2 = zm.Vec2.from(.{ 1.0, 2.0 });
-    const v3 = zm.Vec3.from(.{ 1.0, 2.0, 3.0 });
-    const v4 = zm.Vec4.from(.{ 1.0, 2.0, 3.0, 4.0 });
+    const v2 = zm.Vec2.from(1.0, 2.0);
+    const v3 = zm.Vec3.from(1.0, 2.0, 3.0);
+    const v4 = zm.Vec4.from(1.0, 2.0, 3.0, 4.0);
     const q = zm.Quaternion.identity();
 
     std.debug.print("2: {any}\n3: {any}\n4: {any}\n", .{ v2, v3, v4 });

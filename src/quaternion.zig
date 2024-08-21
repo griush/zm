@@ -1,4 +1,4 @@
-const Vec = @import("vector.zig").Vec;
+const Vec3 = @import("vector.zig").Vec3;
 const clamp = @import("zm.zig").clamp;
 const lerp = @import("zm.zig").lerp;
 
@@ -40,22 +40,22 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub fn fromVec3(w: Element, axis: Vec(3, Element)) Self {
+        pub fn fromVec3(w: Element, axis: Vec3(Element)) Self {
             return Self.from(w, axis.x(), axis.y(), axis.z());
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: Vec(3, Element), radians: Element) Self {
+        pub fn fromAxisAngle(axis: Vec3(Element), radians: Element) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
             return Self.fromVec3(w, axis.normalized().scale(sin_half_angle));
         }
 
         /// `v` components take in radians
-        pub fn fromEulerAngles(v: Vec(3, Element)) Self {
-            const x = Self.fromAxisAngle(Vec(3, Element).right(), v.x());
-            const y = Self.fromAxisAngle(Vec(3, Element).up(), v.y());
-            const z = Self.fromAxisAngle(Vec(3, Element).forward(), v.z());
+        pub fn fromEulerAngles(v: Vec3(Element)) Self {
+            const x = Self.fromAxisAngle(Vec3(Element).right(), v.x());
+            const y = Self.fromAxisAngle(Vec3(Element).up(), v.y());
+            const z = Self.fromAxisAngle(Vec3(Element).forward(), v.z());
 
             return z.multiply(y.multiply(x));
         }
