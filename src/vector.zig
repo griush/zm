@@ -24,6 +24,17 @@ pub fn Vec2(Element: type) type {
             return v.v[1];
         }
 
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("vec2({d}, {d})", .{ v.v[0], v.v[1] });
+        }
+
         pub const splat = Generic.splat;
         pub const zero = Generic.zero;
         pub const add = Generic.add;
@@ -91,7 +102,7 @@ pub fn Vec3(Element: type) type {
         }
 
         pub inline fn swizzle(
-            v: *const Self,
+            v: Self,
             xc: VecComponent,
             yc: VecComponent,
             zc: VecComponent,
@@ -112,6 +123,17 @@ pub fn Vec3(Element: type) type {
             const s2 = a.swizzle(.z, .x, .y)
                 .mul(b.swizzle(.y, .z, .x));
             return s1.sub(s2);
+        }
+
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("vec3({d}, {d}, {d})", .{ v.v[0], v.v[1], v.v[2] });
         }
 
         pub const splat = Generic.splat;
@@ -157,6 +179,17 @@ pub fn Vec4(Element: type) type {
         }
         pub inline fn w(v: Self) Element {
             return v.v[3];
+        }
+
+        pub fn format(
+            v: Self,
+            comptime fmt: []const u8,
+            options: std.fmt.FormatOptions,
+            writer: anytype,
+        ) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("vec4({d}, {d}, {d}, {d})", .{ v.v[0], v.v[1], v.v[2], v.v[3] });
         }
 
         pub const splat = Generic.splat;
