@@ -1,254 +1,235 @@
-const std = @import("std");
+pub const VecComponent = enum { x, y, z, w };
 
-const root = @import("zm.zig");
-
-/// Returns a vector type of dimension `len` and `Element` as the element type.
-pub fn Vec(len: comptime_int, comptime Element: type) type {
-    const type_info = @typeInfo(Element);
-    comptime switch (type_info) {
-        .Int, .Float => {},
-        else => @compileError("Vec only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
-    };
-
-    if (len < 1) @compileError("Vector len must be positive and non-zero");
-
+pub fn Vec2(Element: type) type {
     return struct {
+        pub const dimensions = 2;
+        const Base = @Vector(dimensions, Element);
+
         const Self = @This();
-        const Float = std.meta.Float;
 
-        const DataType = [len]Element;
+        const Generic = VecGeneric(Element, Self);
 
-        data: DataType,
+        v: Base,
 
-        const precision = switch (type_info) {
-            .Int => |int| int.bits,
-            .Float => |float| float.bits,
-            else => unreachable,
-        };
-
-        pub fn from(in: DataType) Self {
-            return Self{
-                .data = in,
-            };
+        pub inline fn from(xs: Element, ys: Element) Self {
+            return .{ .v = .{ xs, ys } };
         }
 
-        pub fn zero() Self {
-            return Self{
-                .data = [_]Element{0} ** len,
-            };
+        pub inline fn x(v: Self) Element {
+            return v.v[0];
+        }
+        pub inline fn y(v: Self) Element {
+            return v.v[1];
         }
 
-        pub fn right() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
+        pub const splat = Generic.splat;
+        pub const zero = Generic.zero;
+        pub const add = Generic.add;
+        pub const sub = Generic.sub;
+        pub const neg = Generic.neg;
+        pub const mul = Generic.mul;
+        pub const scale = Generic.scale;
+        pub const dot = Generic.dot;
+        pub const lenSq = Generic.lenSq;
+        pub const len = Generic.len;
+        pub const normalized = Generic.normalized;
+        pub const lerp = Generic.lerp;
+        pub const distance = Generic.distance;
+    };
+}
 
-            return Self{
-                .data = .{ 1, 0, 0 },
-            };
+pub fn Vec3(Element: type) type {
+    return struct {
+        pub const dimensions = 3;
+        const Base = @Vector(dimensions, Element);
+
+        const Self = @This();
+
+        const Generic = VecGeneric(Element, Self);
+
+        v: Base,
+
+        pub inline fn from(xs: Element, ys: Element, zs: Element) Self {
+            return .{ .v = .{ xs, ys, zs } };
         }
 
-        pub fn left() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
-
-            return Self{
-                .data = .{ -1, 0, 0 },
-            };
+        pub inline fn right() Self {
+            return .{ .v = .{ 1, 0, 0 } };
         }
 
-        pub fn up() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
-
-            return Self{
-                .data = .{ 0, 1, 0 },
-            };
+        pub inline fn up() Self {
+            return .{ .v = .{ 0, 1, 0 } };
         }
 
-        pub fn down() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
-
-            return Self{
-                .data = .{ 0, -1, 0 },
-            };
+        pub inline fn forward() Self {
+            return .{ .v = .{ 0, 0, 1 } };
         }
 
-        pub fn forward() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
-
-            return Self{
-                .data = .{ 0, 0, 1 },
-            };
+        pub inline fn left() Self {
+            return .{ .v = .{ -1, 0, 0 } };
         }
 
-        pub fn back() Self {
-            comptime if (len != 3) {
-                @compileError("Vector must have three elements");
-            };
-
-            return Self{
-                .data = .{ 0, 0, -1 },
-            };
+        pub inline fn down() Self {
+            return .{ .v = .{ 0, -1, 0 } };
         }
 
-        pub fn x(self: Self) Element {
-            if (len < 1) {
-                @compileError("len must be at least 1 to get x component");
-            }
-
-            return self.data[0];
+        pub inline fn back() Self {
+            return .{ .v = .{ 0, 0, -1 } };
         }
 
-        pub fn y(self: Self) Element {
-            if (len < 2) {
-                @compileError("len must be at least 2 to get y component");
-            }
-
-            return self.data[1];
+        pub inline fn x(v: Self) Element {
+            return v.v[0];
+        }
+        pub inline fn y(v: Self) Element {
+            return v.v[1];
+        }
+        pub inline fn z(v: Self) Element {
+            return v.v[2];
         }
 
-        pub fn z(self: Self) Element {
-            if (len < 3) {
-                @compileError("len must be at least 3 to get z component");
-            }
-
-            return self.data[2];
+        pub inline fn swizzle(
+            v: *const Self,
+            xc: VecComponent,
+            yc: VecComponent,
+            zc: VecComponent,
+        ) Self {
+            return .{ .v = @shuffle(Element, v.v, undefined, [3]Element{
+                @intFromEnum(xc),
+                @intFromEnum(yc),
+                @intFromEnum(zc),
+            }) };
         }
 
-        pub fn w(self: Self) Element {
-            if (len < 4) {
-                @compileError("len must be at least 4 to get w component");
-            }
-
-            return self.data[3];
+        /// Calculates the cross product between vector a and b.
+        /// This can be done only in 3D and required inputs are Vec3.
+        pub inline fn cross(a: Self, b: Self) Self {
+            // https://gamemath.com/book/vectors.html#cross_product
+            const s1 = a.swizzle(.y, .z, .x)
+                .mul(b.swizzle(.z, .x, .y));
+            const s2 = a.swizzle(.z, .x, .y)
+                .mul(b.swizzle(.y, .z, .x));
+            return s1.sub(s2);
         }
 
-        pub fn add(lhs: Self, rhs: Self) Self {
-            var result = Self.zero();
-            inline for (0..len) |i| {
-                result.data[i] = lhs.data[i] + rhs.data[i];
-            }
-            return result;
+        pub const splat = Generic.splat;
+        pub const zero = Generic.zero;
+        pub const add = Generic.add;
+        pub const sub = Generic.sub;
+        pub const neg = Generic.neg;
+        pub const mul = Generic.mul;
+        pub const scale = Generic.scale;
+        pub const dot = Generic.dot;
+        pub const lenSq = Generic.lenSq;
+        pub const len = Generic.len;
+        pub const normalized = Generic.normalized;
+        pub const lerp = Generic.lerp;
+        pub const distance = Generic.distance;
+    };
+}
+
+pub fn Vec4(Element: type) type {
+    return struct {
+        pub const dimensions = 4;
+        const Base = @Vector(dimensions, Element);
+
+        const Self = @This();
+
+        const Generic = VecGeneric(Element, Self);
+
+        v: Base,
+
+        pub inline fn from(xs: Element, ys: Element, zs: Element, ws: Element) Self {
+            return .{ .v = .{ xs, ys, zs, ws } };
         }
 
-        pub fn sub(lhs: Self, rhs: Self) Self {
-            var result = Self.zero();
-            inline for (0..len) |i| {
-                result.data[i] = lhs.data[i] - rhs.data[i];
-            }
-            return result;
+        pub inline fn x(v: Self) Element {
+            return v.v[0];
+        }
+        pub inline fn y(v: Self) Element {
+            return v.v[1];
+        }
+        pub inline fn z(v: Self) Element {
+            return v.v[2];
+        }
+        pub inline fn w(v: Self) Element {
+            return v.v[3];
         }
 
-        pub fn neg(self: Self) Self {
-            var result = self;
-            inline for (0..len) |i| {
-                result.data[i] = -self.data[i];
-            }
-            return result;
+        pub const splat = Generic.splat;
+        pub const zero = Generic.zero;
+        pub const add = Generic.add;
+        pub const sub = Generic.sub;
+        pub const neg = Generic.neg;
+        pub const mul = Generic.mul;
+        pub const scale = Generic.scale;
+        pub const dot = Generic.dot;
+        pub const lenSq = Generic.lenSq;
+        pub const len = Generic.len;
+        pub const normalized = Generic.normalized;
+        pub const lerp = Generic.lerp;
+        pub const distance = Generic.distance;
+    };
+}
+
+fn VecGeneric(Element: type, Vector: type) type {
+    return struct {
+        pub inline fn splat(scalar: Element) Vector {
+            return .{ .v = @splat(scalar) };
         }
 
-        pub inline fn scale(self: Self, scalar: Element) Self {
-            var result = Self.zero();
-            inline for (0..len) |i| {
-                result.data[i] = self.data[i] * scalar;
-            }
-            return result;
+        pub inline fn zero() Vector {
+            return .{ .v = @splat(0.0) };
         }
 
-        pub fn squareLength(self: Self) Float(precision) {
-            var l: Float(precision) = 0.0;
-            inline for (0..len) |i| {
-                l += self.data[i] * self.data[i];
-            }
-            return l;
+        /// Element-wise addition
+        pub inline fn add(lhs: Vector, rhs: Vector) Vector {
+            return .{ .v = lhs.v + rhs.v };
         }
 
-        /// Returns the length or norm of a vector
-        pub fn length(self: Self) Float(precision) {
-            return @sqrt(self.squareLength());
+        /// Element-wise subtraction
+        pub inline fn sub(lhs: Vector, rhs: Vector) Vector {
+            return .{ .v = lhs.v - rhs.v };
         }
 
-        /// Returns the unit vector with the same direction as `self`
-        pub fn normalized(self: Self) Vec(len, Float(precision)) {
-            const norm = self.length();
-            if (len == 0.0) return Vec(len, Float(precision)).zero();
-
-            return self.scale(1.0 / norm);
+        /// Element-wise negate
+        pub inline fn neg(v: Vector) Vector {
+            return .{ .v = -v.v };
         }
 
-        /// Returns the dot product of `lhs` and `rhs`
-        pub fn dot(lhs: Self, rhs: Self) Element {
-            var d: Element = 0.0;
-            inline for (0..len) |i| {
-                d += lhs.data[i] * rhs.data[i];
-            }
-            return d;
+        /// Element-wise multiplication.
+        pub inline fn mul(a: Vector, b: Vector) Vector {
+            return .{ .v = a.v * b.v };
         }
 
-        /// Returns the cross product of `lhs` and `rhs` in a right-handed coordinate system
-        pub fn cross(lhs: Vec(3, Element), rhs: Vec(3, Element)) Vec(3, Element) {
-            if (len != 3) {
-                @compileError("Vector parameters must have three elements for cross() to be defined");
-            }
-
-            return Vec(3, Element){
-                .data = .{
-                    lhs.y() * rhs.z() - lhs.z() * rhs.y(),
-                    lhs.z() * rhs.x() - lhs.x() * rhs.z(),
-                    lhs.x() * rhs.y() - lhs.y() * rhs.x(),
-                },
-            };
+        /// Scale the vector by the given scalar
+        pub inline fn scale(v: Vector, s: Element) Vector {
+            return .{ .v = v.v * Vector.splat(s).v };
         }
 
-        /// Returns the distance between two vectors
-        pub fn distance(a: Self, b: Self) Float(precision) {
-            return b.sub(a).length();
+        /// Calculates the dot product between vector a and b and returns scalar.
+        pub inline fn dot(a: Vector, b: Vector) Element {
+            return @reduce(.Add, a.v * b.v);
         }
 
-        /// Returns the angle (in radians) between two vectors
-        pub fn angle(a: Self, b: Self) Float(precision) {
-            const len_a = a.length();
-            const len_b = b.length();
-            const dot_product = a.dot(b);
-            return std.math.acos(dot_product / (len_a * len_b));
+        pub inline fn lenSq(v: Vector) Element {
+            return @reduce(.Add, v.v * v.v);
         }
 
-        /// No extrapolation. Clamps `t`.
-        ///
-        /// `t` must be `.Float`.
-        pub fn lerp(a: Self, b: Self, t: Float(precision)) Self {
-            var result = Self.zero();
-            inline for (0..len) |i| {
-                result.data[i] = root.lerp(a.data[i], b.data[i], t);
-            }
-            return result;
+        pub inline fn len(v: Vector) Element {
+            return @sqrt(v.lenSq());
         }
 
-        /// This function allows `Vectors` to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Vec3.up() });`
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
+        pub inline fn normalized(v: Vector) Vector {
+            return v.scale(1.0 / v.len());
+        }
 
-            if (len == 2) {
-                try writer.print("Vec2({d}, {d})", .{ v.data[0], v.data[1] });
-            } else if (len == 3) {
-                try writer.print("Vec3({d}, {d}, {d})", .{ v.data[0], v.data[1], v.data[2] });
-            } else if (len == 4) {
-                try writer.print("Vec4({d}, {d}, {d}, {d})", .{ v.data[0], v.data[1], v.data[2], v.data[3] });
-            }
+        pub fn lerp(a: Vector, b: Vector, t: Element) Vector {
+            return .{ .v = @mulAdd(@Vector(Vector.dimensions, Element), b.v - a.v, @splat(t), a.v) };
+        }
+
+        /// Returns the distance between two points
+        pub fn distance(a: Vector, b: Vector) Element {
+            return b.sub(a).len();
         }
     };
 }

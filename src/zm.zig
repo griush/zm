@@ -44,20 +44,16 @@ pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
     }
 }
 
-// Vectors
-pub const Vec = @import("vector.zig").Vec;
+// vec namespace
+pub const vec = @import("vector.zig");
 
-// Builtin Vec2Base types
-pub const Vec2 = Vec(2, f32);
-pub const DVec2 = Vec(2, f64);
+pub const Vec2 = vec.Vec2(f32);
+pub const Vec3 = vec.Vec3(f32);
+pub const Vec4 = vec.Vec4(f32);
 
-// Builtin Vec3Base types
-pub const Vec3 = Vec(3, f32);
-pub const DVec3 = Vec(3, f64);
-
-// Builtin Vec4Base types
-pub const Vec4 = Vec(4, f32);
-pub const DVec4 = Vec(4, f64);
+pub const DVec2 = vec.Vec2(f64);
+pub const DVec3 = vec.Vec3(f64);
+pub const DVec4 = vec.Vec4(f64);
 
 // Matrices
 const matrix = @import("matrix.zig");

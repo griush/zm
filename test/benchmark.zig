@@ -10,48 +10,22 @@ const g_allocator = gpa.allocator();
 pub fn main() !void {
     std.debug.print("zm - Benchmarks\n", .{});
 
-    var timer = try std.time.Timer.start();
     std.debug.print("Generating random data...\n", .{});
     const count = 1_000_000;
+    var timer = try std.time.Timer.start();
     var vec2s = try std.ArrayList(zm.Vec2).initCapacity(g_allocator, count);
     var vec3s = try std.ArrayList(zm.Vec3).initCapacity(g_allocator, count);
     var vec4s = try std.ArrayList(zm.Vec4).initCapacity(g_allocator, count);
     var quaternions = try std.ArrayList(zm.Quaternion).initCapacity(g_allocator, count);
     for (0..count) |_| {
-        try vec2s.append(zm.Vec2.from(.{ random.float(f32), random.float(f32) }));
-        try vec3s.append(zm.Vec3.from(.{ random.float(f32), random.float(f32), random.float(f32) }));
-        try vec4s.append(zm.Vec4.from(.{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) }));
+        try vec2s.append(zm.Vec2.from(random.float(f32), random.float(f32)));
+        try vec3s.append(zm.Vec3.from(random.float(f32), random.float(f32), random.float(f32)));
+        try vec4s.append(zm.Vec4.from(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
         try quaternions.append(zm.Quaternion.from(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
-
-    // simd add
-    var v1: @Vector(2, f32) = .{ 0.05, 0.002 };
-    const v2: @Vector(2, f32) = .{ 0.001, 0.003 };
-    for (0..count) |_| {
-        v1 += v2;
-    }
-    std.debug.print("Test - @Vector(2, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
-    std.mem.doNotOptimizeAway(v1);
-
-    // simd add
-    var v3: @Vector(3, f32) = .{ 0.05, 0.002, 0.005 };
-    const v4: @Vector(3, f32) = .{ 0.001, 0.003, 0.001 };
-    for (0..count) |_| {
-        v3 += v4;
-    }
-    std.debug.print("Test - @Vector(3, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
-    std.mem.doNotOptimizeAway(v1);
-
-    // simd add
-    var v5: @Vector(4, f32) = .{ 0.05, 0.002, 0.005, 0.008 };
-    const v6: @Vector(4, f32) = .{ 0.001, 0.003, 0.001, 0.002 };
-    for (0..count) |_| {
-        v5 += v6;
-    }
-    std.debug.print("Test - @Vector(4, f32) add({})(simd): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
-    std.mem.doNotOptimizeAway(v1);
+    timer.reset();
 
     // vec2 add
     for (0..count - 1) |i| {
@@ -64,6 +38,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec2 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // vec3 add
     for (0..count - 1) |i| {
@@ -76,6 +51,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // vec4 add
     for (0..count - 1) |i| {
@@ -88,6 +64,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec4 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // vec3 dot product
     for (0..count - 1) |i| {
@@ -100,6 +77,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // vec4 dot
     for (0..count - 1) |i| {
@@ -112,6 +90,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec4 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // Normalize
     for (0..count) |i| {
@@ -120,14 +99,16 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // Length
     for (0..count) |i| {
-        const length = vec3s.items[i].length();
+        const length = vec3s.items[i].len();
         std.mem.doNotOptimizeAway(length);
     }
 
     std.debug.print("Test - Vec3 Length({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // Lerp
     for (0..count - 1) |i| {
@@ -140,6 +121,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 Lerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // Cross + scale
     for (0..count - 1) |i| {
@@ -152,17 +134,19 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Vec3 Cross + Vec3 scale({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
-    // angle
-    for (0..count - 1) |i| {
-        const a = vec3s.items[i];
-        const b = vec3s.items[i + 1];
-
-        const c = a.angle(b);
-        std.mem.doNotOptimizeAway(c);
-    }
-
-    std.debug.print("Test - Vec3 angle({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    // TODO: bring back angle
+    // // angle
+    // for (0..count - 1) |i| {
+    //     const a = vec3s.items[i];
+    //     const b = vec3s.items[i + 1];
+    //
+    //     const c = a.angle(b);
+    //     std.mem.doNotOptimizeAway(c);
+    // }
+    //
+    // std.debug.print("Test - Vec3 angle({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
 
     // mat mul vec
     for (0..count) |i| {
@@ -174,6 +158,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Mat4 multiply Vec4({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // create translation + transpose
     for (0..count) |i| {
@@ -183,6 +168,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Mat4 translation + transpose({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // create translation + inverse
     for (0..count) |i| {
@@ -192,6 +178,7 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Mat4 translation + inverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 
     // quaternion slerp
     for (0..count - 1) |i| {
@@ -202,4 +189,5 @@ pub fn main() !void {
     }
 
     std.debug.print("Test - Quaternion slerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    timer.reset();
 }

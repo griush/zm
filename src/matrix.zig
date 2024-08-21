@@ -1,4 +1,6 @@
-const Vec = @import("vector.zig").Vec;
+const Vec2 = @import("vector.zig").Vec2;
+const Vec3 = @import("vector.zig").Vec3;
+const Vec4 = @import("vector.zig").Vec4;
 const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 
 /// Returns a Mat2 type with `Element` being the element type.
@@ -62,7 +64,7 @@ pub fn Mat2Base(comptime Element: type) type {
             };
         }
 
-        pub fn scalingVec2(s: Vec(2, Element)) Self {
+        pub fn scalingVec2(s: Vec2(Element)) Self {
             return Self{
                 .data = .{
                     s.x(), 0,
@@ -108,9 +110,9 @@ pub fn Mat2Base(comptime Element: type) type {
             };
         }
 
-        pub fn multiplyVec2(self: Self, vec: Vec(2, Element)) Vec(2, Element) {
-            return Vec(2, Element){
-                .data = .{
+        pub fn multiplyVec2(self: Self, vec: Vec2(Element)) Vec2(Element) {
+            return Vec2(Element){
+                .v = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y(),
                     self.data[2] * vec.x() + self.data[3] * vec.y(),
                 },
@@ -205,7 +207,7 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn translationVec2(v: Vec(2, Element)) Self {
+        pub fn translationVec2(v: Vec2(Element)) Self {
             return Self{
                 .data = .{
                     1, 0, v.x(),
@@ -238,7 +240,7 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn scalingVec2(v: Vec(2, Element)) Self {
+        pub fn scalingVec2(v: Vec2(Element)) Self {
             return Self{
                 .data = .{
                     v.x(), 0,     0,
@@ -266,9 +268,9 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn multiplyVec3(self: Self, vec: Vec(3, Element)) Vec(3, Element) {
-            return Vec(3, Element){
-                .data = .{
+        pub fn multiplyVec3(self: Self, vec: Vec3(Element)) Vec3(Element) {
+            return Vec3(Element){
+                .v = .{
                     self.data[0] * vec.x() + self.data[1] * vec.y() + self.data[2] * vec.z(),
                     self.data[3] * vec.x() + self.data[4] * vec.y() + self.data[5] * vec.z(),
                     self.data[6] * vec.x() + self.data[7] * vec.y() + self.data[8] * vec.z(),
@@ -384,13 +386,13 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn translationVec3(vec: Vec(3, Element)) Self {
+        pub fn translationVec3(vec: Vec3(Element)) Self {
             return Self.translation(vec.x(), vec.y(), vec.z());
         }
 
         /// Returns a rotation transformation matrix
         /// `angle` takes in radians
-        pub fn rotation(axis: Vec(3, Element), angle: Element) Self {
+        pub fn rotation(axis: Vec3(Element), angle: Element) Self {
             var result = Self.identity();
 
             const r = angle;
@@ -428,8 +430,8 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn lookAt(eye: Vec(3, Element), target: Vec(3, Element), up: Vec(3, Element)) Self {
-            const f = Vec(3, Element).sub(target, eye).normalized();
+        pub fn lookAt(eye: Vec3(Element), target: Vec3(Element), up: Vec3(Element)) Self {
+            const f = Vec3(Element).sub(target, eye).normalized();
             const s = f.cross(up).normalized();
             const u = s.cross(f);
 
@@ -501,9 +503,9 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn multiplyVec4(m: Self, v: Vec(4, Element)) Vec(4, Element) {
-            return Vec(4, Element){
-                .data = .{
+        pub fn multiplyVec4(m: Self, v: Vec4(Element)) Vec4(Element) {
+            return Vec4(Element){
+                .v = .{
                     m.data[0] * v.x() + m.data[1] * v.y() + m.data[2] * v.z() + m.data[3] * v.w(),
                     m.data[4] * v.x() + m.data[5] * v.y() + m.data[6] * v.z() + m.data[7] * v.w(),
                     m.data[8] * v.x() + m.data[9] * v.y() + m.data[10] * v.z() + m.data[11] * v.w(),
