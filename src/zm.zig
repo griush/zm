@@ -56,10 +56,10 @@ pub const DVec3 = vec.Vec3(f64);
 pub const DVec4 = vec.Vec4(f64);
 
 // Matrices
-const matrix = @import("matrix.zig");
-pub const Mat2Base = matrix.Mat2Base;
-pub const Mat3Base = matrix.Mat3Base;
-pub const Mat4Base = matrix.Mat4Base;
+pub const matrix = @import("matrix.zig");
+const Mat2Base = matrix.Mat2Base;
+const Mat3Base = matrix.Mat3Base;
+const Mat4Base = matrix.Mat4Base;
 
 // Builtin Mat2Base types
 pub const Mat2 = Mat2Base(f32);
@@ -73,15 +73,23 @@ pub const DMat3 = Mat3Base(f64);
 pub const Mat4 = Mat4Base(f32);
 pub const DMat4 = Mat4Base(f64);
 
-pub const QuaternionBase = @import("quaternion.zig").QuaternionBase;
+// quaternion namespace
+pub const quaternion = @import("quaternion.zig");
 
 // Builtin Quaternion types
-pub const Quaternion = QuaternionBase(f32);
-pub const DQuaternion = QuaternionBase(f64);
+pub const Quaternion = quaternion.QuaternionBase(f32);
+pub const DQuaternion = quaternion.QuaternionBase(f64);
 
 // Rays
-pub const RayBase = @import("ray.zig").RayBase;
+pub const ray = @import("ray.zig");
 
 // Builtin Ray types
-pub const Ray = RayBase(f32);
-pub const DRay = RayBase(f32);
+pub const Ray = ray.RayBase(f32);
+pub const DRay = ray.RayBase(f32);
+
+// aabb namespace
+pub const aabb = @import("aabb.zig");
+
+// aabb builtins
+/// 3-dimensional AABB
+pub const AABB = aabb.AABBBase(3, f32);

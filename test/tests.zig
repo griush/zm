@@ -279,3 +279,17 @@ test "Ray" {
     try std.testing.expectEqual(expect, ray.at(1.0));
     try std.testing.expectEqual(zm.Vec3.zero(), ray.at(0.0));
 }
+
+test "AABB intersect" {
+    const a = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(1, 1, 1));
+    std.debug.print("AABB: {any}", .{a});
+    const b = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(2, 2, 2));
+
+    try std.testing.expect(a.intersects(b));
+}
+
+test "AABB contains" {
+    const a = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(1, 1, 1));
+    const p = zm.Vec3.init(0.5, 0.5, 0.5);
+    try std.testing.expect(a.contains(p));
+}
