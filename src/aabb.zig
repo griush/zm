@@ -23,12 +23,27 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
         pub fn intersects(a: Self, b: Self) bool {
             if (a.max.x() < b.min.x() or a.min.x() > b.max.x()) return false;
             if (a.max.y() < b.min.y() or a.min.y() > b.max.y()) return false;
+            comptime if (dimensions == 3) {
+                if (a.max.z() < b.min.z() or a.min.z() > b.max.z()) return false;
+            };
             return true;
         }
 
         pub fn contains(self: Self, p: Base) bool {
-            return (p.x() >= self.min.x() and p.x() <= self.max.x() and
-                p.y() >= self.min.y() and p.y() <= self.max.y());
+            if (p.x() < self.min.x() or p.x() > self.max.x()) return false;
+            if (p.y() < self.min.y() or p.y() > self.max.y()) return false;
+            comptime if (dimensions == 3) {
+                if (p.z() < self.min.z() or p.z() > self.max.z()) return false;
+            };
+            return true;
+        }
+
+        pub fn center(self: Self) Base {
+            return (self.min.add(self.max)).scale(0.5);
+        }
+
+        pub fn size(self: Self) Base {
+            return self.max.sub(self.min);
         }
     };
 }
