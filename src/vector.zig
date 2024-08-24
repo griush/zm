@@ -13,7 +13,7 @@ pub fn Vec2(Element: type) type {
 
         v: Base,
 
-        pub inline fn from(xs: Element, ys: Element) Self {
+        pub inline fn init(xs: Element, ys: Element) Self {
             return .{ .v = .{ xs, ys } };
         }
 
@@ -63,7 +63,7 @@ pub fn Vec3(Element: type) type {
 
         v: Base,
 
-        pub inline fn from(xs: Element, ys: Element, zs: Element) Self {
+        pub inline fn init(xs: Element, ys: Element, zs: Element) Self {
             return .{ .v = .{ xs, ys, zs } };
         }
 
@@ -164,7 +164,7 @@ pub fn Vec4(Element: type) type {
 
         v: Base,
 
-        pub inline fn from(xs: Element, ys: Element, zs: Element, ws: Element) Self {
+        pub inline fn init(xs: Element, ys: Element, zs: Element, ws: Element) Self {
             return .{ .v = .{ xs, ys, zs, ws } };
         }
 
@@ -261,12 +261,12 @@ fn VecGeneric(Element: type, Vector: type) type {
             return v.scale(1.0 / v.len());
         }
 
-        pub fn lerp(a: Vector, b: Vector, t: Element) Vector {
+        pub inline fn lerp(a: Vector, b: Vector, t: Element) Vector {
             return .{ .v = @mulAdd(@Vector(Vector.dimensions, Element), b.v - a.v, @splat(t), a.v) };
         }
 
         /// Returns the distance between two points
-        pub fn distance(a: Vector, b: Vector) Element {
+        pub inline fn distance(a: Vector, b: Vector) Element {
             return b.sub(a).len();
         }
 

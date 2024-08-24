@@ -13,8 +13,8 @@ test "easeInOutCubic" {
 }
 
 test "Vec initialization" {
-    const v = zm.Vec2.from(2, -1);
-    const v2 = zm.Vec3.from(1.5, -2, 4.2);
+    const v = zm.Vec2.init(2, -1);
+    const v2 = zm.Vec3.init(1.5, -2, 4.2);
 
     try std.testing.expectApproxEqAbs(2, v.x(), float_tolerance);
     try std.testing.expectApproxEqAbs(-1, v.y(), float_tolerance);
@@ -25,8 +25,8 @@ test "Vec initialization" {
 }
 
 test "vec arithmetic" {
-    const v = zm.Vec2.from(2, -1);
-    const v2 = zm.Vec2.from(1.5, 4.5);
+    const v = zm.Vec2.init(2, -1);
+    const v2 = zm.Vec2.init(1.5, 4.5);
 
     const sum = zm.Vec2.add(v, v2);
     const diff = zm.Vec2.add(v, v2.neg());
@@ -39,14 +39,14 @@ test "vec arithmetic" {
 }
 
 test "Vec2 scale" {
-    const v = zm.Vec2.from(2, -1).scale(3.0);
+    const v = zm.Vec2.init(2, -1).scale(3.0);
 
     try std.testing.expectApproxEqAbs(6, v.x(), float_tolerance);
     try std.testing.expectApproxEqAbs(-3, v.y(), float_tolerance);
 }
 
 test "Vec length" {
-    const v = zm.Vec2.from(2, -1);
+    const v = zm.Vec2.init(2, -1);
     const len = v.len();
     const square_len = v.lenSq();
 
@@ -55,8 +55,8 @@ test "Vec length" {
 }
 
 test "Vec dot" {
-    const v = zm.Vec3.from(1, 2, 3);
-    const v2 = zm.Vec3.from(4, 5, 6);
+    const v = zm.Vec3.init(1, 2, 3);
+    const v2 = zm.Vec3.init(4, 5, 6);
 
     const dot = zm.Vec3.dot(v, v2);
 
@@ -64,9 +64,9 @@ test "Vec dot" {
 }
 
 test "Vec normalize" {
-    const x = zm.Vec3.from(1, 0, 0).normalized();
-    const y = zm.Vec3.from(0, 1, 0).normalized();
-    const z = zm.Vec3.from(0, 0, 1).normalized();
+    const x = zm.Vec3.init(1, 0, 0).normalized();
+    const y = zm.Vec3.init(0, 1, 0).normalized();
+    const z = zm.Vec3.init(0, 0, 1).normalized();
 
     try std.testing.expectEqual(@Vector(3, f32){ 1, 0, 0 }, x.v);
     try std.testing.expectEqual(@Vector(3, f32){ 0, 1, 0 }, y.v);
@@ -87,7 +87,6 @@ test "Vec distance" {
     try std.testing.expectEqual(1.0, zm.Vec3.distance(origin, up));
 }
 
-// TODO: bring back angle
 test "Vec angle" {
     const right = zm.Vec3.right();
     const up = zm.Vec3.up();
@@ -104,9 +103,9 @@ test "Vec angle with len 0" {
 
 test "Mat2 scale" {
     const m = zm.Mat2.scaling(1.0, 2.0);
-    const v = zm.Vec2.from(3, 1.5);
+    const v = zm.Vec2.init(3, 1.5);
 
-    try std.testing.expectEqual(zm.Vec2.from(3, 3), m.multiplyVec2(v));
+    try std.testing.expectEqual(zm.Vec2.init(3, 3), m.multiplyVec2(v));
 }
 
 test "Mat3 scale" {
@@ -174,19 +173,19 @@ test "clamp" {
 }
 
 test "Vec2 lerp" {
-    const a = zm.Vec2.from(1.0, 2.0);
-    const b = zm.Vec2.from(4.0, 6.0);
+    const a = zm.Vec2.init(1.0, 2.0);
+    const b = zm.Vec2.init(4.0, 6.0);
 
-    try std.testing.expectEqual(zm.Vec2.from(1.0, 2.0), zm.Vec2.lerp(a, b, 0.0));
-    try std.testing.expectEqual(zm.Vec2.from(4.0, 6.0), zm.Vec2.lerp(a, b, 1.0));
-    try std.testing.expectEqual(zm.Vec2.from(2.5, 4.0), zm.Vec2.lerp(a, b, 0.5));
-    try std.testing.expectEqual(zm.Vec2.from(1.75, 3.0), zm.Vec2.lerp(a, b, 0.25));
-    try std.testing.expectEqual(zm.Vec2.from(3.25, 5.0), zm.Vec2.lerp(a, b, 0.75));
+    try std.testing.expectEqual(zm.Vec2.init(1.0, 2.0), zm.Vec2.lerp(a, b, 0.0));
+    try std.testing.expectEqual(zm.Vec2.init(4.0, 6.0), zm.Vec2.lerp(a, b, 1.0));
+    try std.testing.expectEqual(zm.Vec2.init(2.5, 4.0), zm.Vec2.lerp(a, b, 0.5));
+    try std.testing.expectEqual(zm.Vec2.init(1.75, 3.0), zm.Vec2.lerp(a, b, 0.25));
+    try std.testing.expectEqual(zm.Vec2.init(3.25, 5.0), zm.Vec2.lerp(a, b, 0.75));
 }
 
 test "Mat2 multiply Vec2" {
     const transform = zm.Mat2.rotation(-std.math.pi / 2.0);
-    const vec = zm.Vec2.from(0.0, 1.0);
+    const vec = zm.Vec2.init(0.0, 1.0);
 
     const rotated = transform.multiplyVec2(vec);
 
@@ -195,9 +194,9 @@ test "Mat2 multiply Vec2" {
 }
 
 test "print" {
-    const v2 = zm.Vec2.from(1.0, 2.0);
-    const v3 = zm.Vec3.from(1.0, 2.0, 3.0);
-    const v4 = zm.Vec4.from(1.0, 2.0, 3.0, 4.0);
+    const v2 = zm.Vec2.init(1.0, 2.0);
+    const v3 = zm.Vec3.init(1.0, 2.0, 3.0);
+    const v4 = zm.Vec4.init(1.0, 2.0, 3.0, 4.0);
     const q = zm.Quaternion.identity();
 
     std.debug.print("2: {any}\n3: {any}\n4: {any}\n", .{ v2, v3, v4 });
@@ -206,24 +205,24 @@ test "print" {
 
 test "Quaternion multiply" {
     const i = zm.Quaternion.identity();
-    const a = zm.Quaternion.from(1, 1, 1, 1);
+    const a = zm.Quaternion.init(1, 1, 1, 1);
 
-    try std.testing.expectEqual(zm.Quaternion.from(1, 1, 1, 1), a.multiply(i));
-    try std.testing.expectEqual(zm.Quaternion.from(-2, 2, 2, 2), a.multiply(a));
+    try std.testing.expectEqual(zm.Quaternion.init(1, 1, 1, 1), a.multiply(i));
+    try std.testing.expectEqual(zm.Quaternion.init(-2, 2, 2, 2), a.multiply(a));
 }
 
 test "Quaternion conjugate" {
-    const q = zm.Quaternion.from(1, 1, 1, 1);
+    const q = zm.Quaternion.init(1, 1, 1, 1);
     const q_c = q.conjugate();
 
-    try std.testing.expectEqual(zm.Quaternion.from(1, -1, -1, -1), q_c);
+    try std.testing.expectEqual(zm.Quaternion.init(1, -1, -1, -1), q_c);
 }
 
 test "Quaternion inverse" {
-    const q = zm.Quaternion.from(1, 1, 1, 1);
+    const q = zm.Quaternion.init(1, 1, 1, 1);
     const q_i = q.inverse();
 
-    try std.testing.expectEqual(zm.Quaternion.from(0.25, -0.25, -0.25, -0.25), q_i);
+    try std.testing.expectEqual(zm.Quaternion.init(0.25, -0.25, -0.25, -0.25), q_i);
 }
 
 test "Quaternion slerp" {
@@ -233,11 +232,11 @@ test "Quaternion slerp" {
 
     const qs = zm.Quaternion.slerp(a, b, 1.0);
 
-    // The test should not pass as the expected is different from
+    // The test should not pass as the expected is different init
     // the result, however
     // this two values represent the same orientations, so it's a scrifice for the performance
     // not having the same value, but in practice, nothing changes
-    const expected = zm.Quaternion.from(0, 0, -1, 0);
+    const expected = zm.Quaternion.init(0, 0, -1, 0);
 
     try std.testing.expectApproxEqAbs(expected.w, qs.w, float_tolerance);
     try std.testing.expectApproxEqAbs(expected.x, qs.x, float_tolerance);
@@ -245,7 +244,7 @@ test "Quaternion slerp" {
     try std.testing.expectApproxEqAbs(expected.z, qs.z, float_tolerance);
 
     const c = zm.Quaternion.slerp(a, b, 0.5);
-    var d = zm.Quaternion.from(0.7071067811865475, 0, -0.7071067811865475, 0);
+    var d = zm.Quaternion.init(0.7071067811865475, 0, -0.7071067811865475, 0);
     d.normalize();
 
     try std.testing.expectApproxEqAbs(d.w, c.w, float_tolerance);
@@ -255,7 +254,7 @@ test "Quaternion slerp" {
 }
 
 test "Quaternion to Mat4" {
-    const q = zm.Quaternion.from(0.7071067811865475, 0.7071067811865475, 0.0, 0.0);
+    const q = zm.Quaternion.init(0.7071067811865475, 0.7071067811865475, 0.0, 0.0);
     const m = zm.Mat4.fromQuaternion(q);
 
     const expected = zm.Mat4{
@@ -273,9 +272,23 @@ test "Quaternion to Mat4" {
 }
 
 test "Ray" {
-    const ray = zm.Ray.from(zm.Vec3.zero(), zm.Vec3.right());
+    const ray = zm.Ray.init(zm.Vec3.zero(), zm.Vec3.right());
     const expect = zm.Vec3.right();
 
     try std.testing.expectEqual(expect, ray.at(1.0));
     try std.testing.expectEqual(zm.Vec3.zero(), ray.at(0.0));
+}
+
+test "AABB intersect" {
+    const a = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(1, 1, 1));
+    std.debug.print("AABB: {any}", .{a});
+    const b = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(2, 2, 2));
+
+    try std.testing.expect(a.intersects(b));
+}
+
+test "AABB contains" {
+    const a = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(1, 1, 1));
+    const p = zm.Vec3.init(0.5, 0.5, 0.5);
+    try std.testing.expect(a.containsPoint(p));
 }

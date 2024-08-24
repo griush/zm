@@ -13,7 +13,7 @@ pub fn main() !void {
     // It takes the number of elements(size) and the base type and returns
     // the vector type. There are however builtin types: VecX => Vector of size X
     // and f32 as base type, and VecXd => Vector of size X and f64 as base type.
-    const v1 = zm.Vec2.from(2.0, 1.5);
+    const v1 = zm.Vec2.init(2.0, 1.5);
     std.debug.print("v1: {any}\n", .{v1});
     std.debug.print("v1.neg(): {any}\n", .{v1.neg()});
     std.debug.print("v1.scale(2): {any}\n", .{v1.scale(2)});
@@ -26,7 +26,7 @@ pub fn main() !void {
 
     // Transformation matrices
     const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
-    const view = zm.Mat4.lookAt(zm.Vec3.from(3, 3, 3), zm.Vec3.zero(), zm.Vec3.up());
+    const view = zm.Mat4.lookAt(zm.Vec3.init(3, 3, 3), zm.Vec3.zero(), zm.Vec3.up());
     const view_proj = zm.Mat4.multiply(projection, view);
     _ = view_proj; // Use view proj
 
