@@ -4,7 +4,7 @@ pub fn RayBase(comptime T: type) type {
     const type_info = @typeInfo(T);
     comptime switch (type_info) {
         .Float => {},
-        else => @compileError("Ray only supports floating point type. Ray is not implemented for type " ++ @typeName(T)),
+        else => @compileError("Ray is not implemented for type " ++ @typeName(T)),
     };
 
     return struct {

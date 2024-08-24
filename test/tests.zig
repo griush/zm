@@ -87,7 +87,6 @@ test "Vec distance" {
     try std.testing.expectEqual(1.0, zm.Vec3.distance(origin, up));
 }
 
-// TODO: bring back angle
 test "Vec angle" {
     const right = zm.Vec3.right();
     const up = zm.Vec3.up();
