@@ -290,5 +290,5 @@ test "AABB intersect" {
 test "AABB contains" {
     const a = zm.AABB.init(zm.Vec3.zero(), zm.Vec3.init(1, 1, 1));
     const p = zm.Vec3.init(0.5, 0.5, 0.5);
-    try std.testing.expect(a.contains(p));
+    try std.testing.expect(a.containsPoint(p));
 }

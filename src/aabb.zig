@@ -23,9 +23,9 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
         pub fn intersects(a: Self, b: Self) bool {
             if (a.max.x() < b.min.x() or a.min.x() > b.max.x()) return false;
             if (a.max.y() < b.min.y() or a.min.y() > b.max.y()) return false;
-            comptime if (dimensions == 3) {
+            if (dimensions == 3) {
                 if (a.max.z() < b.min.z() or a.min.z() > b.max.z()) return false;
-            };
+            }
             return true;
         }
 
@@ -33,9 +33,9 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
         pub fn containsPoint(self: Self, p: Base) bool {
             if (p.x() < self.min.x() or p.x() > self.max.x()) return false;
             if (p.y() < self.min.y() or p.y() > self.max.y()) return false;
-            comptime if (dimensions == 3) {
+            if (dimensions == 3) {
                 if (p.z() < self.min.z() or p.z() > self.max.z()) return false;
-            };
+            }
             return true;
         }
 
