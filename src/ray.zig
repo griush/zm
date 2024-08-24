@@ -15,7 +15,7 @@ pub fn RayBase(comptime T: type) type {
         origin: Base,
         direction: Base,
 
-        pub fn from(origin: Base, direction: Base) Self {
+        pub fn init(origin: Base, direction: Base) Self {
             return Self{
                 .origin = origin,
                 .direction = direction,

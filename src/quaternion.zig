@@ -31,7 +31,7 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub inline fn from(w: Element, x: Element, y: Element, z: Element) Self {
+        pub inline fn init(w: Element, x: Element, y: Element, z: Element) Self {
             return Self{
                 .w = w,
                 .x = x,
@@ -41,7 +41,7 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         pub fn fromVec3(w: Element, axis: Vec3(Element)) Self {
-            return Self.from(w, axis.x(), axis.y(), axis.z());
+            return Self.init(w, axis.x(), axis.y(), axis.z());
         }
 
         /// `angle` takes in radians
@@ -61,16 +61,16 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         pub fn add(lhs: Self, rhs: Self) Self {
-            return Self.from(lhs.w + rhs.w, lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+            return Self.init(lhs.w + rhs.w, lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
         }
 
         pub fn sub(lhs: Self, rhs: Self) Self {
-            return Self.from(lhs.w - rhs.w, lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+            return Self.init(lhs.w - rhs.w, lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
         }
 
         /// Non-mutable scale function
         pub fn scale(self: Self, scalar: Element) Self {
-            return Self.from(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
+            return Self.init(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
         }
 
         /// Mutable scale function
@@ -101,7 +101,7 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         pub inline fn conjugate(self: Self) Self {
-            return Self.from(self.w, -self.x, -self.y, -self.z);
+            return Self.init(self.w, -self.x, -self.y, -self.z);
         }
 
         pub fn multiply(lhs: Self, rhs: Self) Self {
@@ -138,7 +138,7 @@ pub fn QuaternionBase(comptime Element: type) type {
             const y = root.lerp(a.y, b.y, t);
             const z = root.lerp(a.z, b.z, t);
 
-            return Self.from(w, x, y, z);
+            return Self.init(w, x, y, z);
         }
 
         /// No extrapolation. Clamps `t`.
@@ -157,7 +157,7 @@ pub fn QuaternionBase(comptime Element: type) type {
                 if (d < 0) b = -b;
             }
 
-            return Self.from(qa.w * a + qb.w * b, qa.x * a + qb.x * b, qa.y * a + qb.y * b, qa.z * a + qb.z * b);
+            return Self.init(qa.w * a + qb.w * b, qa.x * a + qb.x * b, qa.y * a + qb.y * b, qa.z * a + qb.z * b);
         }
 
         /// This function allows `Quaternion`s to be formated by Zig's `std.fmt`.
