@@ -1,5 +1,5 @@
-<img src="./res/zm-dark.svg#gh-dark-mode-only" alt="zm Logo" width="400px">
-<img src="./res/zm-light.svg#gh-light-mode-only" alt="zm Logo" width="400px">
+<img src="https://raw.githubusercontent.com/griush/resources/f5f9659dd5c4d18d63ff9bc2e67b8feee874e482/logos/zm-dark.svg#gh-dark-mode-only" alt="zm Logo" width="400px">
+<img src="https://raw.githubusercontent.com/griush/resources/f5f9659dd5c4d18d63ff9bc2e67b8feee874e482/logos/zm-light.svg#gh-light-mode-only" alt="zm Logo" width="400px">
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/ci.yaml?style=flat&logo=github&label=CI)
 
@@ -8,7 +8,7 @@ Fast, Zig math library, fully cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1294+df6907f60`.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1302+937472508`.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
