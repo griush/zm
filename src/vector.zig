@@ -79,3 +79,8 @@ pub fn angle(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
     const dot_product = dot(self, other);
     return std.math.acos(dot_product / (len_a * len_b));
 }
+
+pub fn lerp(a: anytype, b: anytype, t: VecElement(@TypeOf(a, b))) @TypeOf(a, b) {
+    const T = @TypeOf(a, b);
+    return @mulAdd(T, b - a, @as(T, @splat(t)), a);
+}

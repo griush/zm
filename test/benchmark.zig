@@ -115,7 +115,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.lerp(a, b, @as(@TypeOf(a, b), @splat(0.5)));
+        const c = zm.vec.lerp(a, b, 0.5);
 
         std.mem.doNotOptimizeAway(c);
     }

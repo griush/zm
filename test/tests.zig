@@ -100,11 +100,11 @@ test "Vec2 lerp" {
     const a = zm.Vec2f{ 1.0, 2.0 };
     const b = zm.Vec2f{ 4.0, 6.0 };
 
-    try std.testing.expectEqual(zm.Vec2f{ 1.0, 2.0 }, zm.lerp(a, b, @as(@TypeOf(a, b), @splat(0.0))));
-    try std.testing.expectEqual(zm.Vec2f{ 4.0, 6.0 }, zm.lerp(a, b, @as(@TypeOf(a, b), @splat(1.0))));
-    try std.testing.expectEqual(zm.Vec2f{ 2.5, 4.0 }, zm.lerp(a, b, @as(@TypeOf(a, b), @splat(0.5))));
-    try std.testing.expectEqual(zm.Vec2f{ 1.75, 3.0 }, zm.lerp(a, b, @as(@TypeOf(a, b), @splat(0.25))));
-    try std.testing.expectEqual(zm.Vec2f{ 3.25, 5.0 }, zm.lerp(a, b, @as(@TypeOf(a, b), @splat(0.75))));
+    try std.testing.expectEqual(zm.Vec2f{ 1.0, 2.0 }, zm.vec.lerp(a, b, 0.0));
+    try std.testing.expectEqual(zm.Vec2f{ 4.0, 6.0 }, zm.vec.lerp(a, b, 1.0));
+    try std.testing.expectEqual(zm.Vec2f{ 2.5, 4.0 }, zm.vec.lerp(a, b, 0.5));
+    try std.testing.expectEqual(zm.Vec2f{ 1.75, 3.0 }, zm.vec.lerp(a, b, 0.25));
+    try std.testing.expectEqual(zm.Vec2f{ 3.25, 5.0 }, zm.vec.lerp(a, b, 0.75));
 }
 
 test "Mat2 scale" {

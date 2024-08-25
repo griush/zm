@@ -22,7 +22,7 @@ pub fn clamp(n: anytype, low_bound: anytype, high_bound: anytype) @TypeOf(n, low
 }
 
 /// No extrapolation, clamps `t`.
-/// You can lerp vectors with this function too.
+/// To lerp vectors use `zm.vec.lerp`.
 pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     const T = @TypeOf(a, b, t);
     return @mulAdd(T, b - a, t, a);

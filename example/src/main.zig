@@ -22,7 +22,7 @@ pub fn main() !void {
     // Similar operations with Vec3 and Vec4
     const v2 = zm.vec.up(f32);
     const v3 = zm.vec.right(f32);
-    std.debug.print("mid point: {any}\n", .{zm.lerp(v2, v3, @as(zm.Vec3f, @splat(0.5)))});
+    std.debug.print("mid point: {any}\n", .{zm.vec.lerp(v2, v3, 0.5)});
 
     // Transformation matrices
     const projection = zm.Mat4f.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
