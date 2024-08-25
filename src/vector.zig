@@ -1,281 +1,86 @@
 const std = @import("std");
 
-pub const VecComponent = enum { x, y, z, w };
+pub const Vec2f = @Vector(2, f32);
+pub const Vec2d = @Vector(2, f64);
+pub const Vec3f = @Vector(3, f32);
+pub const Vec3d = @Vector(3, f64);
+pub const Vec4f = @Vector(4, f32);
+pub const Vec4d = @Vector(4, f64);
 
-pub fn Vec2(Element: type) type {
-    return struct {
-        pub const dimensions = 2;
-        const Base = @Vector(dimensions, Element);
+pub fn dimensions(T: type) comptime_int {
+    return @typeInfo(T).Vector.len;
+}
 
-        const Self = @This();
+pub fn VecElement(T: type) type {
+    return @typeInfo(T).Vector.child;
+}
 
-        const Generic = VecGeneric(Element, Self);
+pub fn zero(l: comptime_int, Element: type) @Vector(l, Element) {
+    return @splat(0);
+}
 
-        v: Base,
+pub fn right(Element: type) @Vector(3, Element) {
+    return @Vector(3, Element){ 1, 0, 0 };
+}
 
-        pub inline fn init(xs: Element, ys: Element) Self {
-            return .{ .v = .{ xs, ys } };
-        }
+pub fn up(Element: type) @Vector(3, Element) {
+    return @Vector(3, Element){ 0, 1, 0 };
+}
 
-        pub inline fn x(v: Self) Element {
-            return v.v[0];
-        }
-        pub inline fn y(v: Self) Element {
-            return v.v[1];
-        }
+pub fn forward(Element: type) @Vector(3, Element) {
+    return @Vector(3, Element){ 0, 0, 1 };
+}
 
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-            try writer.print("vec2({d}, {d})", .{ v.v[0], v.v[1] });
-        }
+pub fn xyz(self: anytype) @Vector(3, VecElement(@TypeOf(self))) {
+    return @Vector(3, VecElement(@TypeOf(self))){ self[0], self[1], self[2] };
+}
 
-        pub const splat = Generic.splat;
-        pub const zero = Generic.zero;
-        pub const add = Generic.add;
-        pub const sub = Generic.sub;
-        pub const neg = Generic.neg;
-        pub const mul = Generic.mul;
-        pub const scale = Generic.scale;
-        pub const dot = Generic.dot;
-        pub const lenSq = Generic.lenSq;
-        pub const len = Generic.len;
-        pub const normalized = Generic.normalized;
-        pub const lerp = Generic.lerp;
-        pub const distance = Generic.distance;
-        pub const angle = Generic.angle;
+pub fn xy(self: anytype) @Vector(2, VecElement(@TypeOf(self))) {
+    return @Vector(2, VecElement(@TypeOf(self))){ self[0], self[1] };
+}
+
+pub fn scale(self: anytype, scalar: VecElement(@TypeOf(self))) @TypeOf(self) {
+    return self * @as(@TypeOf(self), @splat(scalar));
+}
+
+pub fn dot(self: anytype, other: @TypeOf(self)) @typeInfo(@TypeOf(self)).Vector.child {
+    return @reduce(.Add, self * other);
+}
+
+pub fn lenSq(self: anytype) VecElement(@TypeOf(self)) {
+    return @reduce(.Add, self * self);
+}
+
+pub fn len(self: anytype) VecElement(@TypeOf(self)) {
+    return @sqrt(@reduce(.Add, self * self));
+}
+
+pub fn normalize(self: anytype) @TypeOf(self) {
+    return self / @as(@TypeOf(self), @splat(len(self)));
+}
+
+pub fn cross(self: anytype, other: @TypeOf(self)) @TypeOf(self) {
+    if (dimensions(@TypeOf(self)) != 3) @compileError("cross is only defined for vectors of length 3.");
+    return @TypeOf(self){
+        self[1] * other[2] - self[2] * other[1],
+        self[2] * other[0] - self[0] * other[2],
+        self[0] * other[1] - self[1] * other[0],
     };
 }
 
-pub fn Vec3(Element: type) type {
-    return struct {
-        pub const dimensions = 3;
-        const Base = @Vector(dimensions, Element);
-
-        const Self = @This();
-
-        const Generic = VecGeneric(Element, Self);
-
-        v: Base,
-
-        pub inline fn init(xs: Element, ys: Element, zs: Element) Self {
-            return .{ .v = .{ xs, ys, zs } };
-        }
-
-        pub inline fn right() Self {
-            return .{ .v = .{ 1, 0, 0 } };
-        }
-
-        pub inline fn up() Self {
-            return .{ .v = .{ 0, 1, 0 } };
-        }
-
-        pub inline fn forward() Self {
-            return .{ .v = .{ 0, 0, 1 } };
-        }
-
-        pub inline fn left() Self {
-            return .{ .v = .{ -1, 0, 0 } };
-        }
-
-        pub inline fn down() Self {
-            return .{ .v = .{ 0, -1, 0 } };
-        }
-
-        pub inline fn back() Self {
-            return .{ .v = .{ 0, 0, -1 } };
-        }
-
-        pub inline fn x(v: Self) Element {
-            return v.v[0];
-        }
-        pub inline fn y(v: Self) Element {
-            return v.v[1];
-        }
-        pub inline fn z(v: Self) Element {
-            return v.v[2];
-        }
-
-        pub inline fn swizzle(
-            v: Self,
-            xc: VecComponent,
-            yc: VecComponent,
-            zc: VecComponent,
-        ) Self {
-            return .{ .v = @shuffle(Element, v.v, undefined, [3]Element{
-                @intFromEnum(xc),
-                @intFromEnum(yc),
-                @intFromEnum(zc),
-            }) };
-        }
-
-        /// Calculates the cross product between vector a and b.
-        /// This can be done only in 3D and required inputs are Vec3.
-        pub inline fn cross(a: Self, b: Self) Self {
-            // https://gamemath.com/book/vectors.html#cross_product
-            const s1 = a.swizzle(.y, .z, .x)
-                .mul(b.swizzle(.z, .x, .y));
-            const s2 = a.swizzle(.z, .x, .y)
-                .mul(b.swizzle(.y, .z, .x));
-            return s1.sub(s2);
-        }
-
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-            try writer.print("vec3({d}, {d}, {d})", .{ v.v[0], v.v[1], v.v[2] });
-        }
-
-        pub const splat = Generic.splat;
-        pub const zero = Generic.zero;
-        pub const add = Generic.add;
-        pub const sub = Generic.sub;
-        pub const neg = Generic.neg;
-        pub const mul = Generic.mul;
-        pub const scale = Generic.scale;
-        pub const dot = Generic.dot;
-        pub const lenSq = Generic.lenSq;
-        pub const len = Generic.len;
-        pub const normalized = Generic.normalized;
-        pub const lerp = Generic.lerp;
-        pub const distance = Generic.distance;
-        pub const angle = Generic.angle;
-    };
+pub fn distance(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
+    return len(other - self);
 }
 
-pub fn Vec4(Element: type) type {
-    return struct {
-        pub const dimensions = 4;
-        const Base = @Vector(dimensions, Element);
-
-        const Self = @This();
-
-        const Generic = VecGeneric(Element, Self);
-
-        v: Base,
-
-        pub inline fn init(xs: Element, ys: Element, zs: Element, ws: Element) Self {
-            return .{ .v = .{ xs, ys, zs, ws } };
-        }
-
-        pub inline fn x(v: Self) Element {
-            return v.v[0];
-        }
-        pub inline fn y(v: Self) Element {
-            return v.v[1];
-        }
-        pub inline fn z(v: Self) Element {
-            return v.v[2];
-        }
-        pub inline fn w(v: Self) Element {
-            return v.v[3];
-        }
-
-        pub fn format(
-            v: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-            try writer.print("vec4({d}, {d}, {d}, {d})", .{ v.v[0], v.v[1], v.v[2], v.v[3] });
-        }
-
-        pub const splat = Generic.splat;
-        pub const zero = Generic.zero;
-        pub const add = Generic.add;
-        pub const sub = Generic.sub;
-        pub const neg = Generic.neg;
-        pub const mul = Generic.mul;
-        pub const scale = Generic.scale;
-        pub const dot = Generic.dot;
-        pub const lenSq = Generic.lenSq;
-        pub const len = Generic.len;
-        pub const normalized = Generic.normalized;
-        pub const lerp = Generic.lerp;
-        pub const distance = Generic.distance;
-        pub const angle = Generic.angle;
-    };
+/// Returns the angle between two vectors in radians
+pub fn angle(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
+    const len_a = len(self);
+    const len_b = len(other);
+    const dot_product = dot(self, other);
+    return std.math.acos(dot_product / (len_a * len_b));
 }
 
-fn VecGeneric(Element: type, Vector: type) type {
-    return struct {
-        pub inline fn splat(scalar: Element) Vector {
-            return .{ .v = @splat(scalar) };
-        }
-
-        pub inline fn zero() Vector {
-            return .{ .v = @splat(0.0) };
-        }
-
-        /// Element-wise addition
-        pub inline fn add(lhs: Vector, rhs: Vector) Vector {
-            return .{ .v = lhs.v + rhs.v };
-        }
-
-        /// Element-wise subtraction
-        pub inline fn sub(lhs: Vector, rhs: Vector) Vector {
-            return .{ .v = lhs.v - rhs.v };
-        }
-
-        /// Element-wise negate
-        pub inline fn neg(v: Vector) Vector {
-            return .{ .v = -v.v };
-        }
-
-        /// Element-wise multiplication.
-        pub inline fn mul(a: Vector, b: Vector) Vector {
-            return .{ .v = a.v * b.v };
-        }
-
-        /// Scale the vector by the given scalar
-        pub inline fn scale(v: Vector, s: Element) Vector {
-            return .{ .v = v.v * Vector.splat(s).v };
-        }
-
-        /// Calculates the dot product between vector a and b and returns scalar.
-        pub inline fn dot(a: Vector, b: Vector) Element {
-            return @reduce(.Add, a.v * b.v);
-        }
-
-        pub inline fn lenSq(v: Vector) Element {
-            return @reduce(.Add, v.v * v.v);
-        }
-
-        pub inline fn len(v: Vector) Element {
-            return @sqrt(v.lenSq());
-        }
-
-        pub inline fn normalized(v: Vector) Vector {
-            return v.scale(1.0 / v.len());
-        }
-
-        pub inline fn lerp(a: Vector, b: Vector, t: Element) Vector {
-            return .{ .v = @mulAdd(@Vector(Vector.dimensions, Element), b.v - a.v, @splat(t), a.v) };
-        }
-
-        /// Returns the distance between two points
-        pub inline fn distance(a: Vector, b: Vector) Element {
-            return b.sub(a).len();
-        }
-
-        /// Returns the angle (in radians) between two vectors
-        pub fn angle(a: Vector, b: Vector) Element {
-            const len_a = a.len();
-            const len_b = b.len();
-            const dot_product = a.dot(b);
-            return std.math.acos(dot_product / (len_a * len_b));
-        }
-    };
+pub fn lerp(a: anytype, b: anytype, t: VecElement(@TypeOf(a, b))) @TypeOf(a, b) {
+    const T = @TypeOf(a, b);
+    return @mulAdd(T, b - a, @as(T, @splat(t)), a);
 }
