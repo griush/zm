@@ -16,12 +16,12 @@ pub fn main() !void {
     var vec2s = try std.ArrayList(zm.Vec2f).initCapacity(g_allocator, count);
     var vec3s = try std.ArrayList(zm.Vec3f).initCapacity(g_allocator, count);
     var vec4s = try std.ArrayList(zm.Vec4f).initCapacity(g_allocator, count);
-    var quaternions = try std.ArrayList(zm.Quaternion).initCapacity(g_allocator, count);
+    var quaternions = try std.ArrayList(zm.Quaternionf).initCapacity(g_allocator, count);
     for (0..count) |_| {
         try vec2s.append(zm.Vec2f{ random.float(f32), random.float(f32) });
         try vec3s.append(zm.Vec3f{ random.float(f32), random.float(f32), random.float(f32) });
         try vec4s.append(zm.Vec4f{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) });
-        try quaternions.append(zm.Quaternion.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
+        try quaternions.append(zm.Quaternionf.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.read())) / 1_000_000.0});
@@ -150,9 +150,9 @@ pub fn main() !void {
 
     // mat mul vec
     for (0..count) |i| {
-        const m = zm.Mat4.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
+        const m = zm.Mat4f.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
         const v = vec4s.items[i];
-        const r = zm.Mat4.multiplyVec4(m, v);
+        const r = zm.Mat4f.multiplyVec4(m, v);
 
         std.mem.doNotOptimizeAway(r);
     }
@@ -162,7 +162,7 @@ pub fn main() !void {
 
     // create translation + transpose
     for (0..count) |i| {
-        const m = zm.Mat4.translation(0, @floatFromInt(i), 0);
+        const m = zm.Mat4f.translation(0, @floatFromInt(i), 0);
         const t = m.transpose();
         std.mem.doNotOptimizeAway(t);
     }
@@ -172,7 +172,7 @@ pub fn main() !void {
 
     // create translation + inverse
     for (0..count) |i| {
-        const m = zm.Mat4.translation(0, @floatFromInt(i), 0);
+        const m = zm.Mat4f.translation(0, @floatFromInt(i), 0);
         const t = m.inverse();
         std.mem.doNotOptimizeAway(t);
     }
@@ -184,7 +184,7 @@ pub fn main() !void {
     for (0..count - 1) |i| {
         const a = quaternions.items[i];
         const b = quaternions.items[i + 1];
-        const t = zm.Quaternion.slerp(a, b, 0.5);
+        const t = zm.Quaternionf.slerp(a, b, 0.5);
         std.mem.doNotOptimizeAway(t);
     }
 

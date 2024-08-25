@@ -3,9 +3,9 @@ const zm = @import("zm");
 
 const float_tolerance = std.math.floatEps(f32);
 
-// test {
-//     std.testing.refAllDeclsRecursive(zm);
-// }
+test {
+    std.testing.refAllDeclsRecursive(zm);
+}
 
 test "easeInOutCubic" {
     try std.testing.expectEqual(0.0, zm.easeInOutCubic(@as(f32, 0.0)));
@@ -108,24 +108,24 @@ test "Vec2 lerp" {
 }
 
 test "Mat2 scale" {
-    const m = zm.Mat2.scaling(1.0, 2.0);
+    const m = zm.Mat2f.scaling(1.0, 2.0);
     const v = zm.Vec2f{ 3, 1.5 };
 
     try std.testing.expectEqual(zm.Vec2f{ 3, 3 }, m.multiplyVec2(v));
 }
 
 test "Mat3 scale" {
-    const result = zm.Mat3.identity().scale(3.0);
-    try std.testing.expectEqual(zm.Mat3.diagonal(3.0).data, result.data);
+    const result = zm.Mat3f.identity().scale(3.0);
+    try std.testing.expectEqual(zm.Mat3f.diagonal(3.0).data, result.data);
 }
 
 test "Mat4 scale" {
-    const result = zm.Mat4.identity().scale(3.0);
-    try std.testing.expectEqual(zm.Mat4.diagonal(3.0).data, result.data);
+    const result = zm.Mat4f.identity().scale(3.0);
+    try std.testing.expectEqual(zm.Mat4f.diagonal(3.0).data, result.data);
 }
 
 test "Mat4 multiply" {
-    const m1 = zm.Mat4{
+    const m1 = zm.Mat4f{
         .data = .{
             1, 2, 2, 2,
             2, 3, 2, 1,
@@ -134,7 +134,7 @@ test "Mat4 multiply" {
         },
     };
 
-    const m2 = zm.Mat4{
+    const m2 = zm.Mat4f{
         .data = .{
             -1,   0,     0,    2,
             0.25, 0.75,  0.25, -2.25,
@@ -143,13 +143,13 @@ test "Mat4 multiply" {
         },
     };
 
-    const m: zm.Mat4 = zm.Mat4.multiply(m1, m2);
+    const m: zm.Mat4f = zm.Mat4f.multiply(m1, m2);
 
-    try std.testing.expectEqual(zm.Mat4.identity().data, m.data);
+    try std.testing.expectEqual(zm.Mat4f.identity().data, m.data);
 }
 
 test "Mat4 inverse" {
-    const m1 = zm.Mat4{
+    const m1 = zm.Mat4f{
         .data = .{
             1, 2, 2, 2,
             2, 3, 2, 1,
@@ -158,7 +158,7 @@ test "Mat4 inverse" {
         },
     };
 
-    const m2 = zm.Mat4{
+    const m2 = zm.Mat4f{
         .data = .{
             -1,   0,     0,    2,
             0.25, 0.75,  0.25, -2.25,
@@ -167,7 +167,7 @@ test "Mat4 inverse" {
         },
     };
 
-    const m: zm.Mat4 = zm.Mat4.inverse(m1);
+    const m: zm.Mat4f = zm.Mat4f.inverse(m1);
 
     try std.testing.expectEqual(m2.data, m.data);
 }
@@ -179,7 +179,7 @@ test "clamp" {
 }
 
 test "Mat2 multiply Vec2" {
-    const transform = zm.Mat2.rotation(-std.math.pi / 2.0);
+    const transform = zm.Mat2f.rotation(-std.math.pi / 2.0);
     const vec = zm.Vec2f{ 0.0, 1.0 };
 
     const rotated = transform.multiplyVec2(vec);
@@ -189,45 +189,45 @@ test "Mat2 multiply Vec2" {
 }
 
 test "Quaternion multiply" {
-    const i = zm.Quaternion.identity();
-    const a = zm.Quaternion.init(1, 1, 1, 1);
+    const i = zm.Quaternionf.identity();
+    const a = zm.Quaternionf.init(1, 1, 1, 1);
 
-    try std.testing.expectEqual(zm.Quaternion.init(1, 1, 1, 1), a.multiply(i));
-    try std.testing.expectEqual(zm.Quaternion.init(-2, 2, 2, 2), a.multiply(a));
+    try std.testing.expectEqual(zm.Quaternionf.init(1, 1, 1, 1), a.multiply(i));
+    try std.testing.expectEqual(zm.Quaternionf.init(-2, 2, 2, 2), a.multiply(a));
 }
 
 test "Quaternion conjugate" {
-    const q = zm.Quaternion.init(1, 1, 1, 1);
+    const q = zm.Quaternionf.init(1, 1, 1, 1);
     const q_c = q.conjugate();
 
-    try std.testing.expectEqual(zm.Quaternion.init(1, -1, -1, -1), q_c);
+    try std.testing.expectEqual(zm.Quaternionf.init(1, -1, -1, -1), q_c);
 }
 
 test "Quaternion inverse" {
-    const q = zm.Quaternion.init(1, 1, 1, 1);
+    const q = zm.Quaternionf.init(1, 1, 1, 1);
     const q_i = q.inverse();
 
-    try std.testing.expectEqual(zm.Quaternion.init(0.25, -0.25, -0.25, -0.25), q_i);
+    try std.testing.expectEqual(zm.Quaternionf.init(0.25, -0.25, -0.25, -0.25), q_i);
 }
 
 test "Quaternion slerp" {
-    const a = zm.Quaternion.identity();
-    const b = zm.Quaternion.fromAxisAngle(zm.vec.up(f32), std.math.pi);
-    const qs = zm.Quaternion.slerp(a, b, 1.0);
+    const a = zm.Quaternionf.identity();
+    const b = zm.Quaternionf.fromAxisAngle(zm.vec.up(f32), std.math.pi);
+    const qs = zm.Quaternionf.slerp(a, b, 1.0);
 
     // The test should not pass as the expected is different init
     // the result, however
     // this two values represent the same orientations, so it's a scrifice for the performance
     // not having the same value, but in practice, nothing changes
-    const expected = zm.Quaternion.init(0, 0, -1, 0);
+    const expected = zm.Quaternionf.init(0, 0, -1, 0);
 
     try std.testing.expectApproxEqAbs(expected.w, qs.w, float_tolerance);
     try std.testing.expectApproxEqAbs(expected.x, qs.x, float_tolerance);
     try std.testing.expectApproxEqAbs(expected.y, qs.y, float_tolerance);
     try std.testing.expectApproxEqAbs(expected.z, qs.z, float_tolerance);
 
-    const c = zm.Quaternion.slerp(a, b, 0.5);
-    var d = zm.Quaternion.init(0.7071067811865475, 0, -0.7071067811865475, 0);
+    const c = zm.Quaternionf.slerp(a, b, 0.5);
+    var d = zm.Quaternionf.init(0.7071067811865475, 0, -0.7071067811865475, 0);
     d.normalize();
 
     try std.testing.expectApproxEqAbs(d.w, c.w, float_tolerance);
@@ -237,10 +237,10 @@ test "Quaternion slerp" {
 }
 
 test "Quaternion to Mat4" {
-    const q = zm.Quaternion.init(0.7071067811865475, 0.7071067811865475, 0.0, 0.0);
-    const m = zm.Mat4.fromQuaternion(q);
+    const q = zm.Quaternionf.init(0.7071067811865475, 0.7071067811865475, 0.0, 0.0);
+    const m = zm.Mat4f.fromQuaternion(q);
 
-    const expected = zm.Mat4{
+    const expected = zm.Mat4f{
         .data = .{
             1, 0, 0,  0,
             0, 0, -1, 0,
@@ -255,7 +255,7 @@ test "Quaternion to Mat4" {
 }
 
 test "Ray" {
-    const ray = zm.Ray.init(zm.vec.zero(3, f32), zm.vec.right(f32));
+    const ray = zm.Rayf.init(zm.vec.zero(3, f32), zm.vec.right(f32));
     const expect = zm.vec.right(f32);
 
     try std.testing.expectEqual(expect, ray.at(1.0));

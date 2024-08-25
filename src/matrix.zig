@@ -65,8 +65,8 @@ pub fn Mat2Base(comptime Element: type) type {
         pub fn scalingVec2(s: @Vector(2, Element)) Self {
             return Self{
                 .data = .{
-                    s.x(), 0,
-                    0,     s.y(),
+                    s[0], 0,
+                    0,    s[1],
                 },
             };
         }
@@ -266,11 +266,9 @@ pub fn Mat3Base(comptime Element: type) type {
 
         pub fn multiplyVec3(self: Self, v: @Vector(3, Element)) @Vector(3, Element) {
             return @Vector(3, Element){
-                .v = .{
-                    self.data[0] * v[0] + self.data[1] * v[1] + self.data[2] * v[2],
-                    self.data[3] * v[0] + self.data[4] * v[1] + self.data[5] * v[2],
-                    self.data[6] * v[0] + self.data[7] * v[1] + self.data[8] * v[2],
-                },
+                self.data[0] * v[0] + self.data[1] * v[1] + self.data[2] * v[2],
+                self.data[3] * v[0] + self.data[4] * v[1] + self.data[5] * v[2],
+                self.data[6] * v[0] + self.data[7] * v[1] + self.data[8] * v[2],
             };
         }
 
@@ -350,7 +348,7 @@ pub fn Mat4Base(comptime Element: type) type {
 
         pub fn orthographic(left: Element, right: Element, bottom: Element, top: Element, near: Element, far: Element) Self {
             return Self{
-                .data = Self{
+                .data = .{
                     2 / (right - left), 0,                  0,                 -(right + left) / (right - left),
                     0,                  2 / (top - bottom), 0,                 -(top + bottom) / (top - bottom),
                     0,                  0,                  -2 / (far - near), -(far + near) / (far - near),
@@ -433,9 +431,9 @@ pub fn Mat4Base(comptime Element: type) type {
 
             return Self{
                 .data = .{
-                    s[0],  s[1],  s[2],  -s.dot(eye),
-                    u[0],  u[1],  u[2],  -u.dot(eye),
-                    -f[0], -f[1], -f[2], f.dot(eye),
+                    s[0],  s[1],  s[2],  -vec.dot(s, eye),
+                    u[0],  u[1],  u[2],  -vec.dot(u, eye),
+                    -f[0], -f[1], -f[2], vec.dot(f, eye),
                     0,     0,     0,     1,
                 },
             };
