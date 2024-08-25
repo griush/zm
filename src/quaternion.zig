@@ -1,4 +1,4 @@
-const Vec3 = @import("vector.zig").Vec3;
+const vec = @import("vector.zig");
 const clamp = @import("zm.zig").clamp;
 const lerp = @import("zm.zig").lerp;
 
@@ -10,7 +10,7 @@ pub fn QuaternionBase(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
         .Float => {},
-        else => @compileError("QuaternionBase only supports floating point types. Type '" ++ @typeName(Element) ++ "' is not supported"),
+        else => @compileError("QuaternionBase is only defined for floating point types. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
     return struct {
@@ -40,22 +40,22 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub fn fromVec3(w: Element, axis: Vec3(Element)) Self {
-            return Self.init(w, axis.x(), axis.y(), axis.z());
+        pub fn fromVec3(w: Element, axis: @Vector(3, Element)) Self {
+            return Self.init(w, axis[0], axis[1], axis[2]);
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: Vec3(Element), radians: Element) Self {
+        pub fn fromAxisAngle(axis: @Vector(3, Element), radians: Element) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
-            return Self.fromVec3(w, axis.normalized().scale(sin_half_angle));
+            return Self.fromVec3(w, vec.scale(vec.normalize(axis), sin_half_angle));
         }
 
         /// `v` components take in radians
-        pub fn fromEulerAngles(v: Vec3(Element)) Self {
-            const x = Self.fromAxisAngle(Vec3(Element).right(), v.x());
-            const y = Self.fromAxisAngle(Vec3(Element).up(), v.y());
-            const z = Self.fromAxisAngle(Vec3(Element).forward(), v.z());
+        pub fn fromEulerAngles(v: @Vector(3, Element)) Self {
+            const x = Self.fromAxisAngle(vec.right(Element), v[0]);
+            const y = Self.fromAxisAngle(vec.up(Element), v[1]);
+            const z = Self.fromAxisAngle(vec.forward(Element), v[2]);
 
             return z.multiply(y.multiply(x));
         }

@@ -22,6 +22,7 @@ pub fn clamp(n: anytype, low_bound: anytype, high_bound: anytype) @TypeOf(n, low
 }
 
 /// No extrapolation, clamps `t`.
+/// You can lerp vectors with this function too.
 pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     const T = @TypeOf(a, b, t);
     return @mulAdd(T, b - a, t, a);
@@ -46,14 +47,9 @@ pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
 
 // vec namespace
 pub const vec = @import("vector.zig");
-
-pub const Vec2 = vec.Vec2(f32);
-pub const Vec3 = vec.Vec3(f32);
-pub const Vec4 = vec.Vec4(f32);
-
-pub const DVec2 = vec.Vec2(f64);
-pub const DVec3 = vec.Vec3(f64);
-pub const DVec4 = vec.Vec4(f64);
+pub const Vec2f = vec.Vec2f;
+pub const Vec3f = vec.Vec3f;
+pub const Vec4f = vec.Vec4f;
 
 // Matrices
 pub const matrix = @import("matrix.zig");

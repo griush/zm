@@ -3,8 +3,8 @@ const vec = @import("vector.zig");
 pub fn AABBBase(dimensions: comptime_int, Element: type) type {
     return struct {
         const Base: type = switch (dimensions) {
-            2 => vec.Vec2(Element),
-            3 => vec.Vec3(Element),
+            2 => if (Element == f32) vec.Vec2f else vec.Vec2d,
+            3 => if (Element == f32) vec.Vec3f else vec.Vec3d,
             else => @compileError("invalid AABB dimensions"),
         };
 
@@ -21,20 +21,20 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
         }
 
         pub fn intersects(a: Self, b: Self) bool {
-            if (a.max.x() < b.min.x() or a.min.x() > b.max.x()) return false;
-            if (a.max.y() < b.min.y() or a.min.y() > b.max.y()) return false;
+            if (a.max[0] < b.min[0] or a.min[0] > b.max[0]) return false;
+            if (a.max[1] < b.min[1] or a.min[1] > b.max[1]) return false;
             if (dimensions == 3) {
-                if (a.max.z() < b.min.z() or a.min.z() > b.max.z()) return false;
+                if (a.max[2] < b.min[2] or a.min[2] > b.max[2]) return false;
             }
             return true;
         }
 
         /// If `p` is at the edge, returns `false`
         pub fn containsPoint(self: Self, p: Base) bool {
-            if (p.x() < self.min.x() or p.x() > self.max.x()) return false;
-            if (p.y() < self.min.y() or p.y() > self.max.y()) return false;
+            if (p[0] < self.min[0] or p[0] > self.max[0]) return false;
+            if (p[1] < self.min[1] or p[1] > self.max[1]) return false;
             if (dimensions == 3) {
-                if (p.z() < self.min.z() or p.z() > self.max.z()) return false;
+                if (p[2] < self.min[2] or p[2] > self.max[2]) return false;
             }
             return true;
         }
@@ -45,12 +45,12 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
 
         /// Returns the center of the AABB
         pub fn center(self: Self) Base {
-            return (self.min.add(self.max)).scale(0.5);
+            return vec.scale(self.min + self.max, 0.5);
         }
 
         /// Returns the size of the AABB
         pub fn size(self: Self) Base {
-            return self.max.sub(self.min);
+            return self.max - self.min;
         }
     };
 }

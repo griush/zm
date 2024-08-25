@@ -1,4 +1,4 @@
-const Vec3 = @import("vector.zig").Vec3;
+const vec = @import("vector.zig");
 
 pub fn RayBase(comptime T: type) type {
     const type_info = @typeInfo(T);
@@ -10,7 +10,7 @@ pub fn RayBase(comptime T: type) type {
     return struct {
         const Self = @This();
 
-        const Base = Vec3(T);
+        const Base = @Vector(3, T);
 
         origin: Base,
         direction: Base,
@@ -23,7 +23,7 @@ pub fn RayBase(comptime T: type) type {
         }
 
         pub fn at(self: Self, t: f32) Base {
-            return self.origin.add(self.direction.scale(t));
+            return self.origin + vec.scale(self.direction, t);
         }
     };
 }
