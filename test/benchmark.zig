@@ -24,7 +24,7 @@ pub fn main() !void {
         try quaternions.append(zm.Quaternion.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
-    std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.lap())) / 1_000_000.0});
+    std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.read())) / 1_000_000.0});
     timer.reset();
 
     // vec2 add
@@ -37,7 +37,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec2 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec2 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // vec3 add
@@ -50,7 +50,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec3 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // vec4 add
@@ -63,7 +63,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec4 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec4 add({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // vec3 dot product
@@ -76,7 +76,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // vec4 dot
@@ -89,7 +89,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec4 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec4 dot({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // Normalize
@@ -98,7 +98,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(v);
     }
 
-    std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 Normalize({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // Length
@@ -107,7 +107,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(length);
     }
 
-    std.debug.print("Test - Vec3 Length({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 Length({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // Lerp
@@ -120,7 +120,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec3 Lerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 Lerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // Cross + scale
@@ -133,7 +133,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec3 Cross + Vec3 scale({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 Cross + Vec3 scale({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // angle
@@ -145,7 +145,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(c);
     }
 
-    std.debug.print("Test - Vec3 angle({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Vec3 angle({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // mat mul vec
@@ -157,7 +157,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(r);
     }
 
-    std.debug.print("Test - Mat4 multiply Vec4({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Mat4 multiply Vec4({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // create translation + transpose
@@ -167,7 +167,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(t);
     }
 
-    std.debug.print("Test - Mat4 translation + transpose({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Mat4 translation + transpose({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // create translation + inverse
@@ -177,7 +177,7 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(t);
     }
 
-    std.debug.print("Test - Mat4 translation + inverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Mat4 translation + inverse({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 
     // quaternion slerp
@@ -188,6 +188,6 @@ pub fn main() !void {
         std.mem.doNotOptimizeAway(t);
     }
 
-    std.debug.print("Test - Quaternion slerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.lap())) / 1_000_000.0 });
+    std.debug.print("Test - Quaternion slerp({}): {d} ms\n", .{ count, @as(f64, @floatFromInt(timer.read())) / 1_000_000.0 });
     timer.reset();
 }
