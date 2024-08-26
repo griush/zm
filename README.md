@@ -3,12 +3,12 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/ci.yaml?style=flat&logo=github&label=CI)
 
-# zm
-Fast, Zig math library, fully cross-platform.
+# zm - Fast math library
+zm is a Zig math library. It is fast, easy to use and cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1302+937472508`.
+> This library is tracking Zig's master branch. Last tested with `0.14.0-dev.1304+7d54c62c8`.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
@@ -23,7 +23,8 @@ const zm = @import("zm");
 ```
 
 ### Getting Started
-For a full example of the usage along with Zig's build system see: [example](/example/).
+For an example using Zig's build system see: [example](/example/).
+There is a working example using OpenGL and GLFW [here](https://github.com/griush/zig-opengl-example).
 
 Simple example for game development.
 ```zig
@@ -39,7 +40,7 @@ pub fn main() !void {
     const view = zm.Mat4.translation(0.0, 0.75, 5.0);
     const view_proj = projection.multiply(view);
 
-    // Upload data to shader using `&view_proj`
+    // Upload data
     gl.NamedBufferSubData(ubo, 0, @sizeOf(zm.Mat4), &view_proj);
     
     // Render loop
@@ -47,8 +48,6 @@ pub fn main() !void {
     // Cleanup
 }
 ```
-
-You can also see a full, working example  [here](https://github.com/griush/zig-opengl-example).
 
 ## Benchmarks
 See [benchmarks](/test/benchmark.zig).
