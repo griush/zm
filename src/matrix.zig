@@ -6,7 +6,7 @@ const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 pub fn Mat2Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
-        .Float => {},
+        .float => {},
         else => @compileError("Mat2Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
@@ -159,7 +159,7 @@ pub fn Mat2Base(comptime Element: type) type {
 pub fn Mat3Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
-        .Float => {},
+        .float => {},
         else => @compileError("Mat3Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 
@@ -311,7 +311,7 @@ pub fn Mat3Base(comptime Element: type) type {
 pub fn Mat4Base(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
-        .Float => {},
+        .float => {},
         else => @compileError("Mat4Base only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 

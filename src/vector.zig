@@ -8,11 +8,11 @@ pub const Vec4f = @Vector(4, f32);
 pub const Vec4d = @Vector(4, f64);
 
 pub fn dimensions(T: type) comptime_int {
-    return @typeInfo(T).Vector.len;
+    return @typeInfo(T).vector.len;
 }
 
 pub fn VecElement(T: type) type {
-    return @typeInfo(T).Vector.child;
+    return @typeInfo(T).vector.child;
 }
 
 pub fn zero(l: comptime_int, Element: type) @Vector(l, Element) {
@@ -43,7 +43,7 @@ pub fn scale(self: anytype, scalar: VecElement(@TypeOf(self))) @TypeOf(self) {
     return self * @as(@TypeOf(self), @splat(scalar));
 }
 
-pub fn dot(self: anytype, other: @TypeOf(self)) @typeInfo(@TypeOf(self)).Vector.child {
+pub fn dot(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
     return @reduce(.Add, self * other);
 }
 

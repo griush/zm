@@ -9,7 +9,7 @@ const root = @This();
 pub fn QuaternionBase(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
-        .Float => {},
+        .float => {},
         else => @compileError("QuaternionBase is only defined for floating point types. Type '" ++ @typeName(Element) ++ "' is not supported"),
     }
 

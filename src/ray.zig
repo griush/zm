@@ -3,7 +3,7 @@ const vec = @import("vector.zig");
 pub fn RayBase(comptime T: type) type {
     const type_info = @typeInfo(T);
     comptime switch (type_info) {
-        .Float => {},
+        .float => {},
         else => @compileError("Ray is not implemented for type " ++ @typeName(T)),
     };
 
