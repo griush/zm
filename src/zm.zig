@@ -34,7 +34,7 @@ pub fn sigmoid(t: anytype) @TypeOf(t) {
 }
 
 /// `t` must be a floating point number.
-/// `t` must be between `0`(beginning of the animation) and `1`(end of the animation)
+/// `t` must be between `0` (beginning of the animation) and `1` (end of the animation).
 pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
     if (@typeInfo(@TypeOf(t)) != .float) @compileError("easeInOutCubic not implemented for " ++ @typeName(@TypeOf(t)));
 

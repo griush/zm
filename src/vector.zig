@@ -68,11 +68,12 @@ pub fn cross(self: anytype, other: @TypeOf(self)) @TypeOf(self) {
     };
 }
 
+/// Returns the distance between two points.
 pub fn distance(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
     return len(other - self);
 }
 
-/// Returns the angle between two vectors in radians
+/// Returns the angle between two vectors in radians.
 pub fn angle(self: anytype, other: @TypeOf(self)) VecElement(@TypeOf(self)) {
     const len_a = len(self);
     const len_b = len(other);
