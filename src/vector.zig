@@ -86,7 +86,7 @@ pub fn lerp(a: anytype, b: anytype, t: VecElement(@TypeOf(a, b))) @TypeOf(a, b) 
     return @mulAdd(T, b - a, @as(T, @splat(t)), a);
 }
 
-// /// Reflects `self` along `normal`. `normal` must be normalized.
-// pub fn reflect(self: anytype, normal: anytype) @TypeOf(self, normal) {
-//     return self - @as(@TypeOf(self, normal), @splat(2.0 * dot(self, normal))) * normal;
-// }
+/// Reflects `self` along `normal`. `normal` must be normalized.
+pub fn reflect(self: anytype, normal: anytype) @TypeOf(self, normal) {
+    return self - @as(@TypeOf(self, normal), @splat(2.0 * dot(self, normal))) * normal;
+}
