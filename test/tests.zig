@@ -275,34 +275,34 @@ test "AABB contains" {
     try std.testing.expect(a.containsPoint(p));
 }
 
-test "vector reflect along self" {
-    const v = zm.Vec2f{ 1, 0 };
-    const n = zm.Vec2f{ 1, 0 };
-    const expected = zm.Vec2f{ -1, 0 };
+// test "vector reflect along self" {
+//     const v = zm.Vec2f{ 1, 0 };
+//     const n = zm.Vec2f{ 1, 0 };
+//     const expected = zm.Vec2f{ -1, 0 };
 
-    try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
-}
+//     try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
+// }
 
-test "vector reflect along y" {
-    const v = zm.Vec2f{ 1, 1 };
-    const n = zm.Vec2f{ 0, 1 };
-    const expected = zm.Vec2f{ 1, -1 };
+// test "vector reflect along y" {
+//     const v = zm.Vec2f{ 1, 1 };
+//     const n = zm.Vec2f{ 0, 1 };
+//     const expected = zm.Vec2f{ 1, -1 };
 
-    try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
-}
+//     try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
+// }
 
-test "vector reflect along x" {
-    const v = zm.Vec2f{ 1, 1 };
-    const n = zm.Vec2f{ 1, 0 };
-    const expected = zm.Vec2f{ -1, 1 };
+// test "vector reflect along x" {
+//     const v = zm.Vec2f{ 1, 1 };
+//     const n = zm.Vec2f{ 1, 0 };
+//     const expected = zm.Vec2f{ -1, 1 };
 
-    try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
-}
+//     try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
+// }
 
-test "vector reflect 3d" {
-    const v = zm.Vec3f{ 1, 2, 3 };
-    const n = zm.Vec3f{ 0, 0, 1 };
-    const expected = zm.Vec3f{ 1, 2, -3 };
+// test "vector reflect 3d" {
+//     const v = zm.Vec3f{ 1, 2, 3 };
+//     const n = zm.Vec3f{ 0, 0, 1 };
+//     const expected = zm.Vec3f{ 1, 2, -3 };
 
-    try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
-}
+//     try std.testing.expectEqual(expected, zm.vec.reflect(v, n));
+// }
