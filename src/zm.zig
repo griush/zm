@@ -53,8 +53,6 @@ pub const EaseType = enum {
 };
 
 pub fn ease(a: anytype, b: anytype, t: anytype, ease_type: EaseType) @TypeOf(a, b, t) {
-    if (@typeInfo(@TypeOf(a, b, t)) != .float) @compileError("ease not implemented for " ++ @typeName(@TypeOf(a, b, t)));
-
     return switch (ease_type) {
         .linear => lerp(a, b, t),
         .ease_in => lerp(a, b, t * t),
