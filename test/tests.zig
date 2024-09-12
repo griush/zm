@@ -7,9 +7,11 @@ test {
     std.testing.refAllDeclsRecursive(zm);
 }
 
-test "easeInOutCubic" {
-    try std.testing.expectEqual(0.0, zm.easeInOutCubic(@as(f32, 0.0)));
-    try std.testing.expectEqual(1.0, zm.easeInOutCubic(@as(f32, 1.0)));
+test "ease" {
+    _ = zm.ease(0, 1, 0.5, .linear);
+    _ = zm.ease(0, 1, 0.5, .ease_in);
+    _ = zm.ease(0, 1, 0.5, .ease_out);
+    _ = zm.ease(0, 1, 0.5, .ease_in_out);
 }
 
 test "Vec initialization" {

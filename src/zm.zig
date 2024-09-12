@@ -45,6 +45,24 @@ pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
     }
 }
 
+pub const EaseType = enum {
+    linear,
+    ease_in,
+    ease_out,
+    ease_in_out,
+};
+
+pub fn ease(a: anytype, b: anytype, t: anytype, ease_type: EaseType) @TypeOf(a, b, t) {
+    if (@typeInfo(@TypeOf(a, b, t)) != .float) @compileError("ease not implemented for " ++ @typeName(@TypeOf(a, b, t)));
+
+    return switch (ease_type) {
+        .linear => lerp(a, b, t),
+        .ease_in => lerp(a, b, t * t),
+        .ease_out => lerp(a, b, 1 - (1 - t) * (1 - t)),
+        .ease_in_out => lerp(a, b, -(std.math.cos(std.math.pi * t) - 1.0) / 2.0),
+    };
+}
+
 // vec namespace
 pub const vec = @import("vector.zig");
 pub const Vec2f = vec.Vec2f;
