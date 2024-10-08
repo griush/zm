@@ -33,18 +33,6 @@ pub fn sigmoid(t: anytype) @TypeOf(t) {
     return 1.0 / (1.0 + @exp(-t));
 }
 
-/// `t` must be a floating point number.
-/// `t` must be between `0` (beginning of the animation) and `1` (end of the animation).
-pub fn easeInOutCubic(t: anytype) @TypeOf(t) {
-    if (@typeInfo(@TypeOf(t)) != .float) @compileError("easeInOutCubic not implemented for " ++ @typeName(@TypeOf(t)));
-
-    if (t < 0.5) {
-        return 4 * t * t * t;
-    } else {
-        return 1 - std.math.pow(@TypeOf(t), -2 * t + 2, 3) / 2;
-    }
-}
-
 pub const EaseType = enum {
     linear,
     ease_in,

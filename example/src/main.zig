@@ -6,8 +6,7 @@ pub fn main() !void {
     const radians = zm.toRadians(180.0); // also toDegrees
     std.debug.print("Radians: {d}\n", .{radians});
 
-    // Useful functions for animation
-    _ = zm.easeInOutCubic(@as(f32, 0.75));
+    _ = zm.ease(0, 90, 0.5, zm.EaseType.ease_in_out);
 
     // Vector types are created with zm.Vec function.
     // It takes the number of elements(size) and the base type and returns
