@@ -28,9 +28,9 @@ pub fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t) {
     return @mulAdd(T, b - a, t, a);
 }
 
-/// `t` must be numeric.
-pub fn sigmoid(t: anytype) @TypeOf(t) {
-    return 1.0 / (1.0 + @exp(-t));
+/// `x` must be numeric.
+pub fn sigmoid(x: anytype) @TypeOf(x) {
+    return 1.0 / (1.0 + @exp(-x));
 }
 
 pub const EaseType = enum {
