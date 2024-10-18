@@ -577,3 +577,60 @@ pub fn Mat4Base(comptime Element: type) type {
         }
     };
 }
+
+pub fn Mat(comptime Element: type, rows: comptime_int, cols: comptime_int) type {
+    const type_info = @typeInfo(Element);
+    switch (type_info) {
+        .float => {},
+        else => @compileError("Mat only supports numerical type. Type '" ++ @typeName(Element) ++ "' is not supported"),
+    }
+
+    return struct {
+        const Self = @This();
+
+        const element_count = cols * rows;
+        const DataType = [element_count]Element;
+        data: DataType,
+
+        /// Creates a matrix with al zeroes as values
+        pub fn zero() Self {
+            return Self{
+                .data = @splat(0.0),
+            };
+        }
+
+        pub fn multiply(lhs: Self, rhs: Self) Self {
+            var data: DataType = @splat(0.0);
+
+            var row: usize = 0;
+            while (row < rows) : (row += 1) {
+                var col: usize = 0;
+                while (col < cols) : (col += 1) {
+                    var e: usize = 0;
+                    while (e < 4) : (e += 1) {
+                        // TODO: check index accessing here
+                        data[col + row * cols] += lhs.data[e + row * cols] * rhs.data[e * rows + col];
+                    }
+                }
+            }
+
+            return Self{
+                .data = data,
+            };
+        }
+
+        /// As `zm` is row-major, matrices should be transposed before passing into OpenGL (which is column-major)
+        pub fn transpose(self: Self) Self {
+            var result = Self.identity();
+
+            for (0..rows) |row| {
+                for (0..cols) |col| {
+                    // TODO: check index accessing here
+                    result.data[col * rows + row] = self.data[row * cols + col];
+                }
+            }
+
+            return result;
+        }
+    };
+}
