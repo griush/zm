@@ -13,7 +13,7 @@ pub fn Mat2Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        const DataType = @Vector(4, Element);
+        const DataType = vec.Vec(4, Element);
 
         data: DataType,
 
@@ -108,7 +108,7 @@ pub fn Mat2Base(comptime Element: type) type {
             };
         }
 
-        pub fn multiplyVec2(self: Self, v: @Vector(2, Element)) @Vector(2, Element) {
+        pub fn multiplyVec2(self: Self, v: vec.Vec(2, Element)) vec.Vec(2, Element) {
             return @Vector(2, Element){
                 self.data[0] * v[0] + self.data[1] * v[1],
                 self.data[2] * v[0] + self.data[3] * v[1],
@@ -166,7 +166,7 @@ pub fn Mat3Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        const DataType = @Vector(9, Element);
+        const DataType = vec.Vec(9, Element);
 
         data: DataType,
 
@@ -203,7 +203,7 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn translationVec2(v: @Vector(2, Element)) Self {
+        pub fn translationVec2(v: vec.Vec(2, Element)) Self {
             return Self{
                 .data = .{
                     1, 0, v[0],
@@ -236,7 +236,7 @@ pub fn Mat3Base(comptime Element: type) type {
             };
         }
 
-        pub fn scalingVec2(v: @Vector(2, Element)) Self {
+        pub fn scalingVec2(v: vec.Vec(2, Element)) Self {
             return Self{
                 .data = .{
                     v[0], 0,    0,
@@ -318,7 +318,7 @@ pub fn Mat4Base(comptime Element: type) type {
     return struct {
         const Self = @This();
 
-        const DataType = @Vector(16, Element);
+        const DataType = vec.Vec(16, Element);
 
         data: DataType,
 
@@ -380,13 +380,13 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn translationVec3(v: @Vector(3, Element)) Self {
+        pub fn translationVec3(v: vec.Vec(3, Element)) Self {
             return Self.translation(v[0], v[1], v[2]);
         }
 
         /// Returns a rotation transformation matrix
         /// `angle` takes in radians
-        pub fn rotation(axis: @Vector(3, Element), angle: Element) Self {
+        pub fn rotation(axis: vec.Vec(3, Element), angle: Element) Self {
             var result = Self.identity();
 
             const r = angle;
@@ -424,7 +424,7 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn lookAt(eye: @Vector(3, Element), target: @Vector(3, Element), up: @Vector(3, Element)) Self {
+        pub fn lookAt(eye: vec.Vec(3, Element), target: vec.Vec(3, Element), up: vec.Vec(3, Element)) Self {
             const f = vec.normalize(target - eye);
             const s = vec.normalize(vec.cross(f, up));
             const u = vec.normalize(vec.cross(s, f));
@@ -497,7 +497,7 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
-        pub fn multiplyVec4(m: Self, v: @Vector(4, Element)) @Vector(4, Element) {
+        pub fn multiplyVec4(m: Self, v: vec.Vec(4, Element)) vec.Vec(4, Element) {
             return @Vector(4, Element){
                 m.data[0] * v[0] + m.data[1] * v[1] + m.data[2] * v[2] + m.data[3] * v[3],
                 m.data[4] * v[0] + m.data[5] * v[1] + m.data[6] * v[2] + m.data[7] * v[3],

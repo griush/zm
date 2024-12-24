@@ -40,19 +40,19 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub fn fromVec3(w: Element, axis: @Vector(3, Element)) Self {
+        pub fn fromVec3(w: Element, axis: vec.Vec(3, Element)) Self {
             return Self.init(w, axis[0], axis[1], axis[2]);
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: @Vector(3, Element), radians: Element) Self {
+        pub fn fromAxisAngle(axis: vec.Vec(3, Element), radians: Element) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
             return Self.fromVec3(w, vec.scale(vec.normalize(axis), sin_half_angle));
         }
 
         /// `v` components take in radians
-        pub fn fromEulerAngles(v: @Vector(3, Element)) Self {
+        pub fn fromEulerAngles(v: vec.Vec(3, Element)) Self {
             const x = Self.fromAxisAngle(vec.right(Element), v[0]);
             const y = Self.fromAxisAngle(vec.up(Element), v[1]);
             const z = Self.fromAxisAngle(vec.forward(Element), v[2]);

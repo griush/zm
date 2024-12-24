@@ -3,8 +3,8 @@ const vec = @import("vector.zig");
 pub fn AABBBase(dimensions: comptime_int, Element: type) type {
     return struct {
         const Base: type = switch (dimensions) {
-            2 => if (Element == f32) vec.Vec2f else vec.Vec2d,
-            3 => if (Element == f32) vec.Vec3f else vec.Vec3d,
+            2 => if (Element == f32) vec.Vec2f else vec.Vec2,
+            3 => if (Element == f32) vec.Vec3f else vec.Vec3,
             else => @compileError("invalid AABB dimensions"),
         };
 
