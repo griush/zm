@@ -5,48 +5,54 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
     const root_source_file = b.path("src/zm.zig");
 
-    // Zig module
+    // zm lib module
     const zm = b.addModule("zm", .{
-        .root_source_file = root_source_file,
-    });
-
-    // Library
-    const lib = b.addStaticLibrary(.{
-        .name = "zm",
         .root_source_file = root_source_file,
         .target = target,
         .optimize = optimize,
     });
 
-    // Check step to see if the module compiles compiles
+    // library
+    const lib = b.addStaticLibrary(.{
+        .name = "zm",
+        .root_module = zm,
+    });
+
+    // check step to see if the zm compiles
     const check = b.step("check", "Check if zm compiles");
     check.dependOn(&lib.step);
 
-    // Tests step
-    const test_step = b.step("test", "Run zm tests");
-    const tests = b.addTest(.{
-        .name = "zm-tests",
+    // tests step
+    const zm_tests = b.createModule(.{
         .root_source_file = b.path("test/tests.zig"),
         .target = target,
         .optimize = optimize,
     });
+    zm_tests.addImport("zm", zm);
 
-    tests.root_module.addImport("zm", zm);
+    const test_step = b.step("test", "Run zm tests");
+    const tests = b.addTest(.{
+        .name = "zm-tests",
+        .root_module = zm_tests,
+    });
 
     b.installArtifact(tests);
     test_step.dependOn(&b.addRunArtifact(tests).step);
 
-    // Benchmark step
-    const benchmark_step = b.step("benchmark", "Run zm benchmark");
-    const benchmark = b.addExecutable(.{
-        .name = "zm-benchmark",
+    // benchmark step
+    const zm_benchmark = b.createModule(.{
         .root_source_file = b.path("test/benchmark.zig"),
         .target = target,
         .optimize = optimize,
     });
 
-    benchmark.root_module.addImport("zm", zm);
+    zm_benchmark.addImport("zm", zm);
 
+    const benchmark_step = b.step("benchmark", "Run zm benchmark");
+    const benchmark = b.addExecutable(.{
+        .name = "zm-benchmark",
+        .root_module = zm_benchmark,
+    });
     b.installArtifact(benchmark);
     benchmark_step.dependOn(&b.addRunArtifact(benchmark).step);
 
