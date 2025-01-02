@@ -1,6 +1,4 @@
 const vec = @import("vector.zig");
-const clamp = @import("zm.zig").clamp;
-const lerp = @import("zm.zig").lerp;
 
 const std = @import("std");
 
@@ -133,10 +131,10 @@ pub fn QuaternionBase(comptime Element: type) type {
 
         /// No extrapolation. Clamps `t`.
         pub fn lerp(a: Self, b: Self, t: Element) Self {
-            const w = root.lerp(a.w, b.w, t);
-            const x = root.lerp(a.x, b.x, t);
-            const y = root.lerp(a.y, b.y, t);
-            const z = root.lerp(a.z, b.z, t);
+            const w = std.math.lerp(a.w, b.w, t);
+            const x = std.math.lerp(a.x, b.x, t);
+            const y = std.math.lerp(a.y, b.y, t);
+            const z = std.math.lerp(a.z, b.z, t);
 
             return Self.init(w, x, y, z);
         }

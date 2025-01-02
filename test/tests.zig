@@ -88,7 +88,7 @@ test "Vec angle" {
     const right = zm.vec.right(f32);
     const up = zm.vec.up(f32);
 
-    try std.testing.expectApproxEqAbs(zm.toRadians(90.0), zm.vec.angle(right, up), float_tolerance);
+    try std.testing.expectApproxEqAbs(std.math.degreesToRadians(90.0), zm.vec.angle(right, up), float_tolerance);
 }
 
 test "Vec angle with len 0" {
@@ -207,9 +207,9 @@ test "Mat4 inverse" {
 }
 
 test "clamp" {
-    try std.testing.expectEqual(0.0, zm.clamp(0.0, -1.0, 1.0));
-    try std.testing.expectEqual(2.0, zm.clamp(3.0, 1.0, 2.0));
-    try std.testing.expectEqual(4.0, zm.clamp(3.0, 4.0, 8.0));
+    try std.testing.expectEqual(0.0, std.math.clamp(0.0, -1.0, 1.0));
+    try std.testing.expectEqual(2.0, std.math.clamp(3.0, 1.0, 2.0));
+    try std.testing.expectEqual(4.0, std.math.clamp(3.0, 4.0, 8.0));
 }
 
 test "Mat2 multiply Vec2" {
