@@ -1,8 +1,8 @@
 .{
     .name = "zm",
-    .version = "0.3.0-dev",
+    .version = "0.3.0",
 
-    .minimum_zig_version = "0.14.0-dev",
+    // .minimum_zig_version = "master",
 
     .dependencies = .{},
 
