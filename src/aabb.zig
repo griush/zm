@@ -51,7 +51,7 @@ pub fn AABBBase(dimensions: comptime_int, Element: type) type {
             return vec.scale(self.min + self.max, 0.5);
         }
 
-        /// Returns the size of the AABB.
+        /// Returns a vector with the size of the AABB.
         pub fn size(self: Self) Base {
             return self.max - self.min;
         }
