@@ -1,7 +1,7 @@
 .{
-    .name = "zm_example",
-
+    .name = .zm_example,
     .version = "0.1.0",
+    .fingerprint = 0xd04bbe5fbd9c2462,
 
     .dependencies = .{
         .zm = .{
