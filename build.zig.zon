@@ -1,6 +1,7 @@
 .{
-    .name = "zm",
+    .name = .zm,
     .version = "0.3.0",
+    .fingerprint = 0xa70a9e6659feb570, // don't change
 
     // .minimum_zig_version = "master",
 

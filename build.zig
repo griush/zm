@@ -43,7 +43,7 @@ pub fn build(b: *std.Build) void {
     const zm_benchmark = b.createModule(.{
         .root_source_file = b.path("test/benchmark.zig"),
         .target = target,
-        .optimize = optimize,
+        .optimize = .ReleaseFast,
     });
 
     zm_benchmark.addImport("zm", zm);
@@ -52,6 +52,7 @@ pub fn build(b: *std.Build) void {
     const benchmark = b.addExecutable(.{
         .name = "zm-benchmark",
         .root_module = zm_benchmark,
+        .optimize = .ReleaseFast,
     });
     b.installArtifact(benchmark);
     benchmark_step.dependOn(&b.addRunArtifact(benchmark).step);
