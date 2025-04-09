@@ -18,10 +18,6 @@ pub fn build(b: *std.Build) void {
         .root_module = zm,
     });
 
-    // check step to see if the zm compiles
-    const check = b.step("check", "Check if zm compiles");
-    check.dependOn(&lib.step);
-
     // tests step
     const zm_tests = b.createModule(.{
         .root_source_file = b.path("test/tests.zig"),
