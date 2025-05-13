@@ -1,7 +1,8 @@
 //! zm - Fast, Zig math library, fully cross-platform.
 //! zm uses a +Y-up, right-handed coordinate system,
 //! for all types, the default is f64.
-//! type names ending with `f` are f32.
+//! Type names ending with `f` are f32.
+//! Matrices are row-major.
 
 const std = @import("std");
 
@@ -37,21 +38,18 @@ pub const Vec4 = vec.Vec4;
 
 // matrices
 pub const matrix = @import("matrix.zig");
-const Mat2Base = matrix.Mat2Base;
-const Mat3Base = matrix.Mat3Base;
-const Mat4Base = matrix.Mat4Base;
 
 // Builtin Mat2Base types
-pub const Mat2f = Mat2Base(f32);
-pub const Mat2 = Mat2Base(f64);
+pub const Mat2f = matrix.Mat2Base(f32);
+pub const Mat2 = matrix.Mat2Base(f64);
 
 // Builtin Mat3Base types
-pub const Mat3f = Mat3Base(f32);
-pub const Mat3 = Mat3Base(f64);
+pub const Mat3f = matrix.Mat3Base(f32);
+pub const Mat3 = matrix.Mat3Base(f64);
 
 // Builtin Mat4Base types
-pub const Mat4f = Mat4Base(f32);
-pub const Mat4 = Mat4Base(f64);
+pub const Mat4f = matrix.Mat4Base(f32);
+pub const Mat4 = matrix.Mat4Base(f64);
 
 // quaternion namespace
 pub const quaternion = @import("quaternion.zig");
@@ -60,7 +58,7 @@ pub const quaternion = @import("quaternion.zig");
 pub const Quaternionf = quaternion.QuaternionBase(f32);
 pub const Quaternion = quaternion.QuaternionBase(f64);
 
-// Rays
+// ray namespace
 pub const ray = @import("ray.zig");
 
 // Builtin Ray types

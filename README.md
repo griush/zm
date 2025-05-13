@@ -8,7 +8,7 @@ zm is a Zig math library. It is fast, easy to use and cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.15.0-dev.276+9bbac4288`.
+> This library is tracking Zig's master branch. Last tested with `0.15.0-dev.516+abbead1fb`.
 > It may not compile with newer or older versions.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
@@ -41,7 +41,7 @@ pub fn main() !void {
     const view = zm.Mat4.translation(0.0, 0.75, 5.0);
     const view_proj = projection.multiply(view);
 
-    // Upload data
+    // Upload data. Matrix should be transposed in OpenGL as they use column-major matrices.
     gl.NamedBufferSubData(ubo, 0, @sizeOf(zm.Mat4), &view_proj);
 
     // Render loop
