@@ -13,7 +13,7 @@ pub fn build(b: *std.Build) void {
     });
 
     // library
-    const lib = b.addStaticLibrary(.{
+    const zm_lib = b.addStaticLibrary(.{
         .name = "zm",
         .root_module = zm,
     });
@@ -55,7 +55,7 @@ pub fn build(b: *std.Build) void {
 
     // Docs step
     const install_docs = b.addInstallDirectory(.{
-        .source_dir = lib.getEmittedDocs(),
+        .source_dir = zm_lib.getEmittedDocs(),
         .install_dir = .{ .custom = "." },
         .install_subdir = "docs",
     });
