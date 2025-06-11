@@ -30,6 +30,8 @@ pub fn build(b: *std.Build) void {
     const tests = b.addTest(.{
         .name = "zm-tests",
         .root_module = zm_tests,
+        // TEMP: fix because of a bug in the Zig compiler on linux
+        .use_llvm = true,
     });
 
     b.installArtifact(tests);
@@ -49,6 +51,8 @@ pub fn build(b: *std.Build) void {
         .name = "zm-benchmark",
         .root_module = zm_benchmark,
         .optimize = .ReleaseFast,
+        // TEMP: fix because of a bug in the Zig compiler on linux
+        .use_llvm = true,
     });
     b.installArtifact(benchmark);
     benchmark_step.dependOn(&b.addRunArtifact(benchmark).step);
