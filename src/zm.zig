@@ -18,7 +18,9 @@ pub const EaseType = enum {
     ease_in_out,
 };
 
-pub fn ease(a: anytype, b: anytype, t: anytype, ease_type: EaseType) @TypeOf(a, b, t) {
+/// `a` and `b` must be numeric types.
+/// `t` should be between 0 and 1.
+pub fn ease(a: anytype, b: anytype, t: f32, ease_type: EaseType) @TypeOf(a, b, t) {
     return switch (ease_type) {
         .linear => std.math.lerp(a, b, t),
         .ease_in => std.math.lerp(a, b, t * t),
