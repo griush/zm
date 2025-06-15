@@ -424,6 +424,17 @@ pub fn Mat4Base(comptime Element: type) type {
             };
         }
 
+        pub fn scalingVec3(v: vec.Vec(3, Element)) Self {
+            return Self{
+                .data = .{
+                    v[0], 0,    0,    0,
+                    0,    v[1], 0,    0,
+                    0,    0,    v[2], 0,
+                    0,    0,    0,    1,
+                },
+            };
+        }
+
         pub fn lookAt(eye: vec.Vec(3, Element), target: vec.Vec(3, Element), up: vec.Vec(3, Element)) Self {
             const f = vec.normalize(target - eye);
             const s = vec.normalize(vec.cross(f, up));
