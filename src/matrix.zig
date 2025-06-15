@@ -17,7 +17,7 @@ pub fn Mat2Base(comptime Element: type) type {
 
         data: DataType,
 
-        /// Creates a matrix with al zeroes as values
+        /// Creates a matrix with all zeroes as values
         pub fn zero() Self {
             return Self{
                 .data = @splat(0.0),
@@ -170,7 +170,7 @@ pub fn Mat3Base(comptime Element: type) type {
 
         data: DataType,
 
-        /// Creates a matrix with al zeroes as values
+        /// Creates a matrix with all zeroes as values
         pub fn zero() Self {
             return Self{
                 .data = @splat(0.0),
@@ -322,7 +322,7 @@ pub fn Mat4Base(comptime Element: type) type {
 
         data: DataType,
 
-        /// Creates a matrix with al zeroes as values
+        /// Creates a matrix with all zeroes as values
         pub fn zero() Self {
             return Self{
                 .data = @splat(0.0),
@@ -384,8 +384,7 @@ pub fn Mat4Base(comptime Element: type) type {
             return Self.translation(v[0], v[1], v[2]);
         }
 
-        /// Returns a rotation transformation matrix.
-        ///
+        /// Returns a rotation transformation matrix. 
         /// `angle` takes in radians.
         pub fn rotation(axis: vec.Vec(3, Element), angle: Element) Self {
             var result = Self.identity();
