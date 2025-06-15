@@ -8,15 +8,18 @@ zm is a Zig math library. It is fast, easy to use and cross-platform.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.15.0-dev.769+4d7980645`.
+> This library is tracking Zig's master branch. Last tested with `0.15.0-dev.828+3ce8d19f7`.
 > It may not compile with newer or older versions.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
 
 Then in the `build.zig` add:
 ```zig
-const zm = b.dependency("zm", .{});
-exe_mod.addImport("zm", zm.module("zm"));
+const zm = b.dependency("zm", .{
+    .target = target,
+    .optimize = optimize,
+});
+module.addImport("zm", zm.module("zm"));
 ```
 Now, in your code, you can use:
 ```zig
@@ -25,9 +28,8 @@ const zm = @import("zm");
 
 ### Getting Started
 For an example using Zig's build system see: [example](/example/).
-There is a working example using OpenGL and GLFW [here](https://github.com/griush/zig-opengl-example).
 
-Simple example for game development.
+Simple example:
 ```zig
 const zm = @import("zm");
 const std = @import("std");
