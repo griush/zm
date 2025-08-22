@@ -13,7 +13,8 @@ pub fn build(b: *std.Build) void {
     });
 
     // library
-    const zm_lib = b.addStaticLibrary(.{
+    const zm_lib = b.addLibrary(.{
+        .linkage = .static,
         .name = "zm",
         .root_module = zm,
     });
@@ -50,7 +51,6 @@ pub fn build(b: *std.Build) void {
     const benchmark = b.addExecutable(.{
         .name = "zm-benchmark",
         .root_module = zm_benchmark,
-        .optimize = .ReleaseFast,
         // TEMP: fix because of a bug in the Zig compiler on linux
         .use_llvm = true,
     });
