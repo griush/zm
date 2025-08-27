@@ -1,4 +1,5 @@
 const vec = @import("vector.zig");
+const mat = @import("matrix.zig");
 
 const std = @import("std");
 
@@ -56,6 +57,69 @@ pub fn QuaternionBase(comptime Element: type) type {
             const z = Self.fromAxisAngle(vec.forward(Element), v[2]);
 
             return z.multiply(y.multiply(x));
+        }
+        
+        pub fn fromMatrix3(m: mat.Mat3Base(Element)) Self {
+            // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+            const trace = m.data[0 * 3 + 0] + m.data[1 * 3 + 1] + m.data[2 * 3 + 2];
+            var q: Self = undefined;
+            if (trace > 0) {
+                const s = @sqrt(trace + 1.0) * 2.0;
+                q.w = 0.25 * s;
+                q.x = (m.data[2 * 3 + 1] - m.data[1 * 3 + 2]) / s;
+                q.y = (m.data[0 * 3 + 2] - m.data[2 * 3 + 0]) / s;
+                q.z = (m.data[1 * 3 + 0] - m.data[0 * 3 + 1]) / s;
+            } else if (m.data[0 * 3 + 0] > m.data[1 * 3 + 1] and m.data[0 * 3 + 0] > m.data[2 * 3 + 2]) {
+                const s = @sqrt(1.0 + m.data[0 * 3 + 0] - m.data[1 * 3 + 1] - m.data[2 * 3 + 2]) * 2.0;
+                q.w = (m.data[2 * 3 + 1] - m.data[1 * 3 + 2]) / s;
+                q.x = 0.25 * s;
+                q.y = (m.data[0 * 3 + 1] + m.data[1 * 3 + 0]) / s;
+                q.z = (m.data[0 * 3 + 2] + m.data[2 * 3 + 0]) / s;
+            } else if (m.data[1 * 3 + 1] > m.data[2 * 3 + 2]) {
+                const s = @sqrt(1.0 + m.data[1 * 3 + 1] - m.data[0 * 3 + 0] - m.data[2 * 3 + 2]) * 2.0;
+                q.w = (m.data[0 * 3 + 2] - m.data[2 * 3 + 0]) / s;
+                q.x = (m.data[0 * 3 + 1] + m.data[1 * 3 + 0]) / s;
+                q.y = 0.25 * s;
+                q.z = (m.data[1 * 3 + 2] + m.data[2 * 3 + 1]) / s;
+            } else {
+                const s = @sqrt(1.0 + m.data[2 * 3 + 2] - m.data[0 * 3 + 0] - m.data[1 * 3 + 1]) * 2.0;
+                q.w = (m.data[1 * 3 + 0] - m.data[0 * 3 + 1]) / s;
+                q.x = (m.data[0 * 3 + 2] + m.data[2 * 3 + 0]) / s;
+                q.y = (m.data[1 * 3 + 2] + m.data[2 * 3 + 1]) / s;
+                q.z = 0.25 * s;
+            }
+            return q;
+        }
+        pub fn fromMatrix4(m: mat.Mat4Base(Element)) Self {
+            // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+            const trace = m.data[0 * 4 + 0] + m.data[1 * 4 + 1] + m.data[2 * 4 + 2];
+            var q: Self = undefined;
+            if (trace > 0) {
+                const s = @sqrt(trace + 1.0) * 2.0;
+                q.w = 0.25 * s;
+                q.x = (m.data[2 * 4 + 1] - m.data[1 * 4 + 2]) / s;
+                q.y = (m.data[0 * 4 + 2] - m.data[2 * 4 + 0]) / s;
+                q.z = (m.data[1 * 4 + 0] - m.data[0 * 4 + 1]) / s;
+            } else if (m.data[0 * 4 + 0] > m.data[1 * 4 + 1] and m.data[0 * 4 + 0] > m.data[2 * 4 + 2]) {
+                const s = @sqrt(1.0 + m.data[0 * 4 + 0] - m.data[1 * 4 + 1] - m.data[2 * 4 + 2]) * 2.0;
+                q.w = (m.data[2 * 4 + 1] - m.data[1 * 4 + 2]) / s;
+                q.x = 0.25 * s;
+                q.y = (m.data[0 * 4 + 1] + m.data[1 * 4 + 0]) / s;
+                q.z = (m.data[0 * 4 + 2] + m.data[2 * 4 + 0]) / s;
+            } else if (m.data[1 * 4 + 1] > m.data[2 * 4 + 2]) {
+                const s = @sqrt(1.0 + m.data[1 * 4 + 1] - m.data[0 * 4 + 0] - m.data[2 * 4 + 2]) * 2.0;
+                q.w = (m.data[0 * 4 + 2] - m.data[2 * 4 + 0]) / s;
+                q.x = (m.data[0 * 4 + 1] + m.data[1 * 4 + 0]) / s;
+                q.y = 0.25 * s;
+                q.z = (m.data[1 * 4 + 2] + m.data[2 * 4 + 1]) / s;
+            } else {
+                const s = @sqrt(1.0 + m.data[2 * 4 + 2] - m.data[0 * 4 + 0] - m.data[1 * 4 + 1]) * 2.0;
+                q.w = (m.data[1 * 4 + 0] - m.data[0 * 4 + 1]) / s;
+                q.x = (m.data[0 * 4 + 2] + m.data[2 * 4 + 0]) / s;
+                q.y = (m.data[1 * 4 + 2] + m.data[2 * 4 + 1]) / s;
+                q.z = 0.25 * s;
+            }
+            return q;
         }
 
         pub fn add(lhs: Self, rhs: Self) Self {
