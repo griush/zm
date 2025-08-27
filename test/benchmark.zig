@@ -18,10 +18,10 @@ pub fn main() !void {
     var vec4s = try std.ArrayList(zm.Vec4f).initCapacity(g_allocator, count);
     var quaternions = try std.ArrayList(zm.Quaternionf).initCapacity(g_allocator, count);
     for (0..count) |_| {
-        try vec2s.append(zm.Vec2f{ random.float(f32), random.float(f32) });
-        try vec3s.append(zm.Vec3f{ random.float(f32), random.float(f32), random.float(f32) });
-        try vec4s.append(zm.Vec4f{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) });
-        try quaternions.append(zm.Quaternionf.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
+        try vec2s.appendBounded(zm.Vec2f{ random.float(f32), random.float(f32) });
+        try vec3s.appendBounded(zm.Vec3f{ random.float(f32), random.float(f32), random.float(f32) });
+        try vec4s.appendBounded(zm.Vec4f{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) });
+        try quaternions.appendBounded(zm.Quaternionf.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
     std.debug.print("Done, took: {d}ms\n", .{@as(f64, @floatFromInt(timer.read())) / 1_000_000.0});
