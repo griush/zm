@@ -31,8 +31,6 @@ pub fn build(b: *std.Build) void {
     const tests = b.addTest(.{
         .name = "zm-tests",
         .root_module = zm_tests,
-        // TEMP: fix because of a bug in the Zig compiler on linux
-        .use_llvm = true,
     });
 
     b.installArtifact(tests);
