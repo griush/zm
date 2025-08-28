@@ -1,6 +1,6 @@
 .{
     .name = .zm,
-    .version = "0.3.0",
+    .version = "0.4.0",
     .fingerprint = 0xa70a9e6659feb570, // Changing this has security and trust implications.
 
     .minimum_zig_version = "0.16.0-dev.43+99b2b6151",
