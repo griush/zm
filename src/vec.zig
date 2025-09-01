@@ -154,7 +154,7 @@ pub fn crossRH(comptime T: type, a: Vec(3, T), b: Vec(3, T)) Vec(3, T) {
     } };
 }
 
-/// Left-handed cross-product
+/// Left-handed cross product
 pub fn crossLH(comptime T: type, a: Vec(3, T), b: Vec(3, T)) Vec(3, T) {
     // simply flip the sign of the RH result
     const cr = crossRH(T, a, b);

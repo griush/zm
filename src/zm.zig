@@ -53,10 +53,11 @@ pub const Mat4 = matrix.Mat4Base(f64);
 
 // quaternion namespace
 pub const quaternion = @import("quaternion.zig");
+pub const Quaternion = quaternion.Quaternion;
 
 // quaternion builtins
-pub const Quaternionf = quaternion.QuaternionBase(f32);
-pub const Quaternion = quaternion.QuaternionBase(f64);
+pub const Quaternionf = quaternion.Quaternion(f32);
+pub const Quaterniond = quaternion.Quaternion(f64);
 
 // ray namespace
 pub const ray = @import("ray.zig");
@@ -68,6 +69,7 @@ pub const Rayd = ray.Ray(f64);
 
 // aabb namespace
 pub const aabb = @import("aabb.zig");
+pub const AABB = aabb.AABB;
 
 // aabb builtins
 pub const AABBf = aabb.AABB(3, f32);

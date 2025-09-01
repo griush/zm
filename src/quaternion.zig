@@ -3,7 +3,7 @@ const mat = @import("matrix.zig");
 
 const std = @import("std");
 
-pub fn QuaternionBase(comptime Element: type) type {
+pub fn Quaternion(comptime Element: type) type {
     const type_info = @typeInfo(Element);
     switch (type_info) {
         .float => {},

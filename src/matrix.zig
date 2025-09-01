@@ -1,7 +1,7 @@
 const math = @import("std").math;
 
 const vec = @import("vec.zig");
-const QuaternionBase = @import("quaternion.zig").QuaternionBase;
+const Quaternion = @import("quaternion.zig").Quaternion;
 
 /// Returns a Mat2 type with `Element` being the element type.
 /// Matrices are row-major.
@@ -454,7 +454,7 @@ pub fn Mat4Base(comptime Element: type) type {
         }
 
         /// Returns a `Mat4Base(T)` from a `QuaternionBase(T)`
-        pub fn fromQuaternion(q: QuaternionBase(Element)) Self {
+        pub fn fromQuaternion(q: Quaternion(Element)) Self {
             // From https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
             var result = Self.identity();
 
