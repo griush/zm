@@ -1,9 +1,7 @@
-const vec = @import("vector.zig");
+const vec = @import("vec.zig");
 const mat = @import("matrix.zig");
 
 const std = @import("std");
-
-const root = @This();
 
 pub fn QuaternionBase(comptime Element: type) type {
     const type_info = @typeInfo(Element);
@@ -40,26 +38,27 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         pub fn fromVec3(w: Element, axis: vec.Vec(3, Element)) Self {
-            return Self.init(w, axis[0], axis[1], axis[2]);
+            return Self.init(w, axis.data[0], axis.data[1], axis.data[2]);
         }
 
         /// `angle` takes in radians
         pub fn fromAxisAngle(axis: vec.Vec(3, Element), radians: Element) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
-            return Self.fromVec3(w, vec.scale(vec.normalize(axis), sin_half_angle));
+            return Self.fromVec3(w, axis.norm().scale(sin_half_angle));
         }
 
         /// `v` components take in radians
         pub fn fromEulerAngles(v: vec.Vec(3, Element)) Self {
-            const x = Self.fromAxisAngle(vec.right(Element), v[0]);
-            const y = Self.fromAxisAngle(vec.up(Element), v[1]);
-            const z = Self.fromAxisAngle(vec.forward(Element), v[2]);
+            // TODO axis convention agnostic
+            const x = Self.fromAxisAngle(vec.Vec(3, Element){ .data = .{ 1, 0, 0 } }, v.data[0]);
+            const y = Self.fromAxisAngle(vec.Vec(3, Element){ .data = .{ 0, 1, 0 } }, v.data[1]);
+            const z = Self.fromAxisAngle(vec.Vec(3, Element){ .data = .{ 0, 0, 1 } }, v.data[2]);
 
             return z.multiply(y.multiply(x));
         }
-        
-        pub fn fromMatrix3(m: mat.Mat3Base(Element)) Self {
+
+        pub fn fromMat3(m: mat.Mat3Base(Element)) Self {
             // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
             const trace = m.data[0 * 3 + 0] + m.data[1 * 3 + 1] + m.data[2 * 3 + 2];
             var q: Self = undefined;
@@ -90,7 +89,8 @@ pub fn QuaternionBase(comptime Element: type) type {
             }
             return q;
         }
-        pub fn fromMatrix4(m: mat.Mat4Base(Element)) Self {
+
+        pub fn fromMat4(m: mat.Mat4Base(Element)) Self {
             // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
             const trace = m.data[0 * 4 + 0] + m.data[1 * 4 + 1] + m.data[2 * 4 + 2];
             var q: Self = undefined;
@@ -136,7 +136,7 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         /// Mutable scale function
-        pub fn scaleMut(self: *Self, scalar: Element) Self {
+        pub fn scaleAssign(self: *Self, scalar: Element) Self {
             self.w *= scalar;
             self.x *= scalar;
             self.y *= scalar;
@@ -220,25 +220,6 @@ pub fn QuaternionBase(comptime Element: type) type {
             }
 
             return Self.init(qa.w * a + qb.w * b, qa.x * a + qb.x * b, qa.y * a + qb.y * b, qa.z * a + qb.z * b);
-        }
-
-        /// This function allows `Quaternion`s to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Quaternion.fromEulerAngles(zm.Vec3.up()) });`
-        pub fn format(
-            q: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-
-            try writer.print("Quat(w: {d}, v: ({d}, {d}, {d}))", .{
-                q.w,
-                q.x,
-                q.y,
-                q.z,
-            });
         }
     };
 }

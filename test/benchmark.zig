@@ -18,9 +18,9 @@ pub fn main() !void {
     var vec4s = try std.ArrayList(zm.Vec4f).initCapacity(g_allocator, count);
     var quaternions = try std.ArrayList(zm.Quaternionf).initCapacity(g_allocator, count);
     for (0..count) |_| {
-        try vec2s.appendBounded(zm.Vec2f{ random.float(f32), random.float(f32) });
-        try vec3s.appendBounded(zm.Vec3f{ random.float(f32), random.float(f32), random.float(f32) });
-        try vec4s.appendBounded(zm.Vec4f{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) });
+        try vec2s.appendBounded(zm.Vec2f{ .data = .{ random.float(f32), random.float(f32) } });
+        try vec3s.appendBounded(zm.Vec3f{ .data = .{ random.float(f32), random.float(f32), random.float(f32) } });
+        try vec4s.appendBounded(zm.Vec4f{ .data = .{ random.float(f32), random.float(f32), random.float(f32), random.float(f32) } });
         try quaternions.appendBounded(zm.Quaternionf.init(random.float(f32), random.float(f32), random.float(f32), random.float(f32)));
     }
 
@@ -32,7 +32,7 @@ pub fn main() !void {
         const a = vec2s.items[i];
         const b = vec2s.items[i + 1];
 
-        const c = a + b;
+        const c = a.add(b);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -45,7 +45,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = a + b;
+        const c = a.add(b);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -58,7 +58,7 @@ pub fn main() !void {
         const a = vec4s.items[i];
         const b = vec4s.items[i + 1];
 
-        const c = a + b;
+        const c = a.add(b);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -71,7 +71,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.vec.dot(a, b);
+        const c = a.dot(b);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -84,7 +84,7 @@ pub fn main() !void {
         const a = vec4s.items[i];
         const b = vec4s.items[i + 1];
 
-        const c = zm.vec.dot(a, b);
+        const c = a.dot(b);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -94,7 +94,7 @@ pub fn main() !void {
 
     // Normalize
     for (0..count) |i| {
-        const v = zm.vec.normalize(vec3s.items[i]);
+        const v = vec3s.items[i].norm();
         std.mem.doNotOptimizeAway(v);
     }
 
@@ -103,7 +103,7 @@ pub fn main() !void {
 
     // Length
     for (0..count) |i| {
-        const length = zm.vec.len(vec3s.items[i]);
+        const length = vec3s.items[i].len();
         std.mem.doNotOptimizeAway(length);
     }
 
@@ -115,7 +115,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.vec.lerp(a, b, 0.5);
+        const c = a.lerp(b, 0.5);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -128,7 +128,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.vec.scale(zm.vec.cross(a, b), 2.0);
+        const c = zm.vec.crossRH(f32, a, b).scale(2.0);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -141,7 +141,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.vec.angle(a, b);
+        const c = a.angle(b);
         std.mem.doNotOptimizeAway(c);
     }
 

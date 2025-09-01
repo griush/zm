@@ -4,11 +4,11 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/griush/zm/ci.yaml?style=flat&logo=github&label=CI)
 
 # zm - Fast math library
-zm is a Zig math library. It is fast, easy to use and cross-platform.
+zm is a Zig math library. It is fast and easy to use.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.16.0-dev.43+99b2b6151`.
+> This library is tracking Zig's master branch. Last tested with `0.16.0-dev.70+73a0b5441`.
 > It may not compile with newer or older versions.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
@@ -26,31 +26,8 @@ Now, in your code, you can use:
 const zm = @import("zm");
 ```
 
-### Getting Started
+### Example
 For an example using Zig's build system see: [example](/example/).
-
-Simple example:
-```zig
-const zm = @import("zm");
-const std = @import("std");
-
-pub fn main() !void {
-    // Initialize window (with GLFW for example)
-
-    // Create OpenGL/Vulkan... context
-
-    const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
-    const view = zm.Mat4.translation(0.0, 0.75, 5.0);
-    const view_proj = projection.multiply(view);
-
-    // Upload data. Matrix should be transposed in OpenGL as they use column-major matrices.
-    gl.NamedBufferSubData(ubo, 0, @sizeOf(zm.Mat4), &view_proj);
-
-    // Render loop
-
-    // Cleanup
-}
-```
 
 ## Benchmarks
 See [benchmarks](/test/benchmark.zig).
