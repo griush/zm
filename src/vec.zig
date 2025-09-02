@@ -1,11 +1,10 @@
 const math = @import("std").math;
 
 pub fn Vec(n: comptime_int, comptime T: type) type {
-    if (n <= 0) {
+    if (n < 1) {
         @compileError("Vec of 0 or negative dimension is not allowed");
     }
 
-    // TODO should we allow ints as well?
     const type_info = @typeInfo(T);
     comptime switch (type_info) {
         .float => {},
@@ -135,6 +134,34 @@ pub fn Vec(n: comptime_int, comptime T: type) type {
             }
             return result;
         }
+
+        /// Right-handed cross product
+        pub fn crossRH(self: Self, b: Self) Self {
+            comptime {
+                if (n != 3) {
+                    @compileError("crossRH is only defined for 3 dimensional vectors");
+                }
+            }
+
+            return Self{ .data = .{
+                self.data[1] * b.data[2] - self.data[2] * b.data[1],
+                self.data[2] * b.data[0] - self.data[0] * b.data[2],
+                self.data[0] * b.data[1] - self.data[1] * b.data[0],
+            } };
+        }
+
+        /// Left-handed cross product
+        pub fn crossLH(self: Self, b: Self) Self {
+            comptime {
+                if (n != 3) {
+                    @compileError("crossLH is only defined for 3 dimensional vectors");
+                }
+            }
+
+            // simply flip the sign of the RH result
+            const cr = crossRH(self, b);
+            return Self{ .data = .{ -cr.data[0], -cr.data[1], -cr.data[2] } };
+        }
     };
 }
 
@@ -144,19 +171,3 @@ pub const Vec4f = Vec(4, f32);
 pub const Vec2 = Vec(2, f64);
 pub const Vec3 = Vec(3, f64);
 pub const Vec4 = Vec(4, f64);
-
-/// Right-handed cross product
-pub fn crossRH(comptime T: type, a: Vec(3, T), b: Vec(3, T)) Vec(3, T) {
-    return Vec(3, T){ .data = .{
-        a.data[1] * b.data[2] - a.data[2] * b.data[1],
-        a.data[2] * b.data[0] - a.data[0] * b.data[2],
-        a.data[0] * b.data[1] - a.data[1] * b.data[0],
-    } };
-}
-
-/// Left-handed cross product
-pub fn crossLH(comptime T: type, a: Vec(3, T), b: Vec(3, T)) Vec(3, T) {
-    // simply flip the sign of the RH result
-    const cr = crossRH(T, a, b);
-    return Vec(3, T){ .data = .{ -cr.data[0], -cr.data[1], -cr.data[2] } };
-}

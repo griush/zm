@@ -1,7 +1,22 @@
 //! zm - Fast, Zig math library, fully cross-platform.
 //! For all types, the default is f64. Type names ending with `f` are f32.
+//! Use RH/LH functions to choose handedness acordingly.
 
 const std = @import("std");
+
+pub const EulerOrder = enum {
+    xyz,
+    xzy,
+    yxz,
+    yzx,
+    zxy,
+    zyx,
+};
+
+pub const FrameConvention = enum {
+    intrinsic,
+    extrinsic,
+};
 
 /// `x` must be numeric.
 pub fn sigmoid(x: anytype) @TypeOf(x) {
@@ -42,14 +57,14 @@ pub const Vec4 = vec.Vec4;
 pub const matrix = @import("matrix.zig");
 
 // matrix builtins
-pub const Mat2f = matrix.Mat2Base(f32);
-pub const Mat2 = matrix.Mat2Base(f64);
+pub const Mat2f = matrix.Mat2f;
+pub const Mat2 = matrix.Mat2;
 
-pub const Mat3f = matrix.Mat3Base(f32);
-pub const Mat3 = matrix.Mat3Base(f64);
+pub const Mat3f = matrix.Mat3f;
+pub const Mat3 = matrix.Mat3;
 
-pub const Mat4f = matrix.Mat4Base(f32);
-pub const Mat4 = matrix.Mat4Base(f64);
+pub const Mat4f = matrix.Mat4f;
+pub const Mat4 = matrix.Mat4;
 
 // quaternion namespace
 pub const quaternion = @import("quaternion.zig");

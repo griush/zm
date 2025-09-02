@@ -52,7 +52,22 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(benchmark);
     benchmark_step.dependOn(&b.addRunArtifact(benchmark).step);
 
-    // Docs step
+    // example step
+    const example_step = b.step("example", "Run zm demo example");
+    const example = b.addExecutable(.{
+        .name = "zm-demo",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("examples/demo.zig"),
+            .target = target,
+            .imports = &.{
+                .{ .name = "zm", .module = zm },
+            },
+        }),
+    });
+    b.installArtifact(example);
+    example_step.dependOn(&b.addRunArtifact(example).step);
+
+    // docs step
     const install_docs = b.addInstallDirectory(.{
         .source_dir = zm_lib.getEmittedDocs(),
         .install_dir = .{ .custom = "." },

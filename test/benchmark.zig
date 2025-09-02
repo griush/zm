@@ -128,7 +128,7 @@ pub fn main() !void {
         const a = vec3s.items[i];
         const b = vec3s.items[i + 1];
 
-        const c = zm.vec.crossRH(f32, a, b).scale(2.0);
+        const c = a.crossRH(b).scale(2.0);
 
         std.mem.doNotOptimizeAway(c);
     }
@@ -150,9 +150,9 @@ pub fn main() !void {
 
     // mat mul vec
     for (0..count) |i| {
-        const m = zm.Mat4f.perspective(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
+        const m = zm.Mat4f.perspectiveRH(std.math.pi / 2.0, 16.0 / 9.0, 0.05, 100.0);
         const v = vec4s.items[i];
-        const r = zm.Mat4f.multiplyVec4(m, v);
+        const r = zm.Mat4f.multiplyVec(m, v);
 
         std.mem.doNotOptimizeAway(r);
     }
