@@ -1,6 +1,6 @@
-const vec = @import("vector.zig");
+const vec = @import("vec.zig");
 
-pub fn RayBase(comptime T: type) type {
+pub fn Ray(comptime T: type) type {
     const type_info = @typeInfo(T);
     comptime switch (type_info) {
         .float => {},
@@ -10,20 +10,20 @@ pub fn RayBase(comptime T: type) type {
     return struct {
         const Self = @This();
 
-        const Base = @Vector(3, T);
+        const V = vec.Vec(3, T);
 
-        origin: Base,
-        direction: Base,
+        origin: V,
+        direction: V,
 
-        pub fn init(origin: Base, direction: Base) Self {
+        pub fn init(origin: V, direction: V) Self {
             return Self{
                 .origin = origin,
                 .direction = direction,
             };
         }
 
-        pub fn at(self: Self, t: f32) Base {
-            return self.origin + vec.scale(self.direction, t);
+        pub fn at(self: Self, t: T) V {
+            return self.origin.add(self.direction.scale(t));
         }
     };
 }
