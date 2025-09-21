@@ -28,8 +28,7 @@ jobs:
           zig build test --summary all
       - name: Example
         run: |
-          cd example
-          zig build
+          zig build example
   x86_64-windows:
     runs-on: windows-latest
     timeout-minutes: 420
@@ -49,8 +48,7 @@ jobs:
           zig build test --summary all
       - name: Example
         run: |
-          cd example
-          zig build
+          zig build example
   x86_64-macos:
     runs-on: macos-latest
     env:
@@ -72,8 +70,7 @@ jobs:
           zig build test --summary all
       - name: Example
         run: |
-          cd example
-          zig build
+          zig build example
   aarch64-macos:
     runs-on: macos-latest
     env:
@@ -95,5 +92,4 @@ jobs:
           zig build test --summary all
       - name: Example
         run: |
-          cd example
-          zig build
+          zig build example
