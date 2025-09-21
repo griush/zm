@@ -18,10 +18,6 @@ pub const FrameConvention = enum {
     extrinsic,
 };
 
-/// `x` must be numeric.
-pub fn sigmoid(x: anytype) @TypeOf(x) {
-    return 1.0 / (1.0 + @exp(-x));
-}
 
 pub const EaseType = enum {
     linear,
@@ -41,6 +37,11 @@ pub fn ease(a: anytype, b: anytype, t: f32, ease_type: EaseType) @TypeOf(a, b, t
     };
 }
 
+/// `x` must be numeric.
+pub fn sigmoid(x: anytype) @TypeOf(x) {
+    return 1.0 / (1.0 + @exp(-x));
+}
+
 // vec namespace
 pub const vec = @import("vec.zig");
 pub const Vec = vec.Vec;
@@ -55,6 +56,7 @@ pub const Vec4 = vec.Vec4;
 
 // matrix namespace
 pub const matrix = @import("matrix.zig");
+pub const Mat = matrix.Mat;
 
 // matrix builtins
 pub const Mat2f = matrix.Mat2f;

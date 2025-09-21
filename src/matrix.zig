@@ -216,7 +216,7 @@ pub fn Mat(r: comptime_int, c: comptime_int, comptime T: type) type {
             return result;
         }
 
-        /// generic
+        /// generic inverse
         pub fn inverse(self: Self) !Self {
             comptime {
                 if (r != c) {

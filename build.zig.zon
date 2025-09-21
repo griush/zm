@@ -1,9 +1,9 @@
 .{
     .name = .zm,
-    .version = "0.4.0",
+    .version = "0.5.0",
     .fingerprint = 0xa70a9e6659feb570, // Changing this has security and trust implications.
 
-    .minimum_zig_version = "0.16.0-dev.164+bc7955306",
+    .minimum_zig_version = "0.16.0-dev.254+6dd0270a1",
 
     .dependencies = .{},
 
