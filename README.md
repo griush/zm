@@ -39,7 +39,7 @@ pub fn main() !void {
 
     // Create OpenGL/Vulkan... context
 
-    const projection = zm.Mat4.perspective(zm.toRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
+    const projection = zm.Mat4.perspective(std.math.degreesToRadians(60.0), 16.0 / 9.0, 0.05, 100.0);
     const view = zm.Mat4.translation(0.0, 0.75, 5.0);
     const view_proj = projection.multiply(view);
 
