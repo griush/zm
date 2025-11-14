@@ -1,15 +1,23 @@
 //! zm - Fast, Zig math library, fully cross-platform.
-//! zm uses a +Y-up, right-handed coordinate system,
-//! for all types, the default is f64.
-//! Type names ending with `f` are f32.
-//! Matrices are row-major.
+//! For all types, the default is f64. Type names ending with `f` are f32.
+//! Use RH/LH functions to choose handedness acordingly.
 
 const std = @import("std");
 
-/// `x` must be numeric.
-pub fn sigmoid(x: anytype) @TypeOf(x) {
-    return 1.0 / (1.0 + @exp(-x));
-}
+pub const EulerOrder = enum {
+    xyz,
+    xzy,
+    yxz,
+    yzx,
+    zxy,
+    zyx,
+};
+
+pub const FrameConvention = enum {
+    intrinsic,
+    extrinsic,
+};
+
 
 pub const EaseType = enum {
     linear,
@@ -29,8 +37,16 @@ pub fn ease(a: anytype, b: anytype, t: f32, ease_type: EaseType) @TypeOf(a, b, t
     };
 }
 
+/// `x` must be numeric.
+pub fn sigmoid(x: anytype) @TypeOf(x) {
+    return 1.0 / (1.0 + @exp(-x));
+}
+
 // vec namespace
-pub const vec = @import("vector.zig");
+pub const vec = @import("vec.zig");
+pub const Vec = vec.Vec;
+
+// vec builtins
 pub const Vec2f = vec.Vec2f;
 pub const Vec3f = vec.Vec3f;
 pub const Vec4f = vec.Vec4f;
@@ -38,39 +54,40 @@ pub const Vec2 = vec.Vec2;
 pub const Vec3 = vec.Vec3;
 pub const Vec4 = vec.Vec4;
 
-// matrices
+// matrix namespace
 pub const matrix = @import("matrix.zig");
+pub const Mat = matrix.Mat;
 
-// Builtin Mat2Base types
-pub const Mat2f = matrix.Mat2Base(f32);
-pub const Mat2 = matrix.Mat2Base(f64);
+// matrix builtins
+pub const Mat2f = matrix.Mat2f;
+pub const Mat2 = matrix.Mat2;
 
-// Builtin Mat3Base types
-pub const Mat3f = matrix.Mat3Base(f32);
-pub const Mat3 = matrix.Mat3Base(f64);
+pub const Mat3f = matrix.Mat3f;
+pub const Mat3 = matrix.Mat3;
 
-// Builtin Mat4Base types
-pub const Mat4f = matrix.Mat4Base(f32);
-pub const Mat4 = matrix.Mat4Base(f64);
+pub const Mat4f = matrix.Mat4f;
+pub const Mat4 = matrix.Mat4;
 
 // quaternion namespace
 pub const quaternion = @import("quaternion.zig");
+pub const Quaternion = quaternion.Quaternion;
 
-// Builtin Quaternion types
-pub const Quaternionf = quaternion.QuaternionBase(f32);
-pub const Quaternion = quaternion.QuaternionBase(f64);
+// quaternion builtins
+pub const Quaternionf = quaternion.Quaternion(f32);
+pub const Quaterniond = quaternion.Quaternion(f64);
 
 // ray namespace
 pub const ray = @import("ray.zig");
+pub const Ray = ray.Ray;
 
-// Builtin Ray types
-pub const Rayf = ray.RayBase(f32);
-pub const Ray = ray.RayBase(f64);
+// ray builtins
+pub const Rayf = ray.Ray(f32);
+pub const Rayd = ray.Ray(f64);
 
 // aabb namespace
 pub const aabb = @import("aabb.zig");
+pub const AABB = aabb.AABB;
 
 // aabb builtins
-/// 3-dimensional AABB
-pub const AABBf = aabb.AABBBase(3, f32);
-pub const AABB = aabb.AABBBase(3, f64);
+pub const AABBf = aabb.AABB(3, f32);
+pub const AABBd = aabb.AABB(3, f64);

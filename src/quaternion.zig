@@ -1,25 +1,26 @@
-const vec = @import("vector.zig");
+const vec = @import("vec.zig");
 const mat = @import("matrix.zig");
 
 const std = @import("std");
 
-const root = @This();
+const EulerOrder = @import("zm.zig").EulerOrder;
+const FrameConvention = @import("zm.zig").FrameConvention;
 
-pub fn QuaternionBase(comptime Element: type) type {
-    const type_info = @typeInfo(Element);
+pub fn Quaternion(comptime T: type) type {
+    const type_info = @typeInfo(T);
     switch (type_info) {
         .float => {},
-        else => @compileError("QuaternionBase is only defined for floating point types. Type '" ++ @typeName(Element) ++ "' is not supported"),
+        else => @compileError("QuaternionBase is only defined for floating point types. Type '" ++ @typeName(T) ++ "' is not supported"),
     }
 
     return struct {
         const Self = @This();
 
         // Data
-        w: Element,
-        x: Element,
-        y: Element,
-        z: Element,
+        w: T,
+        x: T,
+        y: T,
+        z: T,
 
         pub inline fn identity() Self {
             return Self{
@@ -30,7 +31,7 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub inline fn init(w: Element, x: Element, y: Element, z: Element) Self {
+        pub inline fn init(w: T, x: T, y: T, z: T) Self {
             return Self{
                 .w = w,
                 .x = x,
@@ -39,86 +40,129 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub fn fromVec3(w: Element, axis: vec.Vec(3, Element)) Self {
-            return Self.init(w, axis[0], axis[1], axis[2]);
+        pub fn fromVec3(w: T, axis: vec.Vec(3, T)) Self {
+            return Self.init(w, axis.data[0], axis.data[1], axis.data[2]);
         }
 
         /// `angle` takes in radians
-        pub fn fromAxisAngle(axis: vec.Vec(3, Element), radians: Element) Self {
+        pub fn fromAxisAngleRH(axis: vec.Vec(3, T), radians: T) Self {
             const sin_half_angle = @sin(radians / 2);
             const w = @cos(radians / 2);
-            return Self.fromVec3(w, vec.scale(vec.normalize(axis), sin_half_angle));
+            return Self.fromVec3(w, axis.norm().scale(sin_half_angle));
         }
 
-        /// `v` components take in radians
-        pub fn fromEulerAngles(v: vec.Vec(3, Element)) Self {
-            const x = Self.fromAxisAngle(vec.right(Element), v[0]);
-            const y = Self.fromAxisAngle(vec.up(Element), v[1]);
-            const z = Self.fromAxisAngle(vec.forward(Element), v[2]);
-
-            return z.multiply(y.multiply(x));
+        /// `angle` takes in radians
+        pub fn fromAxisAngleLH(axis: vec.Vec(3, T), radians: T) Self {
+            const sin_half_angle = @sin(-radians / 2);
+            const w = @cos(-radians / 2);
+            return Self.fromVec3(w, axis.norm().scale(sin_half_angle));
         }
-        
-        pub fn fromMatrix3(m: mat.Mat3Base(Element)) Self {
+
+        pub fn fromEulerAnglesRH(v: vec.Vec(3, T), order: EulerOrder, frame: FrameConvention) Self {
+            const x = Self.fromAxisAngleRH(vec.Vec(3, T){ .data = .{ 1, 0, 0 } }, v.data[0]);
+            const y = Self.fromAxisAngleRH(vec.Vec(3, T){ .data = .{ 0, 1, 0 } }, v.data[1]);
+            const z = Self.fromAxisAngleRH(vec.Vec(3, T){ .data = .{ 0, 0, 1 } }, v.data[2]);
+
+            const composed = switch (order) {
+                .xyz => x.multiply(y).multiply(z),
+                .xzy => x.multiply(z).multiply(y),
+                .yxz => y.multiply(x).multiply(z),
+                .yzx => y.multiply(z).multiply(x),
+                .zxy => z.multiply(x).multiply(y),
+                .zyx => z.multiply(y).multiply(x),
+            };
+
+            return switch (frame) {
+                .intrinsic => composed,
+                .extrinsic => composed.conjugate(),
+            };
+        }
+
+        pub fn fromEulerAnglesLH(v: vec.Vec(3, T), order: EulerOrder, frame: FrameConvention) Self {
+            const x = Self.fromAxisAngleLH(vec.Vec(3, T){ .data = .{ 1, 0, 0 } }, v.data[0]);
+            const y = Self.fromAxisAngleLH(vec.Vec(3, T){ .data = .{ 0, 1, 0 } }, v.data[1]);
+            const z = Self.fromAxisAngleLH(vec.Vec(3, T){ .data = .{ 0, 0, 1 } }, v.data[2]);
+
+            const composed = switch (order) {
+                .xyz => x.multiply(y).multiply(z),
+                .xzy => x.multiply(z).multiply(y),
+                .yxz => y.multiply(x).multiply(z),
+                .yzx => y.multiply(z).multiply(x),
+                .zxy => z.multiply(x).multiply(y),
+                .zyx => z.multiply(y).multiply(x),
+            };
+
+            return switch (frame) {
+                .intrinsic => composed,
+                .extrinsic => composed.conjugate(),
+            };
+        }
+
+        pub fn fromMat3(m: mat.Mat(3, 3, T)) Self {
             // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
-            const trace = m.data[0 * 3 + 0] + m.data[1 * 3 + 1] + m.data[2 * 3 + 2];
+            const trace = m.trace();
             var q: Self = undefined;
+
             if (trace > 0) {
                 const s = @sqrt(trace + 1.0) * 2.0;
                 q.w = 0.25 * s;
-                q.x = (m.data[2 * 3 + 1] - m.data[1 * 3 + 2]) / s;
-                q.y = (m.data[0 * 3 + 2] - m.data[2 * 3 + 0]) / s;
-                q.z = (m.data[1 * 3 + 0] - m.data[0 * 3 + 1]) / s;
-            } else if (m.data[0 * 3 + 0] > m.data[1 * 3 + 1] and m.data[0 * 3 + 0] > m.data[2 * 3 + 2]) {
-                const s = @sqrt(1.0 + m.data[0 * 3 + 0] - m.data[1 * 3 + 1] - m.data[2 * 3 + 2]) * 2.0;
-                q.w = (m.data[2 * 3 + 1] - m.data[1 * 3 + 2]) / s;
+                q.x = (m.data[2][1] - m.data[1][2]) / s;
+                q.y = (m.data[0][2] - m.data[2][0]) / s;
+                q.z = (m.data[1][0] - m.data[0][1]) / s;
+            } else if (m.data[0][0] > m.data[1][1] and m.data[0][0] > m.data[2][2]) {
+                const s = @sqrt(1.0 + m.data[0][0] - m.data[1][1] - m.data[2][2]) * 2.0;
+                q.w = (m.data[2][1] - m.data[1][2]) / s;
                 q.x = 0.25 * s;
-                q.y = (m.data[0 * 3 + 1] + m.data[1 * 3 + 0]) / s;
-                q.z = (m.data[0 * 3 + 2] + m.data[2 * 3 + 0]) / s;
-            } else if (m.data[1 * 3 + 1] > m.data[2 * 3 + 2]) {
-                const s = @sqrt(1.0 + m.data[1 * 3 + 1] - m.data[0 * 3 + 0] - m.data[2 * 3 + 2]) * 2.0;
-                q.w = (m.data[0 * 3 + 2] - m.data[2 * 3 + 0]) / s;
-                q.x = (m.data[0 * 3 + 1] + m.data[1 * 3 + 0]) / s;
+                q.y = (m.data[0][1] + m.data[1][0]) / s;
+                q.z = (m.data[0][2] + m.data[2][0]) / s;
+            } else if (m.data[1][1] > m.data[2][2]) {
+                const s = @sqrt(1.0 + m.data[1][1] - m.data[0][0] - m.data[2][2]) * 2.0;
+                q.w = (m.data[0][2] - m.data[2][0]) / s;
+                q.x = (m.data[0][1] + m.data[1][0]) / s;
                 q.y = 0.25 * s;
-                q.z = (m.data[1 * 3 + 2] + m.data[2 * 3 + 1]) / s;
+                q.z = (m.data[1][2] + m.data[2][1]) / s;
             } else {
-                const s = @sqrt(1.0 + m.data[2 * 3 + 2] - m.data[0 * 3 + 0] - m.data[1 * 3 + 1]) * 2.0;
-                q.w = (m.data[1 * 3 + 0] - m.data[0 * 3 + 1]) / s;
-                q.x = (m.data[0 * 3 + 2] + m.data[2 * 3 + 0]) / s;
-                q.y = (m.data[1 * 3 + 2] + m.data[2 * 3 + 1]) / s;
+                const s = @sqrt(1.0 + m.data[2][2] - m.data[0][0] - m.data[1][1]) * 2.0;
+                q.w = (m.data[1][0] - m.data[0][1]) / s;
+                q.x = (m.data[0][2] + m.data[2][0]) / s;
+                q.y = (m.data[1][2] + m.data[2][1]) / s;
                 q.z = 0.25 * s;
             }
+
             return q;
         }
-        pub fn fromMatrix4(m: mat.Mat4Base(Element)) Self {
+
+        pub fn fromMat4(m: mat.Mat(4, 4, T)) Self {
             // https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
-            const trace = m.data[0 * 4 + 0] + m.data[1 * 4 + 1] + m.data[2 * 4 + 2];
+            const trace = m.data[0][0] + m.data[1][1] + m.data[2][2];
             var q: Self = undefined;
+
             if (trace > 0) {
                 const s = @sqrt(trace + 1.0) * 2.0;
                 q.w = 0.25 * s;
-                q.x = (m.data[2 * 4 + 1] - m.data[1 * 4 + 2]) / s;
-                q.y = (m.data[0 * 4 + 2] - m.data[2 * 4 + 0]) / s;
-                q.z = (m.data[1 * 4 + 0] - m.data[0 * 4 + 1]) / s;
-            } else if (m.data[0 * 4 + 0] > m.data[1 * 4 + 1] and m.data[0 * 4 + 0] > m.data[2 * 4 + 2]) {
-                const s = @sqrt(1.0 + m.data[0 * 4 + 0] - m.data[1 * 4 + 1] - m.data[2 * 4 + 2]) * 2.0;
-                q.w = (m.data[2 * 4 + 1] - m.data[1 * 4 + 2]) / s;
+                q.x = (m.data[2][1] - m.data[1][2]) / s;
+                q.y = (m.data[0][2] - m.data[2][0]) / s;
+                q.z = (m.data[1][0] - m.data[0][1]) / s;
+            } else if (m.data[0][0] > m.data[1][1] and m.data[0][0] > m.data[2][2]) {
+                const s = @sqrt(1.0 + m.data[0][0] - m.data[1][1] - m.data[2][2]) * 2.0;
+                q.w = (m.data[2][1] - m.data[1][2]) / s;
                 q.x = 0.25 * s;
-                q.y = (m.data[0 * 4 + 1] + m.data[1 * 4 + 0]) / s;
-                q.z = (m.data[0 * 4 + 2] + m.data[2 * 4 + 0]) / s;
-            } else if (m.data[1 * 4 + 1] > m.data[2 * 4 + 2]) {
-                const s = @sqrt(1.0 + m.data[1 * 4 + 1] - m.data[0 * 4 + 0] - m.data[2 * 4 + 2]) * 2.0;
-                q.w = (m.data[0 * 4 + 2] - m.data[2 * 4 + 0]) / s;
-                q.x = (m.data[0 * 4 + 1] + m.data[1 * 4 + 0]) / s;
+                q.y = (m.data[0][1] + m.data[1][0]) / s;
+                q.z = (m.data[0][2] + m.data[2][0]) / s;
+            } else if (m.data[1][1] > m.data[2][2]) {
+                const s = @sqrt(1.0 + m.data[1][1] - m.data[0][0] - m.data[2][2]) * 2.0;
+                q.w = (m.data[0][2] - m.data[2][0]) / s;
+                q.x = (m.data[0][1] + m.data[1][0]) / s;
                 q.y = 0.25 * s;
-                q.z = (m.data[1 * 4 + 2] + m.data[2 * 4 + 1]) / s;
+                q.z = (m.data[1][2] + m.data[2][1]) / s;
             } else {
-                const s = @sqrt(1.0 + m.data[2 * 4 + 2] - m.data[0 * 4 + 0] - m.data[1 * 4 + 1]) * 2.0;
-                q.w = (m.data[1 * 4 + 0] - m.data[0 * 4 + 1]) / s;
-                q.x = (m.data[0 * 4 + 2] + m.data[2 * 4 + 0]) / s;
-                q.y = (m.data[1 * 4 + 2] + m.data[2 * 4 + 1]) / s;
+                const s = @sqrt(1.0 + m.data[2][2] - m.data[0][0] - m.data[1][1]) * 2.0;
+                q.w = (m.data[1][0] - m.data[0][1]) / s;
+                q.x = (m.data[0][2] + m.data[2][0]) / s;
+                q.y = (m.data[1][2] + m.data[2][1]) / s;
                 q.z = 0.25 * s;
             }
+
             return q;
         }
 
@@ -131,12 +175,12 @@ pub fn QuaternionBase(comptime Element: type) type {
         }
 
         /// Non-mutable scale function
-        pub fn scale(self: Self, scalar: Element) Self {
+        pub fn scale(self: Self, scalar: T) Self {
             return Self.init(self.w * scalar, self.x * scalar, self.y * scalar, self.z * scalar);
         }
 
         /// Mutable scale function
-        pub fn scaleMut(self: *Self, scalar: Element) Self {
+        pub fn scaleAssign(self: *Self, scalar: T) Self {
             self.w *= scalar;
             self.x *= scalar;
             self.y *= scalar;
@@ -189,12 +233,12 @@ pub fn QuaternionBase(comptime Element: type) type {
             };
         }
 
-        pub fn dot(lhs: Self, rhs: Self) Element {
+        pub fn dot(lhs: Self, rhs: Self) T {
             return lhs.w * rhs.w + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
         }
 
         /// No extrapolation. Clamps `t`.
-        pub fn lerp(a: Self, b: Self, t: Element) Self {
+        pub fn lerp(a: Self, b: Self, t: T) Self {
             const w = std.math.lerp(a.w, b.w, t);
             const x = std.math.lerp(a.x, b.x, t);
             const y = std.math.lerp(a.y, b.y, t);
@@ -205,7 +249,7 @@ pub fn QuaternionBase(comptime Element: type) type {
 
         /// No extrapolation. Clamps `t`.
         /// Implementation from: https://gitlab.com/bztsrc/slerp-opt/-/blob/master/slerp_cross.c
-        pub fn slerp(qa: Self, qb: Self, t: Element) Self {
+        pub fn slerp(qa: Self, qb: Self, t: T) Self {
             var a = 1.0 - t;
             var b = t;
             const d = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z;
@@ -220,25 +264,6 @@ pub fn QuaternionBase(comptime Element: type) type {
             }
 
             return Self.init(qa.w * a + qb.w * b, qa.x * a + qb.x * b, qa.y * a + qb.y * b, qa.z * a + qb.z * b);
-        }
-
-        /// This function allows `Quaternion`s to be formated by Zig's `std.fmt`.
-        /// Example: `std.debug.print("Vec: {any}", .{ zm.Quaternion.fromEulerAngles(zm.Vec3.up()) });`
-        pub fn format(
-            q: Self,
-            comptime fmt: []const u8,
-            options: std.fmt.FormatOptions,
-            writer: anytype,
-        ) !void {
-            _ = fmt;
-            _ = options;
-
-            try writer.print("Quat(w: {d}, v: ({d}, {d}, {d}))", .{
-                q.w,
-                q.x,
-                q.y,
-                q.z,
-            });
         }
     };
 }
