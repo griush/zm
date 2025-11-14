@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    // library
+    // library for docs
     const zm_lib = b.addLibrary(.{
         .linkage = .static,
         .name = "zm",

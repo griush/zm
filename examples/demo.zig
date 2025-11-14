@@ -25,4 +25,13 @@ pub fn main() !void {
     std.debug.print("  right x up RH = ({d},{d},{d})\n", .{up_x_rightRH.data[0], up_x_rightRH.data[1], up_x_rightRH.data[2]});
     const up_x_rightLH = right.crossLH(up);
     std.debug.print("  right x up LH = ({d},{d},{d})\n", .{up_x_rightLH.data[0], up_x_rightLH.data[1], up_x_rightLH.data[2]});
+
+    std.debug.print("matrices\n", .{});
+    std.debug.print("TODO\n", .{});
+    std.debug.print("ray\n", .{});
+    std.debug.print("TODO\n", .{});
+    std.debug.print("quaternion\n", .{});
+    std.debug.print("TODO\n", .{});
+    std.debug.print("aabb\n", .{});
+    std.debug.print("TODO\n", .{});
 }
