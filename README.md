@@ -27,7 +27,7 @@ const zm = @import("zm");
 ```
 
 ### Example
-For an example using Zig's build system see: [example](/example/).
+Demo using the library (incomplete) [demo](/examples/demo.zig).
 
 ## Benchmarks
 See [benchmarks](/test/benchmark.zig).
