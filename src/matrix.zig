@@ -134,7 +134,7 @@ pub fn Mat(r: comptime_int, c: comptime_int, comptime T: type) type {
             var result: Mat(r, @TypeOf(other).cols(), T) = Mat(r, @TypeOf(other).cols(), T).zero();
 
             inline for (0..r) |i| {
-                inline for (0..other.cols()) |j| {
+                inline for (0..@TypeOf(other).cols()) |j| {
                     var sum: T = 0.0;
                     inline for (0..k) |l| {
                         sum += self.data[i][l] * other.data[l][j];

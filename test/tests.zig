@@ -261,3 +261,62 @@ test "Ray.at handles negative t (extends backwards)" {
     try expectApproxEqAbs(5.0, p.data[1], float_tolerance);
     try expectApproxEqAbs(5.0, p.data[2], float_tolerance);
 }
+
+test "Matrix3 multiplication" {
+    const expectApproxEqAbs = std.testing.expectApproxEqAbs;
+
+    const mat_a = zm.Mat(3, 3, f32){ .data = .{
+        .{ 1.0, 2.0, 3.0 },
+        .{ 4.0, 5.0, 6.0 },
+        .{ 7.0, 8.0, 9.0 },
+    } };
+    const mat_b = zm.Mat(3, 3, f32){ .data = .{
+        .{ 9.0, 8.0, 7.0 },
+        .{ 6.0, 5.0, 4.0 },
+        .{ 3.0, 2.0, 1.0 },
+    } };
+
+    const result = mat_a.multiply(mat_b);
+    const expected = zm.Mat(3, 3, f32){ .data = .{
+        .{ 30.0, 24.0, 18.0 },
+        .{ 84.0, 69.0, 54.0 },
+        .{ 138.0, 114.0, 90.0 },
+    } };
+
+    for (0..@TypeOf(expected).rows()) |i| {
+        for (0..@TypeOf(expected).cols()) |j| {
+            try expectApproxEqAbs(expected.data[i][j], result.data[i][j], float_tolerance);
+        }
+    }
+}
+
+test "Matrix4 multiplication" {
+    const expectApproxEqAbs = std.testing.expectApproxEqAbs;
+
+    const mat_a = zm.Mat(4, 4, f32){ .data = .{
+        .{ 1.0, 2.0, 3.0, 4.0 },
+        .{ 5.0, 6.0, 7.0, 8.0 },
+        .{ 9.0, 10.0, 11.0, 12.0 },
+        .{ 13.0, 14.0, 15.0, 16.0 },
+    } };
+    const mat_b = zm.Mat(4, 4, f32){ .data = .{
+        .{ 16.0, 15.0, 14.0, 13.0 },
+        .{ 12.0, 11.0, 10.0, 9.0 },
+        .{ 8.0, 7.0, 6.0, 5.0 },
+        .{ 4.0, 3.0, 2.0, 1.0 },
+    } };
+
+    const result = mat_a.multiply(mat_b);
+    const expected = zm.Mat(4, 4, f32){ .data = .{
+        .{ 80.0, 70.0, 60.0, 50.0 },
+        .{ 240.0, 214.0, 188.0, 162.0 },
+        .{ 400.0, 358.0, 316.0, 274.0 },
+        .{ 560.0, 502.0, 444.0, 386.0 },
+    } };
+
+    for (0..@TypeOf(expected).rows()) |i| {
+        for (0..@TypeOf(expected).cols()) |j| {
+            try expectApproxEqAbs(expected.data[i][j], result.data[i][j], float_tolerance);
+        }
+    }
+}
