@@ -320,3 +320,31 @@ test "Matrix4 multiplication" {
         }
     }
 }
+
+test "Vec3 multiplication" {
+    const expectApproxEqAbs = std.testing.expectApproxEqAbs;
+
+    const v1 = zm.Vec3{ .data = .{ 1.0, 2.0, 3.0 } };
+    const v2 = zm.Vec3{ .data = .{ 4.0, 5.0, 6.0 } };
+
+    const result = v1.mul(v2);
+    const expected = zm.Vec3{ .data = .{ 4.0, 10.0, 18.0 } };
+
+    for (0..3) |i| {
+        try expectApproxEqAbs(expected.data[i], result.data[i], float_tolerance);
+    }
+}
+
+test "Vec4 multiplication" {
+    const expectApproxEqAbs = std.testing.expectApproxEqAbs;
+
+    const v1 = zm.Vec4{ .data = .{ -1.0, -2.0, -3.0, -4.0 } };
+    const v2 = zm.Vec4{ .data = .{ 2.0, 3.0, -4.0, -5.0 } };
+
+    const result = v1.mul(v2);
+    const expected = zm.Vec4{ .data = .{ -2.0, -6.0, 12.0, 20.0 } };
+
+    for (0..4) |i| {
+        try expectApproxEqAbs(expected.data[i], result.data[i], float_tolerance);
+    }
+}
