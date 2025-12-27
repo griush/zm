@@ -74,6 +74,20 @@ pub fn Vec(n: comptime_int, comptime T: type) type {
             return sum;
         }
 
+        pub fn mul(self: Self, other: Self) Self {
+            var result: Self = .{ .data = undefined };
+            inline for (0..n) |i| {
+                result.data[i] = self.data[i] * other.data[i];
+            }
+            return result;
+        }
+
+        pub fn mulAssign(self: *Self, other: Self) void {
+            inline for (0..n) |i| {
+                self.data[i] *= other.data[i];
+            }
+        }
+
         pub fn lenSq(self: Self) T {
             return self.dot(self);
         }
