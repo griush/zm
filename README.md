@@ -8,7 +8,7 @@ zm is a Zig math library. It is fast and easy to use.
 
 ## Usage
 > [!NOTE]
-> This library is tracking Zig's master branch. Last tested with `0.16.0-dev.1316+181b25ce4`.
+> This library is tracking Zig's master branch. Last tested with `0.16.0-dev.2535+b5bd49460`.
 > It may not compile with newer or older versions.
 
 Run `zig fetch --save git+https://github.com/griush/zm` on the directory of your `build.zig` and `build.zig.zon`.
